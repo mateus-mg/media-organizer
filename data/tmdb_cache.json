@@ -1,0 +1,1188 @@
+{
+  "movie:Carros 2:2011": {
+    "id": 49013,
+    "original_title": "Cars 2",
+    "title": "Cars 2",
+    "year": "2011",
+    "release_date": "2011-06-11"
+  },
+  "movie:A Origem dos Guardioes:2012": {
+    "id": 81188,
+    "original_title": "Rise of the Guardians",
+    "title": "Rise of the Guardians",
+    "year": "2012",
+    "release_date": "2012-11-21"
+  },
+  "movie:Opera\u00e7\u00e3o Big Hero:2014": {
+    "id": 177572,
+    "original_title": "Big Hero 6",
+    "title": "Big Hero 6",
+    "year": "2014",
+    "release_date": "2014-10-24"
+  },
+  "movie:Espetacular Homem Aranha:None": {
+    "id": 478253,
+    "original_title": "Rite of Passage: The Amazing Spider-Man Reborn",
+    "title": "Rite of Passage: The Amazing Spider-Man Reborn",
+    "year": "2012",
+    "release_date": "2012-11-09"
+  },
+  "movie:Circulo de Fogo:None": {
+    "id": 713873,
+    "original_title": "O C\u00edrculo de Fogo",
+    "title": "O C\u00edrculo de Fogo",
+    "year": "1990",
+    "release_date": "1990-10-13"
+  },
+  "movie:Reino Escondido:2013": {
+    "id": 116711,
+    "original_title": "Epic",
+    "title": "Epic",
+    "year": "2013",
+    "release_date": "2013-05-15"
+  },
+  "movie:Carros 1:2006": {
+    "id": 920,
+    "original_title": "Cars",
+    "title": "Cars",
+    "year": "2006",
+    "release_date": "2006-06-08"
+  },
+  "movie:Titanic:1997": {
+    "id": 597,
+    "original_title": "Titanic",
+    "title": "Titanic",
+    "year": "1997",
+    "release_date": "1997-11-18"
+  },
+  "movie:A Escolha:2016": {
+    "id": 396616,
+    "original_title": "Kongens nei",
+    "title": "The King's Choice",
+    "year": "2016",
+    "release_date": "2016-09-29"
+  },
+  "movie:John Wick Um:2017": {
+    "id": 324552,
+    "original_title": "John Wick: Chapter 2",
+    "title": "John Wick: Chapter 2",
+    "year": "2017",
+    "release_date": "2017-02-08"
+  },
+  "movie:Love:2014": {
+    "id": 307231,
+    "original_title": "Love",
+    "title": "Love",
+    "year": "2014",
+    "release_date": "2014-12-01"
+  },
+  "movie:Como Treinar Seu Drag\u00e3o:None": {
+    "id": 1087192,
+    "original_title": "How to Train Your Dragon",
+    "title": "How to Train Your Dragon",
+    "year": "2025",
+    "release_date": "2025-06-06"
+  },
+  "movie:O Melhor de Mim:2014": {
+    "id": 239571,
+    "original_title": "The Best of Me",
+    "title": "The Best of Me",
+    "year": "2014",
+    "release_date": "2014-10-15"
+  },
+  "movie:Como Treinar Seu Drag\u00e3o:2014": {
+    "id": 10191,
+    "original_title": "How to Train Your Dragon",
+    "title": "How to Train Your Dragon",
+    "year": "2010",
+    "release_date": "2010-03-18"
+  },
+  "movie:A Origem:2010": {
+    "id": 812169,
+    "original_title": "Maraj\u00f3: A Origem das \u00c1guas",
+    "title": "Maraj\u00f3: A Origem das \u00c1guas",
+    "year": "2010",
+    "release_date": "2010-10-10"
+  },
+  "movie:Harry Potter Prisioneiro:None": {
+    "id": 673,
+    "original_title": "Harry Potter and the Prisoner of Azkaban",
+    "title": "Harry Potter and the Prisoner of Azkaban",
+    "year": "2004",
+    "release_date": "2004-05-31"
+  },
+  "movie:Reliquias Da:None": {
+    "id": 12444,
+    "original_title": "Harry Potter and the Deathly Hallows: Part 1",
+    "title": "Harry Potter and the Deathly Hallows: Part 1",
+    "year": "2010",
+    "release_date": "2010-11-17"
+  },
+  "movie:Harry Potter Enigma:None": {
+    "id": 767,
+    "original_title": "Harry Potter and the Half-Blood Prince",
+    "title": "Harry Potter and the Half-Blood Prince",
+    "year": "2009",
+    "release_date": "2009-07-15"
+  },
+  "movie:Galaxy Vol:2017": {
+    "id": 283995,
+    "original_title": "Guardians of the Galaxy Vol. 2",
+    "title": "Guardians of the Galaxy Vol. 2",
+    "year": "2017",
+    "release_date": "2017-04-19"
+  },
+  "movie:Elite Inimigo Agora Outro:2010": {
+    "id": 47931,
+    "original_title": "Tropa de Elite 2",
+    "title": "Elite Squad: The Enemy Within",
+    "year": "2010",
+    "release_date": "2010-10-08"
+  },
+  "movie:Vingadores Guerra Infinita:2018": {
+    "id": 299536,
+    "original_title": "Avengers: Infinity War",
+    "title": "Avengers: Infinity War",
+    "year": "2018",
+    "release_date": "2018-04-25"
+  },
+  "movie:Spider Man:2004": {
+    "id": 558,
+    "original_title": "Spider-Man 2",
+    "title": "Spider-Man 2",
+    "year": "2004",
+    "release_date": "2004-06-25"
+  },
+  "movie:The Incredible Hulk:2008": {
+    "id": 1724,
+    "original_title": "The Incredible Hulk",
+    "title": "The Incredible Hulk",
+    "year": "2008",
+    "release_date": "2008-06-12"
+  },
+  "movie:Moneyball:2011": {
+    "id": 60308,
+    "original_title": "Moneyball",
+    "title": "Moneyball",
+    "year": "2011",
+    "release_date": "2011-09-23"
+  },
+  "movie:Tron Ares:2025": {
+    "id": 533533,
+    "original_title": "TRON: Ares",
+    "title": "TRON: Ares",
+    "year": "2025",
+    "release_date": "2025-10-08"
+  },
+  "movie:Vingadores Era:2015": {
+    "id": 99861,
+    "original_title": "Avengers: Age of Ultron",
+    "title": "Avengers: Age of Ultron",
+    "year": "2015",
+    "release_date": "2015-04-22"
+  },
+  "movie:Homem de Aco:2013": {
+    "id": 49521,
+    "original_title": "Man of Steel",
+    "title": "Man of Steel",
+    "year": "2013",
+    "release_date": "2013-06-12"
+  },
+  "movie:O Protetor:None": {
+    "id": 866398,
+    "original_title": "The Beekeeper",
+    "title": "The Beekeeper",
+    "year": "2024",
+    "release_date": "2024-01-08"
+  },
+  "movie:Guardioes da Galaxia:2014": {
+    "id": 118340,
+    "original_title": "Guardians of the Galaxy",
+    "title": "Guardians of the Galaxy",
+    "year": "2014",
+    "release_date": "2014-07-30"
+  },
+  "movie:Vingadores The Avengers:2012": {
+    "id": 24428,
+    "original_title": "The Avengers",
+    "title": "The Avengers",
+    "year": "2012",
+    "release_date": "2012-04-25"
+  },
+  "movie:Spider Man:2017": {
+    "id": 557,
+    "original_title": "Spider-Man",
+    "title": "Spider-Man",
+    "year": "2002",
+    "release_date": "2002-05-01"
+  },
+  "movie:Batman Begins:2005": {
+    "id": 272,
+    "original_title": "Batman Begins",
+    "title": "Batman Begins",
+    "year": "2005",
+    "release_date": "2005-06-10"
+  },
+  "movie:Iron Man:2010": {
+    "id": 10138,
+    "original_title": "Iron Man 2",
+    "title": "Iron Man 2",
+    "year": "2010",
+    "release_date": "2010-04-28"
+  },
+  "movie:Black Panther Wakanda Forever:2022": {
+    "id": 505642,
+    "original_title": "Black Panther: Wakanda Forever",
+    "title": "Black Panther: Wakanda Forever",
+    "year": "2022",
+    "release_date": "2022-11-09"
+  },
+  "movie:Pantera Negra:2018": {
+    "id": 284054,
+    "original_title": "Black Panther",
+    "title": "Black Panther",
+    "year": "2018",
+    "release_date": "2018-02-13"
+  },
+  "movie:Spider Man:2002": {
+    "id": 557,
+    "original_title": "Spider-Man",
+    "title": "Spider-Man",
+    "year": "2002",
+    "release_date": "2002-05-01"
+  },
+  "movie:El Dorado:2000": {
+    "id": 6644,
+    "original_title": "El Dorado",
+    "title": "El Dorado",
+    "year": "1966",
+    "release_date": "1966-12-17"
+  },
+  "movie:Interstellar:2014": {
+    "id": 157336,
+    "original_title": "Interstellar",
+    "title": "Interstellar",
+    "year": "2014",
+    "release_date": "2014-11-05"
+  },
+  "movie:Ne Zha:2025": {
+    "id": 980477,
+    "original_title": "\u54ea\u5412\u4e4b\u9b54\u7ae5\u95f9\u6d77",
+    "title": "Ne Zha 2",
+    "year": "2025",
+    "release_date": "2025-01-29"
+  },
+  "movie:Marvel Studios Iron Man:2008": {
+    "id": 1726,
+    "original_title": "Iron Man",
+    "title": "Iron Man",
+    "year": "2008",
+    "release_date": "2008-04-30"
+  },
+  "movie:Um Sonho de Liberdade:1994": {
+    "id": 278,
+    "original_title": "The Shawshank Redemption",
+    "title": "The Shawshank Redemption",
+    "year": "1994",
+    "release_date": "1994-09-23"
+  },
+  "movie:Deadpool Wolverine:2024": {
+    "id": 533535,
+    "original_title": "Deadpool & Wolverine",
+    "title": "Deadpool & Wolverine",
+    "year": "2024",
+    "release_date": "2024-07-24"
+  },
+  "movie:Iron Man:2013": {
+    "id": 68721,
+    "original_title": "Iron Man 3",
+    "title": "Iron Man 3",
+    "year": "2013",
+    "release_date": "2013-04-18"
+  },
+  "movie:Captain America Civil War:2016": {
+    "id": 271110,
+    "original_title": "Captain America: Civil War",
+    "title": "Captain America: Civil War",
+    "year": "2016",
+    "release_date": "2016-04-27"
+  },
+  "movie:Genio Indomavel:1997": {
+    "id": 489,
+    "original_title": "Good Will Hunting",
+    "title": "Good Will Hunting",
+    "year": "1997",
+    "release_date": "1997-12-05"
+  },
+  "movie:The Dark Knight Rises:2012": {
+    "id": 49026,
+    "original_title": "The Dark Knight Rises",
+    "title": "The Dark Knight Rises",
+    "year": "2012",
+    "release_date": "2012-07-17"
+  },
+  "movie:Spider Man Far:2019": {
+    "id": 429617,
+    "original_title": "Spider-Man: Far From Home",
+    "title": "Spider-Man: Far From Home",
+    "year": "2019",
+    "release_date": "2019-06-28"
+  },
+  "movie:Captain America The:2014": {
+    "id": 100402,
+    "original_title": "Captain America: The Winter Soldier",
+    "title": "Captain America: The Winter Soldier",
+    "year": "2014",
+    "release_date": "2014-03-20"
+  },
+  "movie:A Chegada:2016": {
+    "id": 329865,
+    "original_title": "Arrival",
+    "title": "Arrival",
+    "year": "2016",
+    "release_date": "2016-11-10"
+  },
+  "movie:Um porto seguro:2013": {
+    "id": 112949,
+    "original_title": "Safe Haven",
+    "title": "Safe Haven",
+    "year": "2013",
+    "release_date": "2013-02-07"
+  },
+  "movie:The Super Mario:2023": {
+    "id": 502356,
+    "original_title": "The Super Mario Bros. Movie",
+    "title": "The Super Mario Bros. Movie",
+    "year": "2023",
+    "release_date": "2023-04-05"
+  },
+  "movie:Our Stars:2014": {
+    "id": 222935,
+    "original_title": "The Fault in Our Stars",
+    "title": "The Fault in Our Stars",
+    "year": "2014",
+    "release_date": "2014-06-02"
+  },
+  "movie:Viva Vida:2017": {
+    "id": 354912,
+    "original_title": "Coco",
+    "title": "Coco",
+    "year": "2017",
+    "release_date": "2017-10-27"
+  },
+  "movie:The Dark Knight:2008": {
+    "id": 155,
+    "original_title": "The Dark Knight",
+    "title": "The Dark Knight",
+    "year": "2008",
+    "release_date": "2008-07-16"
+  },
+  "movie:The Equalizer:2023": {
+    "id": 926393,
+    "original_title": "The Equalizer 3",
+    "title": "The Equalizer 3",
+    "year": "2023",
+    "release_date": "2023-08-30"
+  },
+  "movie:Diabo Veste Prada:2006": {
+    "id": 350,
+    "original_title": "The Devil Wears Prada",
+    "title": "The Devil Wears Prada",
+    "year": "2006",
+    "release_date": "2006-06-29"
+  },
+  "movie:Spider Man No:2021": {
+    "id": 634649,
+    "original_title": "Spider-Man: No Way Home",
+    "title": "Spider-Man: No Way Home",
+    "year": "2021",
+    "release_date": "2021-12-15"
+  },
+  "movie:Galaxy Vol:2023": {
+    "id": 447365,
+    "original_title": "Guardians of the Galaxy Vol. 3",
+    "title": "Guardians of the Galaxy Vol. 3",
+    "year": "2023",
+    "release_date": "2023-05-03"
+  },
+  "movie:Perdido em Marte:2015": {
+    "id": 286217,
+    "original_title": "The Martian",
+    "title": "The Martian",
+    "year": "2015",
+    "release_date": "2015-09-30"
+  },
+  "movie:Busca Implacavel:2008": {
+    "id": 8681,
+    "original_title": "Taken",
+    "title": "Taken",
+    "year": "2008",
+    "release_date": "2008-02-18"
+  },
+  "movie:Busca Implacavel:2012": {
+    "id": 26389,
+    "original_title": "From Paris with Love",
+    "title": "From Paris with Love",
+    "year": "2010",
+    "release_date": "2010-02-04"
+  },
+  "movie:Busca Implacavel:2014": {
+    "id": 260346,
+    "original_title": "Taken 3",
+    "title": "Taken 3",
+    "year": "2014",
+    "release_date": "2014-12-16"
+  },
+  "movie:Mission Impossible:1996": {
+    "id": 954,
+    "original_title": "Mission: Impossible",
+    "title": "Mission: Impossible",
+    "year": "1996",
+    "release_date": "1996-05-22"
+  },
+  "movie:Tropa de Elite 1:None": {
+    "id": 7347,
+    "original_title": "Tropa de Elite",
+    "title": "Elite Squad",
+    "year": "2007",
+    "release_date": "2007-10-12"
+  },
+  "movie:Senhor Estagiario:2015": {
+    "id": 257211,
+    "original_title": "The Intern",
+    "title": "The Intern",
+    "year": "2015",
+    "release_date": "2015-09-23"
+  },
+  "movie:Spirit Corcel Indom\u00e1vel:2002": {
+    "id": 9023,
+    "original_title": "Spirit: Stallion of the Cimarron",
+    "title": "Spirit: Stallion of the Cimarron",
+    "year": "2002",
+    "release_date": "2002-05-24"
+  },
+  "movie:Cinco Passos:2019": {
+    "id": 527641,
+    "original_title": "Five Feet Apart",
+    "title": "Five Feet Apart",
+    "year": "2019",
+    "release_date": "2019-03-14"
+  },
+  "movie:Eu Sou Lenda:2008": {
+    "id": 6479,
+    "original_title": "I Am Legend",
+    "title": "I Am Legend",
+    "year": "2007",
+    "release_date": "2007-12-12"
+  },
+  "movie:Bailarina Do Universo:2025": {
+    "id": 541671,
+    "original_title": "Ballerina",
+    "title": "Ballerina",
+    "year": "2025",
+    "release_date": "2025-06-04"
+  },
+  "movie:Em Ritmo:2017": {
+    "id": 339403,
+    "original_title": "Baby Driver",
+    "title": "Baby Driver",
+    "year": "2017",
+    "release_date": "2017-06-28"
+  },
+  "movie:Planeta do Tesouro:2002": {
+    "id": 9016,
+    "original_title": "Treasure Planet",
+    "title": "Treasure Planet",
+    "year": "2002",
+    "release_date": "2002-11-26"
+  },
+  "movie:Jurassic World Mundo:2015": {
+    "id": 135397,
+    "original_title": "Jurassic World",
+    "title": "Jurassic World",
+    "year": "2015",
+    "release_date": "2015-06-06"
+  },
+  "movie:Os Incr\u00edveis 2:2018": {
+    "id": 260513,
+    "original_title": "Incredibles 2",
+    "title": "Incredibles 2",
+    "year": "2018",
+    "release_date": "2018-06-14"
+  },
+  "movie:No Limite:2014": {
+    "id": 497124,
+    "original_title": "David Lama - Das Unm\u00f6gliche M\u00f6glich Machen",
+    "title": "David Lama - Off Limits On Rock and Ice",
+    "year": "2014",
+    "release_date": "2014-03-17"
+  },
+  "movie:Lugar Silencioso Parte II:2021": {
+    "id": 520763,
+    "original_title": "A Quiet Place Part II",
+    "title": "A Quiet Place Part II",
+    "year": "2021",
+    "release_date": "2021-05-21"
+  },
+  "movie:Mad Max Estrada:2015": {
+    "id": 76341,
+    "original_title": "Mad Max: Fury Road",
+    "title": "Mad Max: Fury Road",
+    "year": "2015",
+    "release_date": "2015-05-13"
+  },
+  "movie:Creed II:2018": {
+    "id": 480530,
+    "original_title": "Creed II",
+    "title": "Creed II",
+    "year": "2018",
+    "release_date": "2018-11-21"
+  },
+  "movie:Fury:2014": {
+    "id": 228150,
+    "original_title": "Fury",
+    "title": "Fury",
+    "year": "2014",
+    "release_date": "2014-10-15"
+  },
+  "movie:Como Eu Era Antes:2016": {
+    "id": 296096,
+    "original_title": "Me Before You",
+    "title": "Me Before You",
+    "year": "2016",
+    "release_date": "2016-06-01"
+  },
+  "movie:Ford vs Ferrari:2019": {
+    "id": 359724,
+    "original_title": "Ford v Ferrari",
+    "title": "Ford v Ferrari",
+    "year": "2019",
+    "release_date": "2019-11-13"
+  },
+  "movie:Rei Arthur Lenda:2017": {
+    "id": 274857,
+    "original_title": "King Arthur: Legend of the Sword",
+    "title": "King Arthur: Legend of the Sword",
+    "year": "2017",
+    "release_date": "2017-05-10"
+  },
+  "movie:Atirador:2007": {
+    "id": 7485,
+    "original_title": "Shooter",
+    "title": "Shooter",
+    "year": "2007",
+    "release_date": "2007-03-22"
+  },
+  "movie:Estrelas Al\u00e9m:2017": {
+    "id": 381284,
+    "original_title": "Hidden Figures",
+    "title": "Hidden Figures",
+    "year": "2016",
+    "release_date": "2016-12-10"
+  },
+  "movie:Creed Nascido:2015": {
+    "id": 312221,
+    "original_title": "Creed",
+    "title": "Creed",
+    "year": "2015",
+    "release_date": "2015-11-25"
+  },
+  "movie:Intoc\u00e1veis:2011": {
+    "id": 77338,
+    "original_title": "Intouchables",
+    "title": "The Intouchables",
+    "year": "2011",
+    "release_date": "2011-11-02"
+  },
+  "movie:At\u00e9 \u00daltimo Homem:2017": {
+    "id": 324786,
+    "original_title": "Hacksaw Ridge",
+    "title": "Hacksaw Ridge",
+    "year": "2016",
+    "release_date": "2016-10-07"
+  },
+  "movie:Harry Potter Ordem:2007": {
+    "id": 675,
+    "original_title": "Harry Potter and the Order of the Phoenix",
+    "title": "Harry Potter and the Order of the Phoenix",
+    "year": "2007",
+    "release_date": "2007-07-08"
+  },
+  "movie:Avatar Caminho:2022": {
+    "id": 76600,
+    "original_title": "Avatar: The Way of Water",
+    "title": "Avatar: The Way of Water",
+    "year": "2022",
+    "release_date": "2022-12-14"
+  },
+  "movie:Kung Fu Panda:2011": {
+    "id": 9502,
+    "original_title": "Kung Fu Panda",
+    "title": "Kung Fu Panda",
+    "year": "2008",
+    "release_date": "2008-06-04"
+  },
+  "movie:Kung Fu Panda:2008": {
+    "id": 9502,
+    "original_title": "Kung Fu Panda",
+    "title": "Kung Fu Panda",
+    "year": "2008",
+    "release_date": "2008-06-04"
+  },
+  "movie:Kung Fu Panda:2016": {
+    "id": 9502,
+    "original_title": "Kung Fu Panda",
+    "title": "Kung Fu Panda",
+    "year": "2008",
+    "release_date": "2008-06-04"
+  },
+  "movie:Tom Clancy:2021": {
+    "id": 567189,
+    "original_title": "Tom Clancy's Without Remorse",
+    "title": "Tom Clancy's Without Remorse",
+    "year": "2021",
+    "release_date": "2021-04-29"
+  },
+  "movie:300:2006": {
+    "id": 1271,
+    "original_title": "300",
+    "title": "300",
+    "year": "2007",
+    "release_date": "2007-03-07"
+  },
+  "movie:Guardians The Owls:2010": {
+    "id": 41216,
+    "original_title": "Legend of the Guardians: The Owls of Ga'Hoole",
+    "title": "Legend of the Guardians: The Owls of Ga'Hoole",
+    "year": "2010",
+    "release_date": "2010-07-10"
+  },
+  "movie:Harry Potter Calice:2005": {
+    "id": 674,
+    "original_title": "Harry Potter and the Goblet of Fire",
+    "title": "Harry Potter and the Goblet of Fire",
+    "year": "2005",
+    "release_date": "2005-11-16"
+  },
+  "movie:Homem Aranha De Volta:2017": {
+    "id": 315635,
+    "original_title": "Spider-Man: Homecoming",
+    "title": "Spider-Man: Homecoming",
+    "year": "2017",
+    "release_date": "2017-07-05"
+  },
+  "movie:Mal\u00e9vola:2014": {
+    "id": 102651,
+    "original_title": "Maleficent",
+    "title": "Maleficent",
+    "year": "2014",
+    "release_date": "2014-05-28"
+  },
+  "movie:Como Treinar Seu Drag\u00e3o:2019": {
+    "id": 166428,
+    "original_title": "How to Train Your Dragon: The Hidden World",
+    "title": "How to Train Your Dragon: The Hidden World",
+    "year": "2019",
+    "release_date": "2019-01-03"
+  },
+  "movie:Avatar:2009": {
+    "id": 19995,
+    "original_title": "Avatar",
+    "title": "Avatar",
+    "year": "2009",
+    "release_date": "2009-12-16"
+  },
+  "movie:Deadpool:2016": {
+    "id": 293660,
+    "original_title": "Deadpool",
+    "title": "Deadpool",
+    "year": "2016",
+    "release_date": "2016-02-09"
+  },
+  "movie:John Wick Baba Yaga:2023": {
+    "id": 603692,
+    "original_title": "John Wick: Chapter 4",
+    "title": "John Wick: Chapter 4",
+    "year": "2023",
+    "release_date": "2023-03-22"
+  },
+  "movie:Homem Aranha:2019": {
+    "id": 324857,
+    "original_title": "Spider-Man: Into the Spider-Verse",
+    "title": "Spider-Man: Into the Spider-Verse",
+    "year": "2018",
+    "release_date": "2018-12-06"
+  },
+  "movie:Bastardos Ingl\u00f3rios:2009": {
+    "id": 16869,
+    "original_title": "Inglourious Basterds",
+    "title": "Inglourious Basterds",
+    "year": "2009",
+    "release_date": "2009-08-02"
+  },
+  "movie:Grande Escolha:2014": {
+    "id": 200505,
+    "original_title": "Draft Day",
+    "title": "Draft Day",
+    "year": "2014",
+    "release_date": "2014-04-11"
+  },
+  "movie:Harry Potter Camara Secreta:2002": {
+    "id": 672,
+    "original_title": "Harry Potter and the Chamber of Secrets",
+    "title": "Harry Potter and the Chamber of Secrets",
+    "year": "2002",
+    "release_date": "2002-11-13"
+  },
+  "movie:A Guerra do Amanh\u00e3:2021": {
+    "id": 588228,
+    "original_title": "The Tomorrow War",
+    "title": "The Tomorrow War",
+    "year": "2021",
+    "release_date": "2021-09-03"
+  },
+  "movie:Beekeeper Rede:2024": {
+    "id": 866398,
+    "original_title": "The Beekeeper",
+    "title": "The Beekeeper",
+    "year": "2024",
+    "release_date": "2024-01-08"
+  },
+  "movie:Ela Dan\u00e7a Eu Dan\u00e7o:2010": {
+    "id": 41233,
+    "original_title": "Step Up 3D",
+    "title": "Step Up 3D",
+    "year": "2010",
+    "release_date": "2010-08-04"
+  },
+  "movie:Ela Dan\u00e7a Eu Dan\u00e7o:2012": {
+    "id": 9762,
+    "original_title": "Step Up",
+    "title": "Step Up",
+    "year": "2006",
+    "release_date": "2006-08-11"
+  },
+  "movie:Ela Dan\u00e7a Eu Dan\u00e7o:2014": {
+    "id": 243683,
+    "original_title": "Step Up All In",
+    "title": "Step Up All In",
+    "year": "2014",
+    "release_date": "2014-07-15"
+  },
+  "movie:Ela Dan\u00e7a Eu Dan\u00e7o:2008": {
+    "id": 9762,
+    "original_title": "Step Up",
+    "title": "Step Up",
+    "year": "2006",
+    "release_date": "2006-08-11"
+  },
+  "movie:Ela Dan\u00e7a Eu Dan\u00e7o:2006": {
+    "id": 9762,
+    "original_title": "Step Up",
+    "title": "Step Up",
+    "year": "2006",
+    "release_date": "2006-08-11"
+  },
+  "movie:Guerreiras do K Pop:2025": {
+    "id": 803796,
+    "original_title": "KPop Demon Hunters",
+    "title": "KPop Demon Hunters",
+    "year": "2025",
+    "release_date": "2025-06-20"
+  },
+  "movie:Mission Impossible Fallout:2018": {
+    "id": 353081,
+    "original_title": "Mission: Impossible - Fallout",
+    "title": "Mission: Impossible - Fallout",
+    "year": "2018",
+    "release_date": "2018-07-25"
+  },
+  "movie:Duna Parte:2024": {
+    "id": 438631,
+    "original_title": "Dune",
+    "title": "Dune",
+    "year": "2021",
+    "release_date": "2021-09-15"
+  },
+  "movie:Capit\u00e3o Am\u00e9rica Primeiro Vingador:2011": {
+    "id": 1771,
+    "original_title": "Captain America: The First Avenger",
+    "title": "Captain America: The First Avenger",
+    "year": "2011",
+    "release_date": "2011-07-22"
+  },
+  "movie:Contas Parte:2023": {
+    "id": 575264,
+    "original_title": "Mission: Impossible - Dead Reckoning Part One",
+    "title": "Mission: Impossible - Dead Reckoning Part One",
+    "year": "2023",
+    "release_date": "2023-07-08"
+  },
+  "movie:Mission Impossible III:2006": {
+    "id": 956,
+    "original_title": "Mission: Impossible III",
+    "title": "Mission: Impossible III",
+    "year": "2006",
+    "release_date": "2006-04-25"
+  },
+  "movie:Deadpool 2:2018": {
+    "id": 383498,
+    "original_title": "Deadpool 2",
+    "title": "Deadpool 2",
+    "year": "2018",
+    "release_date": "2018-05-15"
+  },
+  "movie:Gigantes de A\u00e7o:2011": {
+    "id": 39254,
+    "original_title": "Real Steel",
+    "title": "Real Steel",
+    "year": "2011",
+    "release_date": "2011-09-28"
+  },
+  "movie:Justice League The:2013": {
+    "id": 183011,
+    "original_title": "Justice League: The Flashpoint Paradox",
+    "title": "Justice League: The Flashpoint Paradox",
+    "year": "2013",
+    "release_date": "2013-07-30"
+  },
+  "movie:Os Incr\u00edveis:2004": {
+    "id": 9806,
+    "original_title": "The Incredibles",
+    "title": "The Incredibles",
+    "year": "2004",
+    "release_date": "2004-11-05"
+  },
+  "movie:Destrui\u00e7\u00e3o Final \u00daltimo Ref\u00fagio:None": {
+    "id": 524047,
+    "original_title": "Greenland",
+    "title": "Greenland",
+    "year": "2020",
+    "release_date": "2020-07-29"
+  },
+  "movie:Kung Fu Panda:2024": {
+    "id": 1011985,
+    "original_title": "Kung Fu Panda 4",
+    "title": "Kung Fu Panda 4",
+    "year": "2024",
+    "release_date": "2024-03-02"
+  },
+  "movie:C\u00f3digo de Conduta:2009": {
+    "id": 22803,
+    "original_title": "Law Abiding Citizen",
+    "title": "Law Abiding Citizen",
+    "year": "2009",
+    "release_date": "2009-10-15"
+  },
+  "movie:Creed III:2023": {
+    "id": 677179,
+    "original_title": "Creed III",
+    "title": "Creed III",
+    "year": "2023",
+    "release_date": "2023-03-01"
+  },
+  "movie:Ascensao Do Imperio:2014": {
+    "id": 53182,
+    "original_title": "300: Rise of an Empire",
+    "title": "300: Rise of an Empire",
+    "year": "2014",
+    "release_date": "2014-03-05"
+  },
+  "movie:Um Homem de Sorte:2012": {
+    "id": 77877,
+    "original_title": "The Lucky One",
+    "title": "The Lucky One",
+    "year": "2012",
+    "release_date": "2012-04-19"
+  },
+  "movie:O Contador:2016": {
+    "id": 13,
+    "original_title": "Forrest Gump",
+    "title": "Forrest Gump",
+    "year": "1994",
+    "release_date": "1994-06-23"
+  },
+  "movie:John Wick Parabellum:2019": {
+    "id": 458156,
+    "original_title": "John Wick: Chapter 3 - Parabellum",
+    "title": "John Wick: Chapter 3 - Parabellum",
+    "year": "2019",
+    "release_date": "2019-05-15"
+  },
+  "movie:O Contador 2:2025": {
+    "id": 870028,
+    "original_title": "The Accountant\u00b2",
+    "title": "The Accountant\u00b2",
+    "year": "2025",
+    "release_date": "2025-04-23"
+  },
+  "movie:Guerra Mundial:2013": {
+    "id": 72190,
+    "original_title": "World War Z",
+    "title": "World War Z",
+    "year": "2013",
+    "release_date": "2013-06-19"
+  },
+  "movie:Mal\u00e9vola Dona:2020": {
+    "id": 420809,
+    "original_title": "Maleficent: Mistress of Evil",
+    "title": "Maleficent: Mistress of Evil",
+    "year": "2019",
+    "release_date": "2019-10-16"
+  },
+  "movie:De Volta ao Jogo:2014": {
+    "id": 245891,
+    "original_title": "John Wick",
+    "title": "John Wick",
+    "year": "2014",
+    "release_date": "2014-10-22"
+  },
+  "movie:Vingadores Ultimato:2019": {
+    "id": 299534,
+    "original_title": "Avengers: Endgame",
+    "title": "Avengers: Endgame",
+    "year": "2019",
+    "release_date": "2019-04-24"
+  },
+  "movie:Carros 3:2017": {
+    "id": 260514,
+    "original_title": "Cars 3",
+    "title": "Cars 3",
+    "year": "2017",
+    "release_date": "2017-06-15"
+  },
+  "movie:Jurassic World Reino Amea\u00e7ado:2018": {
+    "id": 351286,
+    "original_title": "Jurassic World: Fallen Kingdom",
+    "title": "Jurassic World: Fallen Kingdom",
+    "year": "2018",
+    "release_date": "2018-06-06"
+  },
+  "movie:Lugar Silencioso:2018": {
+    "id": 447332,
+    "original_title": "A Quiet Place",
+    "title": "A Quiet Place",
+    "year": "2018",
+    "release_date": "2018-04-03"
+  },
+  "movie:Batman Vs Superman Origem:2016": {
+    "id": 209112,
+    "original_title": "Batman v Superman: Dawn of Justice",
+    "title": "Batman v Superman: Dawn of Justice",
+    "year": "2016",
+    "release_date": "2016-03-23"
+  },
+  "movie:Homem Aranha Atraves:2023": {
+    "id": 569094,
+    "original_title": "Spider-Man: Across the Spider-Verse",
+    "title": "Spider-Man: Across the Spider-Verse",
+    "year": "2023",
+    "release_date": "2023-05-31"
+  },
+  "movie:Sound of Metal:2019": {
+    "id": 502033,
+    "original_title": "Sound of Metal",
+    "title": "Sound of Metal",
+    "year": "2020",
+    "release_date": "2020-11-20"
+  },
+  "movie:Divertida Mente:2024": {
+    "id": 1022789,
+    "original_title": "Inside Out 2",
+    "title": "Inside Out 2",
+    "year": "2024",
+    "release_date": "2024-06-11"
+  },
+  "movie:Miss\u00e3o Imposs\u00edvel Acerto Final:2025": {
+    "id": 575265,
+    "original_title": "Mission: Impossible - The Final Reckoning",
+    "title": "Mission: Impossible - The Final Reckoning",
+    "year": "2025",
+    "release_date": "2025-05-17"
+  },
+  "movie:Zootopia:2016": {
+    "id": 269149,
+    "original_title": "Zootopia",
+    "title": "Zootopia",
+    "year": "2016",
+    "release_date": "2016-02-11"
+  },
+  "movie:O Protetor 2:2018": {
+    "id": 156022,
+    "original_title": "The Equalizer",
+    "title": "The Equalizer",
+    "year": "2014",
+    "release_date": "2014-09-24"
+  },
+  "movie:Divertida Mente:2015": {
+    "id": 150540,
+    "original_title": "Inside Out",
+    "title": "Inside Out",
+    "year": "2015",
+    "release_date": "2015-06-17"
+  },
+  "movie:Horas Os Soldados Secretos:2016": {
+    "id": 300671,
+    "original_title": "13 Hours: The Secret Soldiers of Benghazi",
+    "title": "13 Hours: The Secret Soldiers of Benghazi",
+    "year": "2016",
+    "release_date": "2016-01-14"
+  },
+  "movie:Espetacular Homem Aranha:2014": {
+    "id": 1930,
+    "original_title": "The Amazing Spider-Man",
+    "title": "The Amazing Spider-Man",
+    "year": "2012",
+    "release_date": "2012-06-23"
+  },
+  "movie:Dunkirk:2017": {
+    "id": 374720,
+    "original_title": "Dunkirk",
+    "title": "Dunkirk",
+    "year": "2017",
+    "release_date": "2017-07-19"
+  },
+  "movie:Sniper Americano:2015": {
+    "id": 190859,
+    "original_title": "American Sniper",
+    "title": "American Sniper",
+    "year": "2014",
+    "release_date": "2014-12-25"
+  },
+  "movie:Mission Impossible II:2000": {
+    "id": 955,
+    "original_title": "Mission: Impossible II",
+    "title": "Mission: Impossible II",
+    "year": "2000",
+    "release_date": "2000-05-24"
+  },
+  "movie:Duna:2021": {
+    "id": 1464568,
+    "original_title": "Duna",
+    "title": "Duna",
+    "year": "2021",
+    "release_date": "2021-05-25"
+  },
+  "movie:Longa Jornada:2015": {
+    "id": 228205,
+    "original_title": "The Longest Ride",
+    "title": "The Longest Ride",
+    "year": "2015",
+    "release_date": "2015-04-09"
+  },
+  "movie:Top Gun Ases Indom\u00e1veis:1986": {
+    "id": 744,
+    "original_title": "Top Gun",
+    "title": "Top Gun",
+    "year": "1986",
+    "release_date": "1986-05-16"
+  },
+  "movie:Mission Impossible Ghost Protocol:2011": {
+    "id": 56292,
+    "original_title": "Mission: Impossible - Ghost Protocol",
+    "title": "Mission: Impossible - Ghost Protocol",
+    "year": "2011",
+    "release_date": "2011-12-07"
+  },
+  "movie:Harry Potter Pedra Filosofal:2001": {
+    "id": 671,
+    "original_title": "Harry Potter and the Philosopher's Stone",
+    "title": "Harry Potter and the Philosopher's Stone",
+    "year": "2001",
+    "release_date": "2001-11-16"
+  },
+  "movie:Top Gun Maverick:2022": {
+    "id": 361743,
+    "original_title": "Top Gun: Maverick",
+    "title": "Top Gun: Maverick",
+    "year": "2022",
+    "release_date": "2022-05-21"
+  },
+  "movie:Mission Impossible Rogue Nation:2015": {
+    "id": 177677,
+    "original_title": "Mission: Impossible - Rogue Nation",
+    "title": "Mission: Impossible - Rogue Nation",
+    "year": "2015",
+    "release_date": "2015-07-28"
+  },
+  "movie:Alita Anjo:2019": {
+    "id": 399579,
+    "original_title": "Alita: Battle Angel",
+    "title": "Alita: Battle Angel",
+    "year": "2019",
+    "release_date": "2019-01-31"
+  },
+  "tv:Chernobyl:None": {
+    "id": 87108,
+    "original_name": "Chernobyl",
+    "name": "Chernobyl",
+    "year": "2019"
+  },
+  "tv:chernobyl:None": {
+    "id": 87108,
+    "original_name": "Chernobyl",
+    "name": "Chernobyl",
+    "year": "2019"
+  },
+  "tv:The Pitt:None": {
+    "id": 250307,
+    "original_name": "The Pitt",
+    "name": "The Pitt",
+    "year": "2025"
+  },
+  "tv:Irmaos de Guerra 2001:None": {
+    "id": 4613,
+    "original_name": "Band of Brothers",
+    "name": "Band of Brothers",
+    "year": "2001"
+  },
+  "tv:Demon Slayer:None": {
+    "id": 85937,
+    "original_name": "\u9b3c\u6ec5\u306e\u5203",
+    "name": "Demon Slayer: Kimetsu no Yaiba",
+    "year": "2019"
+  },
+  "tv:Demon Slayer Kimetsu no Yaiba Entertainment District Arc:None": {
+    "id": 85937,
+    "original_name": "\u9b3c\u6ec5\u306e\u5203",
+    "name": "Demon Slayer: Kimetsu no Yaiba",
+    "year": "2019"
+  },
+  "tv:Demon Slayer Kimetsu no Yaiba:None": {
+    "id": 85937,
+    "original_name": "\u9b3c\u6ec5\u306e\u5203",
+    "name": "Demon Slayer: Kimetsu no Yaiba",
+    "year": "2019"
+  },
+  "tv:Alchemy of Souls:None": {
+    "id": 135157,
+    "original_name": "\ud658\ud63c",
+    "name": "Alchemy of Souls",
+    "year": "2022"
+  },
+  "tv:When Life Gives You Tangerines:None": {
+    "id": 219246,
+    "name": "When Life Gives You Tangerines",
+    "original_name": "\ud3ed\uc2f9 \uc18d\uc558\uc218\ub2e4",
+    "year": "2025"
+  },
+  "movie:One Battle After Another:2025": {
+    "id": 1054867,
+    "title": "One Battle After Another",
+    "original_title": "One Battle After Another",
+    "year": "2025",
+    "release_date": "2025-09-23"
+  },
+  "tv:Destined With You:None": {
+    "id": 215001,
+    "name": "Destined with You",
+    "original_name": "\uc774 \uc5f0\uc560\ub294 \ubd88\uac00\ud56d\ub825",
+    "year": "2023"
+  },
+  "tv:Dear Hongrang:None": {
+    "id": 224819,
+    "name": "Dear Hongrang",
+    "original_name": "\ud0c4\uae08",
+    "year": "2025"
+  }
+}
