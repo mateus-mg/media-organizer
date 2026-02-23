@@ -16,10 +16,9 @@ from rich.prompt import Prompt, Confirm
 from rich.console import Console
 
 from src.config import Config
-from src.utils import get_logger
+from src.utils import get_logger, ConflictHandler
 from src.core import (
-    Orquestrador, MediaClassifier, FileScanner,
-    MediaType, ConflictHandler,
+    Orquestrador, MediaType,
     FileExistenceValidator, FileTypeValidator,
     IncompleteFileValidator, JunkFileValidator
 )
