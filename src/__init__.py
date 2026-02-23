@@ -71,9 +71,16 @@ from src.organizers import (
 from src.persistence import OrganizationDatabase, UnorganizedDatabase, format_datetime_br
 
 # Utils
-from src.utils import (
+from src.log_config import (
     get_logger,
-    MediaOrganizerLogger,
+    log_success, log_error, log_warning, log_info,
+    log_organize, log_movie, log_tv, log_anime, log_dorama,
+    log_music, log_book, log_comic, log_database, log_tmdb,
+    log_qbittorrent, log_conflict, log_subtitle, log_progress,
+    log_stats, log_debug,
+    set_console_log_level,
+)
+from src.utils import (
     ConflictHandler,
     ConflictResolution,
     ConcurrencyManager,
@@ -157,7 +164,12 @@ __all__ = [
     
     # Utils
     "get_logger",
-    "MediaOrganizerLogger",
+    "log_success", "log_error", "log_warning", "log_info",
+    "log_organize", "log_movie", "log_tv", "log_anime", "log_dorama",
+    "log_music", "log_book", "log_comic", "log_database", "log_tmdb",
+    "log_qbittorrent", "log_conflict", "log_subtitle", "log_progress",
+    "log_stats", "log_debug",
+    "set_console_log_level",
     "ConflictHandler",
     "ConflictResolution",
     "ConcurrencyManager",

@@ -75,7 +75,7 @@ def run_import_tests():
     
     # Utils
     print("\n📁 Utils module:")
-    test_import("get_logger", lambda: __import__('src.utils', fromlist=['get_logger']))
+    test_import("get_logger", lambda: __import__('src.log_config', fromlist=['get_logger']))
     test_import("ConflictHandler", lambda: __import__('src.utils', fromlist=['ConflictHandler']))
     test_import("ConcurrencyManager", lambda: __import__('src.utils', fromlist=['ConcurrencyManager']))
     test_import("normalize_title", lambda: __import__('src.utils', fromlist=['normalize_title']))

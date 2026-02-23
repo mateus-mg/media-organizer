@@ -2,15 +2,15 @@
 Utilities module for Media Organization System
 
 Consolidated module containing:
-- Logger (Rich-based logging with custom theme)
 - ConflictHandler (File conflict resolution)
 - ConcurrencyManager (Async concurrency control)
 - FileOperations (Safe file operations)
 - Helper functions (hash calculation, subtitle moving, naming normalization)
 
+Note: Logger moved to src/log_config.py for centralized logging.
+
 Usage:
     from src.utils import (
-        get_logger, MediaOrganizerLogger,
         ConflictHandler, ConflictResolution,
         ConcurrencyManager, FileOperations,
         calculate_partial_hash, normalize_title
@@ -24,140 +24,21 @@ import re
 import fcntl
 from pathlib import Path
 from typing import Tuple, Optional, List, Dict, Any, Callable
-from logging.handlers import RotatingFileHandler
-from rich.console import Console
-from rich.logging import RichHandler
-from rich.theme import Theme
 from contextlib import asynccontextmanager
 
-
-# ============================================================================
-# SECTION 1: LOGGER
-# ============================================================================
-
-CUSTOM_THEME = Theme({
-    "info": "cyan",
-    "warning": "yellow",
-    "error": "bold red",
-    "success": "bold green",
-    "dry_run": "bold magenta",
-    "conflict": "bold yellow",
-})
-
-
-class MediaOrganizerLogger:
-    """
-    Custom logger with Rich formatting.
-    
-    Features:
-    - Colorized console output
-    - File logging with rotation
-    - Dry-run mode support
-    - Custom log levels
-    """
-    
-    def __init__(
-        self,
-        name: str = "media-organizer",
-        log_level: str = "INFO",
-        log_file: Optional[Path] = None,
-        max_size_mb: int = 50,
-        backup_count: int = 5,
-        dry_run: bool = False
-    ):
-        self.name = name
-        self.dry_run = dry_run
-        self.console = Console(theme=CUSTOM_THEME, width=180)
-        
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(getattr(logging, log_level.upper()))
-        self.logger.handlers.clear()
-        
-        # Console handler with Rich
-        console_handler = RichHandler(
-            console=self.console,
-            show_time=True,
-            show_level=True,
-            show_path=False,
-            markup=True,
-            rich_tracebacks=True,
-            log_time_format="[%d/%m/%y %H:%M:%S]"
-        )
-        console_handler.setLevel(getattr(logging, log_level.upper()))
-        self.logger.addHandler(console_handler)
-        
-        # File handler
-        if log_file:
-            log_file.parent.mkdir(parents=True, exist_ok=True)
-            file_handler = RotatingFileHandler(
-                log_file,
-                maxBytes=max_size_mb * 1024 * 1024,
-                backupCount=backup_count,
-                encoding='utf-8'
-            )
-            file_handler.setLevel(logging.DEBUG)
-            self.logger.addHandler(file_handler)
-    
-    def debug(self, message: str, **kwargs):
-        self.logger.debug(message, **kwargs)
-    
-    def info(self, message: str, **kwargs):
-        self.logger.info(message, **kwargs)
-    
-    def warning(self, message: str, **kwargs):
-        self.logger.warning(message, **kwargs)
-    
-    def error(self, message: str, **kwargs):
-        self.logger.error(message, **kwargs)
-    
-    def success(self, message: str):
-        self.console.print(f"[success]✓[/success] {message}")
-        self.logger.info(f"SUCCESS: {message}")
-    
-    def dry_run_action(self, action: str, details: str = ""):
-        prefix = "[dry_run][DRY-RUN][/dry_run]"
-        message = f"{prefix} Would {action}"
-        if details:
-            message += f": {details}"
-        self.console.print(message)
-        self.logger.info(f"DRY-RUN: Would {action}: {details}")
-    
-    def conflict_detected(self, path: str, strategy: str, resolution: str):
-        self.console.print(f"[conflict]⚠ CONFLICT:[/conflict] File exists: {path}")
-        self.console.print(f"[conflict]  Strategy:[/conflict] {strategy} -> {resolution}")
-        self.logger.warning(f"CONFLICT: {path} (strategy: {strategy}, result: {resolution})")
-
-
-def get_logger(
-    name: str = "media-organizer",
-    config=None,
-    dry_run: bool = False
-) -> MediaOrganizerLogger:
-    """
-    Get or create logger instance
-    
-    Args:
-        name: Logger name
-        config: Config object (optional)
-        dry_run: Dry-run mode
-        
-    Returns:
-        MediaOrganizerLogger instance
-    """
-    if config:
-        return MediaOrganizerLogger(
-            name=name,
-            log_level=config.log_level,
-            log_file=config.log_file,
-            max_size_mb=config.log_max_size_mb,
-            backup_count=config.log_backup_count,
-            dry_run=dry_run
-        )
-    return MediaOrganizerLogger(name=name, dry_run=dry_run)
+# Import logger from centralized log_config
+from src.log_config import (
+    get_logger,
+    log_success, log_error, log_warning, log_info,
+    log_organize, log_movie, log_tv, log_anime, log_dorama,
+    log_music, log_book, log_comic, log_database, log_tmdb,
+    log_qbittorrent, log_conflict, log_subtitle, log_progress,
+    log_stats, log_debug
+)
 
 
 # ============================================================================
-# SECTION 2: CONFLICT HANDLER
+# SECTION 1: CONFLICT HANDLER
 # ============================================================================
 
 class ConflictResolution:
@@ -290,7 +171,7 @@ class ConflictHandler:
 
 
 # ============================================================================
-# SECTION 3: CONCURRENCY MANAGER
+# SECTION 2: CONCURRENCY MANAGER
 # ============================================================================
 
 class ConcurrencyManager:
@@ -432,7 +313,7 @@ class FileOperations:
 
 
 # ============================================================================
-# SECTION 4: HELPER FUNCTIONS
+# SECTION 3: HELPER FUNCTIONS
 # ============================================================================
 
 def calculate_partial_hash(file_path: Path, chunk_size: int = 4096) -> str:

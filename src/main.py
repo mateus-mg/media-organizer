@@ -7,6 +7,7 @@ Consolidated version - uses simplified module structure.
 
 import asyncio
 import json
+import logging
 from pathlib import Path
 from typing import List, Optional
 
@@ -16,7 +17,7 @@ from rich.prompt import Prompt, Confirm
 from rich.console import Console
 
 from src.config import Config
-from src.utils import get_logger, ConflictHandler
+from src.log_config import get_logger, set_console_log_level, log_info, log_success, log_error, log_warning
 from src.core import (
     Orquestrador, MediaType,
     FileExistenceValidator, FileTypeValidator,
@@ -28,6 +29,7 @@ from src.organizers import (
     MovieOrganizer, TVOrganizer, MusicOrganizer, BookOrganizer,
     BaseOrganizer
 )
+from src.utils import ConflictHandler
 from src.integrations import FileCompletionValidator
 
 
@@ -40,17 +42,20 @@ class MediaOrganizerApp:
         self.dry_run = dry_run
 
         # Initialize logger
-        self.logger = get_logger(
-            config=self.config,
-            dry_run=dry_run
-        )
+        self.logger = get_logger(name="MediaOrganizer", dry_run=dry_run)
+        
+        # Set console log level based on dry_run mode
+        if dry_run:
+            set_console_log_level(logging.INFO)
+        else:
+            set_console_log_level(logging.WARNING)
 
         # Check configuration validity
         is_valid, errors = self.config.is_valid()
         if not is_valid:
-            self.logger.error("Configuration is invalid:")
+            log_error(self.logger, "Configuration is invalid:")
             for error in errors:
-                self.logger.error(f"  - {error}")
+                log_error(self.logger, f"  - {error}")
             import sys
             sys.exit(1)
 
