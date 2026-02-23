@@ -1,0 +1,77 @@
+#!/bin/bash
+# Media Organizer CLI Wrapper - NEW VERSION WITH PYTHON CLI
+# Uses Python CLI with Rich interface and structured logging
+
+# ============================================
+# DETERMINAR O DIRETÓRIO REAL DO PROJETO
+# ============================================
+
+# Método 1: Se executado via link simbólico, encontrar o diretório real
+if [ -L "$0" ]; then
+    # Está sendo executado via link simbólico
+    REAL_PATH=$(readlink -f "$0")
+    PROJECT_DIR=$(dirname "$REAL_PATH")
+else
+    # Está sendo executado diretamente
+    PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+
+# ============================================
+# IR PARA O DIRETÓRIO DO PROJETO
+# ============================================
+
+cd "$PROJECT_DIR" || {
+    echo "❌ Erro: Não consigo acessar o diretório do projeto: $PROJECT_DIR"
+    echo ""
+    echo "Verifique:"
+    echo "1. O diretório existe"
+    echo "2. Você tem permissão de leitura"
+    echo "3. O drive está montado"
+    exit 1
+}
+
+# ============================================
+# FUNÇÕES AUXILIARES
+# ============================================
+
+# Verificar se daemon está rodando
+check_daemon_running() {
+    if [ -f ".daemon.pid" ]; then
+        PID=$(cat ".daemon.pid" 2>/dev/null)
+        if ps -p "$PID" > /dev/null 2>&1; then
+            return 0  # running
+        else
+            rm -f ".daemon.pid"
+            return 1  # not running
+        fi
+    fi
+    return 1  # not running
+}
+
+# Verificar configuração
+check_configuration() {
+    if [ ! -f ".env" ]; then
+        echo "⚠ Aviso: Arquivo .env não encontrado"
+        echo "Use: cp .env.example .env"
+        echo "E edite com seus caminhos"
+        return 1
+    fi
+    return 0
+}
+
+# ============================================
+# EXECUTAR O NOVO SISTEMA PYTHON
+# ============================================
+
+# Check and activate virtual environment
+if [ -d "venv" ] && [ -f "venv/bin/activate" ]; then
+    source venv/bin/activate
+fi
+
+# Execute the new CLI system
+# If no arguments provided, default to interactive mode
+if [ $# -eq 0 ]; then
+    exec python3 -m src.main organize
+else
+    exec python3 -m src.main "$@"
+fi
