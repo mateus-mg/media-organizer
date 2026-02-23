@@ -1,6 +1,3 @@
-Here is the complete development instruction document for your media organization system, updated based on our entire conversation:
-
-```markdown
 # 🗂️ Media Organization System - Development Instructions
 
 ## 📁 Project Overview
@@ -110,89 +107,6 @@ library/
 - Each book gets its own subfolder
 - Comics: Include year of first issue in folder name
 - **PDF to EPUB**: Converted EPUB files go to `books/` structure, PDF stays in downloads
-
-### 4. Local Metadata Management
-
-#### **System Focus: Organization ONLY**
-This system is a **file organizer**, not a metadata manager:
-- ✅ **Does**: Organize files into proper folder structures
-- ✅ **Does**: Add IDs to folder names for Jellyfin identification
-- ✅ **Does**: Rename and move subtitle files correctly
-- ❌ **Does NOT**: Download images (posters, backdrops, covers)
-- ❌ **Does NOT**: Generate metadata files (metadata.opf, ComicInfo.xml)
-- ❌ **Does NOT**: Manage or update metadata after organization
-
-#### **Metadata Sources (Minimal - IDs Only)**
-The system uses TMDB API **only for obtaining IDs** to add to folder names:
-
-**For Movies/TV Shows:**
-- **TMDB API** - For ID extraction only
-  - Free API key: https://www.themoviedb.org/settings/api
-  - Used for: Getting TMDB IDs to add to folder names
-  - Example: `Movie Name (2024) [tmdbid-12345]/`
-  - **Does NOT download**: Images, synopses, cast info, etc.
-
-**For Music:**
-- **Music Automation database** - Primary source for track info
-- No external metadata APIs needed
-- Preserves existing ID3/Vorbis tags from files
-
-**For Books/Comics:**
-- **Filename parsing only** - No external APIs
-- Extracts author, title, year from filenames
-- No metadata file generation
-
-#### **How Jellyfin Uses This System:**
-
-**For Movies/TV Shows:**
-1. This system organizes files with TMDB IDs in folder names
-2. Jellyfin scans and finds TMDB IDs
-3. Jellyfin fetches ALL metadata (images, info) from its own sources
-4. Result: Perfect identification without this system downloading anything
-
-**For Music:**
-1. This system organizes into `Artist/Album/` structure
-2. Updates embedded ID3 tags with clean metadata
-3. Jellyfin reads embedded ID3/Vorbis tags from files
-4. Jellyfin displays music based on embedded tags
-5. Result: No external metadata or API sync needed
-
-**For Books/Audiobooks:**
-1. This system organizes into `Author/Title/` structure
-2. Jellyfin reads embedded metadata from EPUB/PDF/audio files
-3. Jellyfin extracts covers from files themselves
-4. Result: Embedded metadata is sufficient
-
-**For Comics:**
-1. This system organizes into `Series/Issue` structure
-2. Jellyfin reads CBZ/CBR files natively
-3. Jellyfin extracts first page as cover
-4. Result: Comic files contain everything needed
-
-**Summary:**
-- This system: **Organization + IDs** (folder names only)
-- Jellyfin: **Everything else** (images, metadata, descriptions, etc.)
-- Separation of concerns: Organizer ≠ Metadata Manager
-
-**Image Standards:**
-- System does NOT download or manage images
-- Jellyfin handles all image downloads (posters, backdrops, covers, etc.)
-- Organization provides correct structure for Jellyfin to work efficiently
-
-**Subtitle Standards:**
-- Format: `BaseName.language[.flag].ext`
-- Examples: `.en.srt`, `.pt.br.forced.ass`, `.es.sdh.srt`
-- Language codes: 2-letter ISO codes
-- Flags: `forced`, `sdh`, `cc`, `hi`
-
-**System Philosophy:**
-- **Focus**: File organization and initial metadata setup ONLY
-- **Not a metadata manager**: Once organized, files are managed by Jellyfin
-- **One-time operation**: System organizes files during initial processing
-- **No continuous updates**: Jellyfin handles all ongoing metadata management
-- **Result**: Clean, well-organized library that Jellyfin can scan perfectly
-
-### 5. Jellyfin API Integration (Playlist Sync)
 
 ### 4. Local Metadata Management
 
@@ -382,7 +296,6 @@ The system uses TMDB API **only for obtaining IDs** to add to folder names:
 ### Dependencies
 ```
 # Core libraries
-python-requests          # HTTP requests for TMDB API (IDs only)
 python-dotenv            # Load configuration from .env file
 tinydb                   # JSON database (simple and lightweight)
 

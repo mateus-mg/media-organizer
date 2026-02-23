@@ -1,0 +1,1428 @@
+{
+    "movies": [
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Perdido em Marte 2015 [1080p] BLUDV/Perdido.em.Marte.2015.1080p.BluRay.x264.AC3.5.1.Dual-BLUDV.mkv",
+            "title_pt": "Perdido em Marte",
+            "title_en": "The Martian",
+            "year": 2015,
+            "tmdb_id": 286217,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Trilogia.Busca.Implacável.2008-2012-2014.1080p.DUAL-SF/Busca.Implacavel.2008.1080p.BluRay.5.1.x265.DUAL-SF.mkv",
+            "title_pt": "Busca Implacavel",
+            "title_en": "Taken",
+            "year": 2008,
+            "tmdb_id": 8681,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Trilogia.Busca.Implacável.2008-2012-2014.1080p.DUAL-SF/Busca.Implacavel.2.Versão.Estendida.2012.1080p.BluRay.5.1.x264.DUAL-SF.mkv",
+            "title_pt": "Busca Implacavel 2",
+            "title_en": "Taken 2",
+            "year": 2012,
+            "tmdb_id": 82675,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Trilogia.Busca.Implacável.2008-2012-2014.1080p.DUAL-SF/Busca.Implacavel.3.Versão.Estendida.2014.1080p.BluRay.5.1.x264.DUAL-SF.mkv",
+            "title_pt": "Busca Implacavel 3",
+            "title_en": "Taken 3",
+            "year": 2015,
+            "tmdb_id": 260346,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mission Impossible 1996 (1080p) Acesse o ORIGINAL WWW.BLUDV.COM/Mission.Impossible.1996.1080p.BluRay.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Missao Impossivel",
+            "title_en": "Mission Impossible",
+            "year": 1996,
+            "tmdb_id": 954,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Tropa de Elite 1/Tropa de Elite 1.mkv",
+            "title_pt": "Tropa de Elite",
+            "title_en": "Elite Squad",
+            "year": 2007,
+            "tmdb_id": 7347,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um.Senhor.Estagiario.2015.1080p.BluRay.DUAL-LAPUMiA/Um.Senhor.Estagiario.2015.1080p.BluRay.DUAL-LAPUMiA.mkv",
+            "title_pt": "Um Senhor Estagiario",
+            "title_en": "The Intern",
+            "year": 2015,
+            "tmdb_id": 257211,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spirit.O.Corcel.Indomável.2002.1080p.BluRay.H264.AC3.5.1.DUAL-MLD-BLUDV/Spirit.O.Corcel.Indomável.2002.1080p.BluRay.H264.AC3.5.1.DUAL-MLD.mkv",
+            "title_pt": "Spirit: O Corcel Indomavel",
+            "title_en": "Spirit - Stallion of the Cimarron",
+            "year": 2002,
+            "tmdb_id": 9023,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Guardians.of.the.Galaxy.Vol.3.2023.BluRay.1080p.DD.5.1.x264-BHDStudio.DUAL-C76/Guardians.of.the.Galaxy.Vol.3.2023.BluRay.1080p.DD.5.1.x264-BHDStudio.DUAL-C76.mkv",
+            "title_pt": "Guardioes da Galaxia: Vol. 3",
+            "title_en": "Guardians of the Galaxy Vol. 3",
+            "year": 2023,
+            "tmdb_id": 447365,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Jogador Nº 1 2018 (1080p) [BluRay] Acesse o ORIGINAL WWW.BLUDV.COM/Jogador.N1.2018.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Jogador N° 1",
+            "title_en": "Ready Player One",
+            "year": 2018,
+            "tmdb_id": 333339,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Operação Big Hero (2014) 1080p 5.1 Dublado - Alan_680/Operação Big Hero (2014) 1080p Dublado - Alan_680.mp4",
+            "title_pt": "Operação Big Hero",
+            "title_en": "Big Hero 6",
+            "year": 2014,
+            "tmdb_id": 177572,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/[WWW.BLUDV.TV] A Cinco Passos de Você 2019 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/A.Cinco.Passos.de.Você.2019.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "A Cinco Passos de Voce",
+            "title_en": "Five Feet Apart",
+            "year": 2019,
+            "tmdb_id": 527641,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Dark.Knight.Rises.2012.IMAX.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken/The.Dark.Knight.Rises.2012.IMAX.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken.mkv",
+            "title_pt": "Batman O Cavaleiro das Trevas Ressurge",
+            "title_en": "The Dark Knight Rises",
+            "year": 2012,
+            "tmdb_id": 49026,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Moneyball.2011.1080p.HMAX.WEB-DL.DDP2.0.H.264.DUAL-Spaghettimancer/Moneyball.2011.1080p.HMAX.WEB-DL.DDP2.0.H.264.DUAL-Spaghettimancer.mkv",
+            "title_pt": "O Homem Que Mudou o Jogo",
+            "title_en": "Moneyball",
+            "year": 2012,
+            "tmdb_id": 60308,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spider.Man.3.2017.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa/Spider.Man.3.2017.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Homem-Aranha 3",
+            "title_en": "Spider Man 3",
+            "year": 2007,
+            "tmdb_id": 559,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Eu Sou a Lenda 2008 Versão de Cinema (1080p)/Eu.Sou.A.Lenda.2008.1080p.Bluray.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Eu Sou a Lenda",
+            "title_en": "I Am Legend",
+            "year": 2007,
+            "tmdb_id": 6479,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Guardians.of.the.Galaxy.Vol.2.2017.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa/Guardians.of.the.Galaxy.Vol.2.2017.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Guardioes da Galaxia: Vol. 2",
+            "title_en": "Guardians of the Galaxy Vol. 2",
+            "year": 2017,
+            "tmdb_id": 283995,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Bailarina - Do Universo De John Wick 2025 WEB-DL 1080p x264 DUAL 5.1/Bailarina - Do Universo De John Wick 2025 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Bailarina: Do Universo de John Wick",
+            "title_en": "Ballerina: From the World of John Wick",
+            "year": 2025,
+            "tmdb_id": 541671,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Em Ritmo de Fuga 2017 (1080p) WWW.BLUDV.COM/Em.Ritmo.de.Fuga.2017.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Em Ritmo de Fuga",
+            "title_en": "Baby Driver",
+            "year": 2017,
+            "tmdb_id": 339403,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Planeta do Tesouro 2002 BluRay 1080p x265 DUAL 5.1/Planeta do Tesouro 2002 BluRay 1080p x265 DUAL 5.1.mkv",
+            "title_pt": "Planeta do Tesouro",
+            "title_en": "Treasure Planet",
+            "year": 2002,
+            "tmdb_id": 9016,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Jurassic.World.O.Mundo.dos.Dinossauros.2015.1080p.BluRay.Dual-WOLVERDONFILMES.COM/Jurassic.World.O.Mundo.dos.Dinossauros.2015.1080p.BluRay.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Jurassic World: O Mundo dos Dinossauros",
+            "title_en": "Jurassic World",
+            "year": 2015,
+            "tmdb_id": 135397,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Ne.Zha.2.2025.1080p.iT.WEB-DL.DD5.1.H.264.DUAL-BiOMA/Ne.Zha.2.2025.1080p.iT.WEB-DL.DD5.1.H.264.DUAL-BiOMA.mkv",
+            "title_pt": "Ne Zha 2: O Renascer da Alma",
+            "title_en": "Nezha: The Demon Child Churns The Sea",
+            "year": 2025,
+            "tmdb_id": 980477,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/{WWW.BLUDV.TV} Os Incríveis 2 2018 (1080p - BluRay) Acesse o ORIGINAL WWW.BLUDV.TV/Os.Incríveis.2.2018.1080p.BluRay.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Os Incriveis",
+            "title_en": "The Incredibles",
+            "year": 2004,
+            "tmdb_id": 9806,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/No.Limite.do.Amanhã.2014.1080p.Dual-WOLVERDONFILMES.COM/No.Limite.do.Amanhã.2014.1080p.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "No Limite do Amanha",
+            "title_en": "Edge of Tomorrow",
+            "year": 2014,
+            "tmdb_id": 137113,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um Lugar Silencioso - Parte II 2021 WEB-DL 1080p DUAL 5.1/Um Lugar Silencioso - Parte II 2021 WEB-DL 1080p DUAL 5.1.mkv",
+            "title_pt": "Um Lugar Silencioso - Parte II",
+            "title_en": "A Quiet Place - Part II",
+            "year": 2021,
+            "tmdb_id": 520763,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Espetacular Homem-Aranha (2012) 1080p 5.1 CH Dublado - The Pirate Filmes/O Espetacular Homem-Aranha - ToTTi9.mp4",
+            "title_pt": "O Espetacular Homem-Aranha",
+            "title_en": "The Amazing Spider-Man",
+            "year": 2012,
+            "tmdb_id": 1930,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mad.Max.Estrada.da.Furia.2015.1080p.BluRay.Dual/Mad.Max.Estrada.da.Furia.2015.1080p.BluRay.Dual.mkv",
+            "title_pt": "Mad Max: Estrada da Furia",
+            "title_en": "Mad Max: Fury Road",
+            "year": 2015,
+            "tmdb_id": 76341,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/{WWW.BLUDV.TV} Creed II 2018 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Creed.II.2018.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Creed II",
+            "title_en": "Creed II",
+            "year": 2018,
+            "tmdb_id": 480530,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spider.Man.No.Way.Home.2021.2160p.DTSHD-MA5.1.DV.H265.DUAL-andrehsa/Spider.Man.No.Way.Home.2021.2160p.DTSHD-MA5.1.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Homem-Aranha: Sem Volta Para Casa",
+            "title_en": "Spider-Man: No Way Home",
+            "year": 2021,
+            "tmdb_id": 634649,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spider.Man.2.2004.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa/Spider.Man.2.2004.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Homem-Aranha 2",
+            "title_en": "Spider Man 2",
+            "year": 2004,
+            "tmdb_id": 558,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Fury 2014 [1080p] WWW.BLUDV.COM/Fury.2014.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Coracoes de Ferro",
+            "title_en": "Fury",
+            "year": 2014,
+            "tmdb_id": 228150,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Como Eu Era Antes de Você 2016 [1080p] WWW.BLUDV.COM/Como Eu Era Antes de Você.2016.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Como Eu Era Antes de Voce",
+            "title_en": "Me Before You",
+            "year": 2016,
+            "tmdb_id": 296096,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/LAPUMiA.Org - Ford vs Ferrari 2020 5.1 (1080p)/Ford.vs.Ferrari.2019.1080p.BluRay.6CH.x264.DUAL-LAPUMiA.mkv",
+            "title_pt": "Ford vs Ferrari",
+            "title_en": "Ford vs Ferrari",
+            "year": 2019,
+            "tmdb_id": 359724,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Rei Arthur - A Lenda da Espada 2017 [BluRay] (1080p)/Rei.Arthur.A.Lenda.da.Espada.2017.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Rei Arthur: A Lenda da Espada",
+            "title_en": "King Arthur: Legend of the Sword",
+            "year": 2017,
+            "tmdb_id": 274857,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Círculo de Fogo (2013) BDRip 1080p Dublado - The Pirate Filmes/Circulo de Fogo - ToTTi9.mp4",
+            "title_pt": "Circulo de Fogo",
+            "title_en": "Pacific Rim",
+            "year": 2013,
+            "tmdb_id": 68726,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Viva.A.Vida.e.uma.Festa.2017.1080p.DSNP.WEB-DL.HDR10.H265.DDP5.1.Dual.PTBR/Viva.A.Vida.e.uma.Festa.2017.1080p.DSNP.WEB-DL.HDR10.H265.DDP5.1.Dual.PTBR.mkv",
+            "title_pt": "Viva: A Vida e uma Festa",
+            "title_en": "Coco",
+            "year": 2017,
+            "tmdb_id": 354912,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/One.Battle.After.Another.2025.1080p.WEB-DL.DDP5.1.H.264.DUAL-NoGroup/One.Battle.After.Another.2025.1080p.WEB-DL.DDP5.1.H.264.DUAL-NoGroup.mkv",
+            "title_pt": "Uma Batalha Apos a Outra",
+            "title_en": "One Battle After Another",
+            "year": 2025,
+            "tmdb_id": 1054867,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Atirador.2007.1080p.x264.WEB-DL.DUAL.5.1-SF/Atirador.2007.1080p.x264.WEB-DL.DUAL.5.1-SF.mkv",
+            "title_pt": "Atirador",
+            "title_en": "Shooter",
+            "year": 2007,
+            "tmdb_id": 7485,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Estrelas Além do Tempo 2017 (1080p)/Estrelas Além do Tempo (2017) [1080p] {BluRay 6CH} Dual Áudio.mkv",
+            "title_pt": "Estrelas Alem do Tempo",
+            "title_en": "Hidden Figures",
+            "year": 2017,
+            "tmdb_id": 381284,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Super.Mario.Bros.Movie.2023.1080p.MA.WEB-DL.DDP5.1.Atmos.H.264-CMaRioG.DUAL-alfaHD/The.Super.Mario.Bros.Movie.2023.1080p.MA.WEB-DL.DDP5.1.Atmos.H.264-CMaRioG.DUAL-alfaHD.mkv",
+            "title_pt": "Super Mario Bros. O Filme",
+            "title_en": "The Super Mario Bros. Movie",
+            "year": 2023,
+            "tmdb_id": 502356,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Creed - Nascido para Lutar 2015 [1080p] BLUDV/Creed.Nascido.para.Lutar.2015.1080p.BluRay.5.1.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Creed: Nascido para Lutar",
+            "title_en": "Creed",
+            "year": 2015,
+            "tmdb_id": 312221,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Intocáveis.2011.BluRay.1080p.x264.5.1.DUAL-SF/Intocáveis.2011.BluRay.1080p.x264.5.1.DUAL-SF.mkv",
+            "title_pt": "Intocaveis",
+            "title_en": "Intouchables",
+            "year": 2012,
+            "tmdb_id": 77338,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Até o Último Homem 2017 (1080p)/Até.o.Último.Homem.2017.1080p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ate o Último Homem",
+            "title_en": "Hacksaw Ridge",
+            "year": 2016,
+            "tmdb_id": 324786,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Guardioes.da.Galaxia.2014.2160p.DSNP.WEB-DL.DDP5.1.Atmos.IMAX.HDR.H.265.DUAL-XaR/Guardioes.da.Galaxia.2014.2160p.DSNP.WEB-DL.DDP5.1.Atmos.IMAX.HDR.H.265.DUAL-XaR.mkv",
+            "title_pt": "Guardioes da Galaxia",
+            "title_en": "Guardians of the Galaxy Vol. 1",
+            "year": 2014,
+            "tmdb_id": 118340,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Genio.Indomavel.1997.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-RiPER/Genio.Indomavel.1997.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-RiPER.mkv",
+            "title_pt": "Gênio Indomavel",
+            "title_en": "Good Will Hunting",
+            "year": 1998,
+            "tmdb_id": 489,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Os.Vingadores.The.Avengers.2012.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza/Os.Vingadores.The.Avengers.2012.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza.mkv",
+            "title_pt": "Os Vingadores: The Avengers",
+            "title_en": "The Avengers",
+            "year": 2012,
+            "tmdb_id": 24428,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry.Potter.e.a.Ordem.da.Fênix.2007.1080p-WOLVERDONFILMES.COM/Harry.Potter.e.a.Ordem.da.Fênix.2007.1080p-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Harry Potter e a Ordem da Fenix",
+            "title_en": "The Avengers)",
+            "year": 2007,
+            "tmdb_id": 675,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Avatar - O Caminho da Água 2022 WEB-DL 1080p x264 DUAL 7.1/Avatar - O Caminho da Água 2022 WEB-DL 1080p x264 DUAL 7.1.mkv",
+            "title_pt": "Avatar: O Caminho da Agua",
+            "title_en": "Avatar: The Way of Water",
+            "year": 2022,
+            "tmdb_id": 76600,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Kung Fu Panda Coleção Completa 2008-2011-2016 [BluRay] (1080p) WWW.BLUDV.COM/Kung.Fu.Panda.2.2011.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Kung Fu Panda 2",
+            "title_en": "Kung Fu Panda 2",
+            "year": 2011,
+            "tmdb_id": 49444,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Kung Fu Panda Coleção Completa 2008-2011-2016 [BluRay] (1080p) WWW.BLUDV.COM/Kung.Fu.Panda.2008.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Kung Fu Panda",
+            "title_en": "Kung Fu Panda",
+            "year": 2008,
+            "tmdb_id": 9502,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Kung Fu Panda Coleção Completa 2008-2011-2016 [BluRay] (1080p) WWW.BLUDV.COM/Kung.Fu.Panda.3.2016.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Kung Fu Panda 3",
+            "title_en": "Kung Fu Panda 3",
+            "year": 2016,
+            "tmdb_id": 140300,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Sem_Remorso_de_Tom_Clancy.2021.1080p.WEB-DL.DUAL.5.1.COMANDO.TO/Sem_Remorso_de_Tom_Clancy.2021.1080p.WEB-DL.DUAL.5.1.COMANDO.TO.mkv",
+            "title_pt": "Sem Remorso",
+            "title_en": "Tom Clancy's Without Remorse",
+            "year": 2021,
+            "tmdb_id": 567189,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/300  (1080p)WWW.BLUDV.COM/300 (2006)1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "300",
+            "title_en": "300",
+            "year": 2007,
+            "tmdb_id": 1271,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Legend.of.the.Guardians.The.Owls.of.GaHoole.2010.1080p.BRRip.AC3.x264.DUAL-ASM/Legend.of.the.Guardians.The.Owls.of.Ga'Hoole.2010.1080p.BRRip.AC3.x264.DUAL-ASM.mkv",
+            "title_pt": "A Lenda dos Guardioes",
+            "title_en": "Legend of the Guardians",
+            "year": 2010,
+            "tmdb_id": 41216,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um porto seguro Safe Haven Julianne Hough, Josh Duhamel/Um porto seguro (2013) Safe Haven (Lasse Hallstrom) Julianne Hough, Josh Duhamel.mkv",
+            "title_pt": "Um Porto Seguro",
+            "title_en": "Safe Haven",
+            "year": 2013,
+            "tmdb_id": 112949,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry.Potter.e.o.Calice.de.Fogo.2005.1080p-WOLVERDONFILMES.COM/Harry.Potter.e.o.Calice.de.Fogo.2005.1080p-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Harry Potter e o Calice de Fogo",
+            "title_en": "Harry Potter and the Goblet of Fire",
+            "year": 2005,
+            "tmdb_id": 674,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Homem-Aranha.De.Volta.ao.Lar.2017.2160p.UHD.BluRay.6CH.x265.DUAL/Homem-Aranha.De.Volta.ao.Lar.2017.2160p.UHD.BluRay.6CH.x265.DUAL.mkv",
+            "title_pt": "Homem-Aranha: De Volta ao Lar",
+            "title_en": "Spider-Man: Homecoming",
+            "year": 2017,
+            "tmdb_id": 315635,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/{WWW.BLUDV.COM} Malévola 2018 (1080p) Acesse o ORIGINAL WWW.BLUDV.COM/Malévola.2014.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Malevola",
+            "title_en": "Maleficent",
+            "year": 2014,
+            "tmdb_id": 102651,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/[WWW.BLUDV.TV] Como Treinar o Seu Dragão 3 2019 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Como.Treinar.o.Seu.Dragão.3.2019.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Como Treinar o Seu Dragao 3",
+            "title_en": "How to Train Your Dragon: The Hidden World",
+            "year": 2019,
+            "tmdb_id": 166428,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Avatar EXTENDED 2009 BluRay 1080p DUAL 5.1/Avatar EXTENDED 2009 BluRay 1080p DUAL 5.1.mkv",
+            "title_pt": "Avatar",
+            "title_en": "Avatar",
+            "year": 2009,
+            "tmdb_id": 19995,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Deadpool 1080p (2016) Dual Áudio BluRay 5.1/Deadpool 1080p (2016) Dual Áudio BluRay 5.1/Deadpool 1080p (2016) Dual Áudio BluRay 5.1.mkv",
+            "title_pt": "Deadpool",
+            "title_en": "Deadpool",
+            "year": 2016,
+            "tmdb_id": 293660,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/John Wick 4 - Baba Yaga 2023 BluRay 1080p x264 DUAL 5.1/John Wick 4 - Baba Yaga 2023 BluRay 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "John Wick 4: Baba Yaga",
+            "title_en": "John Wick: Chapter 4",
+            "year": 2023,
+            "tmdb_id": 603692,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/ Homem-Aranha no Aranhaverso 2019 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Homem-Aranha.no.Aranhaverso.2019.1080p.UHD.BluRay.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Homem-Aranha: No Aranhaverso",
+            "title_en": "Spider-Man: Into the Spider-Verse",
+            "year": 2018,
+            "tmdb_id": 324857,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry Potter Todos os Filmes 1080p Dual Áudio + Legenda [HIPERTORRENT]/03.Harry Potter e o Prisioneiro de Azkaban.1080p/Harry Potter e o Prisioneiro de Azkaban.mp4",
+            "title_pt": "Harry Potter e o Prisioneiro de Azkaban",
+            "title_en": "Harry Potter and the Prisoner of Azkaban",
+            "year": 2004,
+            "tmdb_id": 673,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry Potter Todos os Filmes 1080p Dual Áudio + Legenda [HIPERTORRENT]/07.Harry Potter e as Reliquias Da Morte Parte 1.1080p/Harry Potter e as Reliquias Da Morte Parte 1.mp4",
+            "title_pt": "Harry Potter e as Relíquias da Morte - Parte 1",
+            "title_en": "Harry Potter and the Deathly Hallows - Part 1",
+            "year": 2010,
+            "tmdb_id": 12444,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry Potter Todos os Filmes 1080p Dual Áudio + Legenda [HIPERTORRENT]/08.Harry Potter e as Reliquias Da Morte Parte 2.1080p/Harry Potter e as Reliquias Da Morte Parte 2.mp4",
+            "title_pt": "Harry Potter e as Relíquias da Morte - Parte 2",
+            "title_en": "Harry Potter and the Deathly Hallows - Part 2",
+            "year": 2011,
+            "tmdb_id": 12445,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry Potter Todos os Filmes 1080p Dual Áudio + Legenda [HIPERTORRENT]/06.Harry Potter e o Enigma do Principe.1080p/Harry Potter e o Enigma do Principe.mp4",
+            "title_pt": "Harry Potter e o Enigma do Príncipe",
+            "title_en": "Harry Potter and the Half-Blood Prince",
+            "year": 2009,
+            "tmdb_id": 767,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Pantera.Negra.2018.2160p.DSNP.WEB-DL.DDP5.1.Atmos.IMAX.HDR.H.265.DUAL-XaR/Pantera.Negra.2018.2160p.DSNP.WEB-DL.DDP5.1.Atmos.IMAX.HDR.H.265.DUAL-XaR.mkv",
+            "title_pt": "Pantera Negra",
+            "title_en": "Black Panther",
+            "year": 2018,
+            "tmdb_id": 284054,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Bastardos Inglórios 2009 [1080p] WWW.BLUDV.COM/Bastardos.Inglórios.2009.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Bastardos Inglorios",
+            "title_en": "Inglourious Basterds",
+            "year": 2009,
+            "tmdb_id": 16869,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Reino Escondido (2013) 720p Dublado - AndreTPF/Reino Escondido (2013) 720p Dublado - AndreTPF.mp4",
+            "title_pt": "Reino Escondido",
+            "title_en": "Epic",
+            "year": 2013,
+            "tmdb_id": 116711,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A.Grande.Escolha.2014.1080p.Dual/A.Grande.Escolha.2014.1080p.Dual/A.Grande.Escolha.2014.1080p.Dual.mkv",
+            "title_pt": "A Grande Escolha",
+            "title_en": "Draft Day",
+            "year": 2014,
+            "tmdb_id": 200505,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry.Potter.e.a.Camara.Secreta.2002.1080p-WOLVERDONFILMES.COM/Harry.Potter.e.a.Camara.Secreta.2002.1080p-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Harry Potter e a Câmara Secreta",
+            "title_en": "Harry Potter and the Chamber of Secrets",
+            "year": 2002,
+            "tmdb_id": 672,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Equalizer.3.2023.720p.MA.WEB-DL.DDP5.1.H.264-FLUX.DUAL-C76/The.Equalizer.3.2023.720p.MA.WEB-DL.DDP5.1.H.264-FLUX.DUAL-C76.mkv",
+            "title_pt": "O Protetor: Capitulo Final",
+            "title_en": "The Equalizer 3",
+            "year": 2023,
+            "tmdb_id": 926393,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A Guerra do Amanhã 2021 WEB-DL 1080p DUAL 5.1/A Guerra do Amanhã 2021 WEB-DL 1080p DUAL 5.1.mkv",
+            "title_pt": "A Guerra do Amanha",
+            "title_en": "The Tomorrow War",
+            "year": 2021,
+            "tmdb_id": 588228,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Beekeeper-Rede.de.Vinganca.2024.1080p.WEB-DL.EAC3.AAC.DUAL.5.1/Beekeeper-Rede.de.Vinganca.2024.1080p.WEB-DL.EAC3.AAC.DUAL.5.1.mkv",
+            "title_pt": "Beekeeper: Rede de Vinganca",
+            "title_en": "The Beekeeper",
+            "year": 2024,
+            "tmdb_id": 866398,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Tropa.de.Elite.2.O.Inimigo.Agora.E.Outro.2010.1080p.AMZN.WEB-DL.DDP5.1.H.264-SiGLA/Tropa.de.Elite.2.O.Inimigo.Agora.E.Outro.2010.1080p.AMZN.WEB-DL.DDP5.1.H.264-SiGLA.mkv",
+            "title_pt": "Tropa de Elite 2: O Inimigo Agora e Outro",
+            "title_en": "Elite Squad - The Enemy Within",
+            "year": 2010,
+            "tmdb_id": 47931,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Coleção Ela Dança, Eu Danço 5 em 1 2006 -2008 - 2010 - 2012 - 2014 (720p)/Ela.Dança.Eu.Danço.3.2010.720p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ela Dança, Eu Danço 3",
+            "title_en": "Step Up 3D",
+            "year": 2010,
+            "tmdb_id": 41233,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Coleção Ela Dança, Eu Danço 5 em 1 2006 -2008 - 2010 - 2012 - 2014 (720p)/Ela.Dança.Eu.Danço.4.2012.720p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ela Dança, Eu Danço 4",
+            "title_en": "Step Up Revolution",
+            "year": 2012,
+            "tmdb_id": 85446,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Coleção Ela Dança, Eu Danço 5 em 1 2006 -2008 - 2010 - 2012 - 2014 (720p)/Ela.Dança.Eu.Danço.5.2014.720p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ela Dança, Eu Danço 5: Tudo ou Nada",
+            "title_en": "Step Up All In",
+            "year": 2014,
+            "tmdb_id": 243683,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Coleção Ela Dança, Eu Danço 5 em 1 2006 -2008 - 2010 - 2012 - 2014 (720p)/Ela.Dança.Eu.Danço.2.2008.720p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ela Dança, Eu Danço 2",
+            "title_en": "Step Up 2 - The Streets",
+            "year": 2008,
+            "tmdb_id": 8328,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Coleção Ela Dança, Eu Danço 5 em 1 2006 -2008 - 2010 - 2012 - 2014 (720p)/Ela.Dança.Eu.Danço.1.2006.720p.BluRay.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Ela Dança, Eu Danço 1",
+            "title_en": "Step Up",
+            "year": 2006,
+            "tmdb_id": 9762,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Guerreiras do K-Pop 2025 WEB-DL 1080p x264 DUAL 5.1/Guerreiras do K-Pop 2025 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Guerreiras do K-Pop",
+            "title_en": "KPop Demon Hunters",
+            "year": 2025,
+            "tmdb_id": 803796,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Dark.Knight.2008.IMAX.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken/The.Dark.Knight.2008.IMAX.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken.mkv",
+            "title_pt": "Batman: O Cavaleiro das Trevas",
+            "title_en": "The Dark Knight",
+            "year": 2008,
+            "tmdb_id": 155,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/{WWW.BLUDV.TV} Missão Impossível - Efeito Fallout 2018 (1080p - BluRay) Acesse o ORIGINAL WWW.BLUDV.TV/Mission.Impossible.Fallout.(2018).IMAX.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Missao Impossivel: Efeito Fallout",
+            "title_en": "Mission Impossible Fallout",
+            "year": 2018,
+            "tmdb_id": 353081,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Fault.in.Our.Stars.2014.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-NeX/The.Fault.in.Our.Stars.2014.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-NeX.mkv",
+            "title_pt": "A Culpa e das Estrelas",
+            "title_en": "The Fault in Our Stars",
+            "year": 2014,
+            "tmdb_id": 222935,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Carros 1 (2006) 1080p Dublado JohnL/Carros 1 (2006) 1080p Dublado JohnL.mp4",
+            "title_pt": "Carros",
+            "title_en": "Cars",
+            "year": 2006,
+            "tmdb_id": 920,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Duna - Parte 2 2024 WEB-DL 1080p x264 DUAL 5.1/Duna - Parte 2 2024 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Duna: Parte Dois",
+            "title_en": "Dune: Part Two",
+            "year": 2024,
+            "tmdb_id": 693134,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Titanic (1997)/Titanic (1997) 1080p - 210GJI.mp4",
+            "title_pt": "Titanic",
+            "title_en": "Titanic",
+            "year": 1998,
+            "tmdb_id": 597,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Iron.Man.2.2010.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-RiPER/Iron.Man.2.2010.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-RiPER.mkv",
+            "title_pt": "Homem de Ferro 2",
+            "title_en": "Iron Man 2",
+            "year": 2010,
+            "tmdb_id": 10138,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Capitão América O Primeiro Vingador/Capitão América O Primeiro Vingador 2011 4K.mkv",
+            "title_pt": "Capitao America: O Primeiro Vingador",
+            "title_en": "Captain America: The First Avenger",
+            "year": 2011,
+            "tmdb_id": 1771,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Missão - Impossível - Acerto de Contas Parte 1 2023 WEB-DL 1080p x264 DUAL 5.1/Missão - Impossível - Acerto de Contas Parte 1 2023 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Missao Impossivel Acerto de Contas Parte 1",
+            "title_en": "Mission Impossible - Dead Reckoning Part 1",
+            "year": 2023,
+            "tmdb_id": 575264,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A Escolha (2016) 5.1 CH Dublado 1080p (By-LuanHarper)/A Escolha (2016) 5.1 CH Dublado 1080p (By-LuanHarper).mp4",
+            "title_pt": "A Escolha",
+            "title_en": "The Choice",
+            "year": 2016,
+            "tmdb_id": 330483,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mission Impossible III 2006 (1080p) Acesse o ORIGINAL WWW.BLUDV.COM/Mission.Impossible.III.2006.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Missao Impossivel 3",
+            "title_en": "Mission Impossible 3",
+            "year": 2006,
+            "tmdb_id": 956,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Deadpool.2.2018.BluRay.1080p.x264.DD.5.1.Hon3yHD.DUAL-NoUsEr/Deadpool.2.2018.BluRay.1080p.x264.DD.5.1.Hon3yHD.DUAL-NoUsEr/Deadpool.2.2018.BluRay.1080p.x264.DD.5.1.Hon3yHD.DUAL-NoUsEr.mkv",
+            "title_pt": "Deadpool 2",
+            "title_en": "Deadpool 2",
+            "year": 2018,
+            "tmdb_id": 383498,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Gigantes de Aço  (1080p) WWW.BLUDV.COM/Gigantes de Aço (2011) BluRay.1080p.5.1.x264.WWW.BLUDV.COM.mkv",
+            "title_pt": "Gigantes de Aco",
+            "title_en": "Real Steel",
+            "year": 2011,
+            "tmdb_id": 39254,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Marvel.Studios.Iron.Man.2008.IMAX.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-alfaHD/Marvel.Studios.Iron.Man.2008.IMAX.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-alfaHD.mkv",
+            "title_pt": "Homem de Ferro",
+            "title_en": "Iron Man",
+            "year": 2008,
+            "tmdb_id": 1726,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/John Wick - Um Novo Dia Para Matar 2017 [BluRay] (1080p) DUBLADO/John.Wick.Um.Novo.Dia.para.Matar.2017.1080p.BluRay.x264.DUBLADO-WWW.BLUDV.COM.mp4",
+            "title_pt": "John Wick: Um Novo Dia para Matar",
+            "title_en": "John Wick: Chapter 2",
+            "year": 2017,
+            "tmdb_id": 324552,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Justice.League.The.Flashpoint.Paradox.2013.BluRay.1080p.DTS.x264-PRoDJi-DUAL/Justice.League.The.Flashpoint.Paradox.2013.BluRay.1080p.DTS.x264-PRoDJi-DUAL/Justice.League.The.Flashpoint.Paradox.2013.BluRay.1080p.DTS.x264-PRoDJi-DUAL.mkv",
+            "title_pt": "Liga da Justica: Ponto de Ignicao",
+            "title_en": "Justice League: The Flashpoint Paradox",
+            "year": 2013,
+            "tmdb_id": 183011,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spider.Man.2002.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa/Spider.Man.2002.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Homem-Aranha",
+            "title_en": "Spider Man",
+            "year": 2002,
+            "tmdb_id": 557,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Os Incríveis 2004 [1080p] WWW.BLUDV.COM/Os.Incríveis.2004.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Os Incriveis 2",
+            "title_en": "The Incredibles 2",
+            "year": 2018,
+            "tmdb_id": 260513,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Destruição Final - O Último Refúgio BluRay 1080p DUAL 5.1/Destruição Final - O Último Refúgio BluRay 1080p DUAL 5.1.mkv",
+            "title_pt": "Destruicao Final: O Ultimo Refugio",
+            "title_en": "Greenland",
+            "year": 2020,
+            "tmdb_id": 524047,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Kung Fu Panda 4 2024 WEB-DL 1080p x264 DUAL 5.1/Kung Fu Panda 4 2024 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Kung Fu Panda 4",
+            "title_en": "Kung Fu Panda 4",
+            "year": 2024,
+            "tmdb_id": 1011985,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Vingadores.Era.de.Ultron.2015.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza/Vingadores.Era.de.Ultron.2015.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza.mkv",
+            "title_pt": "Vingadores: Era de Ultron",
+            "title_en": "Avengers: Age of Ultron",
+            "year": 2015,
+            "tmdb_id": 99861,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Codigo.de.Conduta.2009.1080p.BluRay.DUAL-SF/Código.de.Conduta.2009.1080p.BluRay.DUAL-SF.mkv",
+            "title_pt": "Codigo de Conduta",
+            "title_en": "Law Abiding Citizen",
+            "year": 2010,
+            "tmdb_id": 22803,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Creed III 2023 WEB-DL 1080p x264 DUAL 5.1/Creed III 2023 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Creed III",
+            "title_en": "Law Abiding Citizen)",
+            "year": 2023,
+            "tmdb_id": 677179,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/300.A.Ascensao.Do.Imperio.2014.1080p.BRRip.x264.DualAudio.SpeedBR/300.A.Ascensao.Do.Imperio.2014.1080p.BRRip.x264.DualAudio.SpeedBR.www.BRSHARES.com.mkv",
+            "title_pt": "300: A Ascensão do Imperio",
+            "title_en": "300: Rise of an Empire",
+            "year": 2014,
+            "tmdb_id": 53182,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um Homem de Sorte 2012 (1080p) WWW.BLUDV.COM/Um.Homem.de.Sorte.2012.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Um Homem de Sorte",
+            "title_en": "The Lucky One",
+            "year": 2012,
+            "tmdb_id": 77877,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Contador 2016 [1080p] WWW.BLUDV.COM/O.Contador.2016.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "O Contador",
+            "title_en": "The Accountant",
+            "year": 2016,
+            "tmdb_id": 302946,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Vingadores.Guerra.Infinita.2018.IMAX.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza/Vingadores.Guerra.Infinita.2018.IMAX.1080p.DSNP.WEB-DL.DDP5.1.Atmos.H.264.DUAL-cza.mkv",
+            "title_pt": "Vingadores: Guerra Infinita",
+            "title_en": "Avengers: Infinity War",
+            "year": 2018,
+            "tmdb_id": 299536,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Iron.Man.3.2013.2160p.DSNP.WEB-DL.HDR10.DDP.5.1.Atmos.H265.DUAL-palato/Iron.Man.3.2013.2160p.DSNP.WEB-DL.HDR10.DDP.5.1.Atmos.H265.DUAL-palato.mkv",
+            "title_pt": "Homem de Ferro 3",
+            "title_en": "Iron Man 3",
+            "year": 2013,
+            "tmdb_id": 68721,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/[WWW.BLUDV.TV] John Wick 3 - Parabellum  2019 (1080p - BluRay) Acesse o ORIGINAL WWW.BLUDV.TV/John.Wick.3.Parabellum.2019.1080p.BluRay.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "John Wick 3: Parabellum",
+            "title_en": "John Wick: Chapter 3 - Parabellum",
+            "year": 2019,
+            "tmdb_id": 458156,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Contador 2 2025 WEB-DL 1080p x264 DUAL 5.1/O Contador 2 2025 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "O Contador 2",
+            "title_en": "The Accountant²",
+            "year": 2025,
+            "tmdb_id": 870028,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Love, Rosie (2014) [1080p]/Love,.Rosie.2014.1080p.BluRay.x264.YIFY.mp4",
+            "title_pt": "Simplesmente Acontece",
+            "title_en": "Love, Rosie",
+            "year": 2014,
+            "tmdb_id": 200727,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Guerra Mundial Z - Sem Cortes [1080p] BLUDV/Guerra.Mundial.Z.Sem.Cortes.2013.1080p.BluRay.5.1.x264.DUAL-BLUDV.mkv",
+            "title_pt": "Guerra Mundial Z",
+            "title_en": "World War Z",
+            "year": 2013,
+            "tmdb_id": 72190,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/[WWW.BLUDV.TV] Malévola - Dona do Mal 2020 (1080p - BluRay) Acesse o ORIGINAL WWW.BLUDV.TV/Malévola.Dona.do.Mal.2020.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Malevola: Dona do Mal",
+            "title_en": "Maleficent: Mistress of Evil",
+            "year": 2019,
+            "tmdb_id": 420809,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Batman.Begins.2005.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken/Batman.Begins.2005.UHD.BluRay.2160p.DDP.5.1.DV.HDR.x265-hallowed.DUAL-wastaken.mkv",
+            "title_pt": "Batman Begins",
+            "title_en": "Batman Begins",
+            "year": 2005,
+            "tmdb_id": 272,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Spider.Man.Far.From.Home.2019.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa/Spider.Man.Far.From.Home.2019.2160p.DSNP.WEB-DL.DDP5.1.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Homem-Aranha: Longe de Casa",
+            "title_en": "Spider-Man: Far From Home",
+            "year": 2019,
+            "tmdb_id": 429617,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/De Volta ao Jogo 2014 (1080p)/De.Volta.ao.Jogo.2014.1080p.BluRay.6CH.x264.DUAL-BLUDV.mkv",
+            "title_pt": "John Wick - De Volta ao Jogo",
+            "title_en": "John Wick",
+            "year": 2014,
+            "tmdb_id": 245891,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Vingadores.Ultimato.2019.OPEN.MATTE.1080p.WEB-DL.H264.AC3.5.1.DUAL/Vingadores.Ultimato.2019.OPEN.MATTE.1080p.WEB-DL.H264.AC3.5.1.DUAL/Vingadores.Ultimato.2019.OPEN.MATTE.1080p.WEB-DL.H264.AC3.5.1.DUAL.mkv",
+            "title_pt": "Vingadores: Ultimato",
+            "title_en": "Avengers: Endgame",
+            "year": 2019,
+            "tmdb_id": 299534,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O.Caminho.para.El.Dorado.2000.BRRip.1080p.H265.DUAL-KANE/O.Caminho.para.El.Dorado.2000.BRRip.1080p.H265.DUAL-KANE.mkv",
+            "title_pt": "O Caminho para El Dorado",
+            "title_en": "The Road to El Dorado",
+            "year": 2000,
+            "tmdb_id": 10501,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Carros 3 2017 [BluRay] (1080p) WWW.BLUDV.COM/Carros.3.2017.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.C.mkv",
+            "title_pt": "Carros 3",
+            "title_en": "Cars 3",
+            "year": 2017,
+            "tmdb_id": 260514,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/{WWW.BLUDV.TV}Jurassic World - Reino Ameaçado 2018 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Jurassic.World.Reino.Ameaçado.2018.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Jurassic World: Reino Ameaçado",
+            "title_en": "Jurassic World: Fallen Kingdom",
+            "year": 2018,
+            "tmdb_id": 351286,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um Lugar Silencioso 2018 (1080p) Acesse o ORIGINAL WWW.BLUDV.COM/Um.Lugar.Silencioso.2018.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Um Lugar Silencioso",
+            "title_en": "A Quiet Place",
+            "year": 2018,
+            "tmdb_id": 447332,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Batman.Vs.Superman.A.Origem.da.Justica.2016.Versao.Estendida.1080p.BluRay.x264.SPARKS-DUAL-LAPUMiA/Batman.Vs.Superman.A.Origem.da.Justica.2016.Versao.Estendida.1080p.BluRay.x264.SPARKS-DUAL-LAPUMiA/Batman.Vs.Superman.A.Origem.da.Justica.2016.Versao.Estendida.1080p.BluRay.x264.SPARKS-DUAL-LAPUMiA.mkv",
+            "title_pt": "Batman vs Superman: A Origem da Justica",
+            "title_en": "Batman v Superman: Dawn of Justice",
+            "year": 2016,
+            "tmdb_id": 209112,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Como Treinar o seu Dragão (2010) BDRip 1080p Dublado ToTTi9 - The Pirate filmes/Como Treinar Seu Dragão - ToTTi9.mp4",
+            "title_pt": "Como Treinar o Seu Dragao",
+            "title_en": "How to Train Your Dragon",
+            "year": 2010,
+            "tmdb_id": 10191,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Homem-Aranha.Atraves.do.Aranhaverso.2023.1080p.HDRip.H264.DUBLADO-LAPUMiA/Homem-Aranha.Atraves.do.Aranhaverso.2023.1080p.HDRip.H264.DUBLADO-LAPUMiA.mkv",
+            "title_pt": "Homem-Aranha: Atraves do Aranhaverso",
+            "title_en": "Spider-Man: Across the Spider-Verse",
+            "year": 2023,
+            "tmdb_id": 569094,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/The.Incredible.Hulk.2008.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-alfaHD/The.Incredible.Hulk.2008.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-alfaHD.mkv",
+            "title_pt": "O Incrivel Hulk",
+            "title_en": "The Incredible Hulk",
+            "year": 2008,
+            "tmdb_id": 1724,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Melhor de Mim (2014) 1080p 5.1 Dublado - Alan_680/O Melhor de Mim (2014) 1080p Dublado - Alan_680.mp4",
+            "title_pt": "O Melhor de Mim",
+            "title_en": "The Best of Me",
+            "year": 2014,
+            "tmdb_id": 239571,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O.Diabo.Veste.Prada.2006.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-cza/O.Diabo.Veste.Prada.2006.1080p.DSNP.WEB-DL.DDP5.1.H.264.DUAL-cza.mkv",
+            "title_pt": "O Diabo Veste Prada",
+            "title_en": "The Devil Wears Prada",
+            "year": 2006,
+            "tmdb_id": 350,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Divertida Mente 2 2024 WEB-DL 1080p x264 DUAL 5.1/Divertida Mente 2 2024 WEB-DL 1080p x264 DUAL 5.1.mkv",
+            "title_pt": "Divertida Mente 2",
+            "title_en": "Inside Out 2",
+            "year": 2024,
+            "tmdb_id": 1022789,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Missão - Impossível - O Acerto Final 2025 WEB-DL 1080p x264 IMAX DUAL 5.1/Missão - Impossível - O Acerto Final 2025 WEB-DL 1080p x264 IMAX DUAL 5.1.mkv",
+            "title_pt": "Missao ImpossIvel: O Acerto Final",
+            "title_en": "Mission Impossible: Dead Reckoning Part Two",
+            "year": 2025,
+            "tmdb_id": 575265,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Zootopia.2016.1080p.WEB-DL.DDP5.1.H.254-DUAL/Zootopia.2016.1080p.WEB-DL.DDP5.1.H.254-DUAL.mkv",
+            "title_pt": "Zootopia: Essa Cidade e o Bicho",
+            "title_en": "Zootopia",
+            "year": 2016,
+            "tmdb_id": 269149,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Protetor 2 2018 - Versão Estendida 5.1 (1080p-FULL) LAPUMiA/O.Protetor.2.2018.Versão.Estendida.1080p.BluRay.FULL.6CH.x264.DUAL-LAPUMiA.mkv",
+            "title_pt": "O Protetor 2",
+            "title_en": "The Equalizer 2",
+            "year": 2018,
+            "tmdb_id": 345887,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Divertida.Mente.2015.REPACK.1080p.Dual-WOLVERDONFILMES.COM/Divertida.Mente.2015.REPACK.1080p.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Divertida Mente",
+            "title_en": "Inside Out",
+            "year": 2015,
+            "tmdb_id": 150540,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Como Treinar O Seu Dragão 2 (2014) BRrip 1080p Dublado - AndreTPF/Como Treinar O Seu Dragão 2 (2014) BRrip 1080p Dublado - AndreTPF.mp4",
+            "title_pt": "Como Treinar o seu Dragao 2",
+            "title_en": "How to Train Your Dragon 2",
+            "year": 2014,
+            "tmdb_id": 82702,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Um.Sonho.de.Liberdade.1994.2160p.Bluray.DD5.1.H265.Dual-andrehsa/Um.Sonho.de.Liberdade.1994.2160p.Bluray.DD5.1.H265.Dual-andrehsa.mkv",
+            "title_pt": "Um Sonho de Liberdade",
+            "title_en": "The Shawshank Redemption",
+            "year": 1995,
+            "tmdb_id": 278,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/13 Horas - Os Soldados Secretos de Benghazi 2016 [1080p] WWW.BLUDV.COM/13 Horas Os Soldados Secretos de Benghazi.2016.1080p.BluRay.5.1.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "13 Horas: Os Soldados Secretos de Benghazi",
+            "title_en": "13 Hours: The Secret Soldiers of Benghazi",
+            "year": 2016,
+            "tmdb_id": 300671,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Captain.America.The.Winter.Soldier.2014.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa/Captain.America.The.Winter.Soldier.2014.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Capitao America: O Soldado Invernal",
+            "title_en": "Captain America: The Winter Soldier",
+            "year": 2014,
+            "tmdb_id": 100402,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A Origem dos Guardioes/A Origem dos Guardioes (2012) [1080p][Dual].mp4",
+            "title_pt": "A Origem dos Guardioes",
+            "title_en": "Rise of The Guardians",
+            "year": 2012,
+            "tmdb_id": 81188,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O.Espetacular.Homem.Aranha.2.2014.1080p.Dual-WOLVERDONFILMES.COM/O.Espetacular.Homem.Aranha.2.a.ameaça.de.electro.2014.1080p.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "O Espetacular Homem-Aranha 2 - A Ameaça de Electro",
+            "title_en": "The Amazing Spider-Man 2",
+            "year": 2014,
+            "tmdb_id": 102382,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A Origem (2010) 1080p 5.1 Dublado - Alan_680/A Origem (2010) 1080p Dublado - Alan_680.mp4",
+            "title_pt": "A Origem",
+            "title_en": "Inception",
+            "year": 2010,
+            "tmdb_id": 27205,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Dunkirk 2017 (1080p) WWW.BLUDV.COM/Dunkirk.2017.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Dunkirk",
+            "title_en": "Dunkirk",
+            "year": 2017,
+            "tmdb_id": 374720,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Interstellar.2014.IMAX.2160p.BluRay.DDP5.1.DV.HDR.x265-Weasley_HONE.DUAL-wastaken/Interstellar.2014.IMAX.2160p.BluRay.DDP5.1.DV.HDR.x265-Weasley_HONE.DUAL-wastaken.mkv",
+            "title_pt": "Interestelar",
+            "title_en": "Interstellar",
+            "year": 2014,
+            "tmdb_id": 157336,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/A.Chegada.2016.1080p.BluRay.5.1.x264.DUAL-Kraven/A.Chegada.2016.1080p.BluRay.5.1.x264.DUAL-Kraven.mkv",
+            "title_pt": "A Chegada",
+            "title_en": "Arrival",
+            "year": 2016,
+            "tmdb_id": 329865,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Sniper.Americano.2015.1080p.Dual-WOLVERDONFILMES.COM/Sniper.Americano.2015.1080p.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Sniper Americano",
+            "title_en": "American Sniper",
+            "year": 2015,
+            "tmdb_id": 190859,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mission Impossible II 2000 (1080p) Acesse o ORIGINAL WWW.BLUDV.COM/Mission.Impossible.II.2000.1080p.BluRay.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Missao Impossivel 2",
+            "title_en": "Mission Impossible 2",
+            "year": 2000,
+            "tmdb_id": 955,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Duna 2021 WEB-DL 1080p DUAL 5.1/Duna 2021 WEB-DL 1080p DUAL 5.1.mkv",
+            "title_pt": "Duna",
+            "title_en": "Dune",
+            "year": 2021,
+            "tmdb_id": 438631,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Uma.Longa.Jornada.2015.1080p.Dual-WOLVERDONFILMES.COM/Uma.Longa.Jornada.2015.1080p.Dual-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Uma Longa Jornada",
+            "title_en": "The Longest Ride",
+            "year": 2015,
+            "tmdb_id": 228205,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Top Gun - Ases Indomáveis 1986 REMASTER BluRay 1080p DUAL 5.1/Top Gun - Ases Indomáveis 1986 REMASTER BluRay 1080p DUAL 5.1.mkv",
+            "title_pt": "Top Gun - Ases Indomaveis",
+            "title_en": "Top Gun",
+            "year": 1986,
+            "tmdb_id": 744,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Black.Panther.Wakanda.Forever.2022.2160p.IMAX.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa/Black.Panther.Wakanda.Forever.2022.2160p.IMAX.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Pantera Negra: Wakanda para Sempre",
+            "title_en": "Black Panther: Wakanda Forever",
+            "year": 2022,
+            "tmdb_id": 505642,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mission Impossible Ghost Protocol 2011 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Mission.Impossible.Ghost.Protocol.2011.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.COM.mkv",
+            "title_pt": "Missao Impossivel: Protocolo Fantasma",
+            "title_en": "Mission Impossible: Ghost Protocol",
+            "year": 2011,
+            "tmdb_id": 56292,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Harry.Potter.e.a.Pedra.Filosofal.2001.1080p-WOLVERDONFILMES.COM/Harry.Potter.e.a.Pedra.Filosofal.2001.1080p-WOLVERDONFILMES.COM.mkv",
+            "title_pt": "Harry Potter e a Pedra Filosofal",
+            "title_en": "Harry Potter and the Philosopher's Stone",
+            "year": 2001,
+            "tmdb_id": 671,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/O Protetor.1080p.HMAX.WEB-DL.AC3.x264.DUAL-LMB/O Protetor.1080p.HMAX.WEB-DL.AC3.x264.DUAL-LMB.mkv",
+            "title_pt": "O Protetor",
+            "title_en": "The Equalizer",
+            "year": 2014,
+            "tmdb_id": 156022,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Homem.de.Aco.2013.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-FLY/Homem.de.Aco.2013.1080p.AMZN.WEB-DL.DDP5.1.H.264.DUAL-FLY.mkv",
+            "title_pt": "O Homem de Aco",
+            "title_en": "Man of Steel",
+            "year": 2013,
+            "tmdb_id": 49521,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Top Gun - Maverick 2022 WEB-DL 1080p IMAX DUAL 5.1/Top Gun - Maverick 2022 WEB-DL 1080p IMAX DUAL 5.1.mkv",
+            "title_pt": "Top Gun: Maverick",
+            "title_en": "Top Gun: Maverick",
+            "year": 2022,
+            "tmdb_id": 361743,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Mission Impossible Rogue Nation 2015 (1080p) Acesse o ORIGINAL WWW.BLUDV.TV/Mission.Impossible.Rogue.Nation.2015.1080p.BluRay.6CH.x264.DUAL-WWW.BLUDV.TV.mkv",
+            "title_pt": "Missao Impossivel: Nacao Secreta",
+            "title_en": "Mission Impossible: Rogue Nation",
+            "year": 2015,
+            "tmdb_id": 177677,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Carros 2/Carros 2 (2011) 1080p Dublado JohnL.mp4",
+            "title_pt": "Carros 2",
+            "title_en": "Cars 2",
+            "year": 2011,
+            "tmdb_id": 49013,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Deadpool.&.Wolverine.2024.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa/Deadpool.&.Wolverine.2024.2160p.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Deadpool & Wolverine",
+            "title_en": "Deadpool & Wolverine",
+            "year": 2024,
+            "tmdb_id": 533535,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/[ACESSE COMANDOTORRENTS.COM] Alita - Anjo de Combate 2019 [1080p] [BluRay] [DUAL]/Alita.Anjo.de.Combate.2019.1080p.BluRay.6CH.x264.DUAL-COMANDOTORRENTS.COM.mkv",
+            "title_pt": "Alita: Anjo de Combate",
+            "title_en": "Alita: Battle Angel",
+            "year": 2019,
+            "tmdb_id": 399579,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Captain.America.Civil.War.2016.2160p.IMAX.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa/Captain.America.Civil.War.2016.2160p.IMAX.DSNP.WEB-DL.DDP5.1.Atmos.DV.H265.DUAL-andrehsa.mkv",
+            "title_pt": "Capitao America: Guerra Civil",
+            "title_en": "Captain America: Civil War",
+            "year": 2016,
+            "tmdb_id": 271110,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/WALL-E.2008.2160p.DSNP.WEB-DL.DDP5.1.HDR.H.265.DUAL-RARBR/WALL-E.2008.2160p.DSNP.WEB-DL.DDP5.1.HDR.H.265.DUAL-RARBR.mkv",
+            "title_pt": "WALL-E",
+            "title_en": "WALL-E",
+            "year": 2008,
+            "tmdb_id": 10681,
+            "category": "movie"
+        },
+        {
+            "file_path": "/media/mateus/Servidor/containers/media/downloads/movies/Histórias.Cruzadas.2011.1080p.BluRay.DDP5.1.x264-SECTOR7.DUAL-EDK/Histórias.Cruzadas.2011.1080p.BluRay.DDP5.1.x264-SECTOR7.DUAL-EDK.mkv",
+            "title_pt": "Historias Cruzadas",
+            "title_en": "The Help",
+            "year": 2011,
+            "tmdb_id": 50014,
+            "category": "movie"
+        }
+    ],
+    "tv": [
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/tv/Chernobyl.S01.1080p.WEB-DL.DD5.1.H264-DUAL-RK",
+            "title_pt": "Chernobyl",
+            "title_en": "Chernobyl",
+            "year": 2019,
+            "category": "tv",
+            "structure_type": "complete_series",
+            "tmdb_id": 87108
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/tv/Irmaos.de.Guerra.2001.S01.BRRip.1080p.AVC-AXS.DUAL-VET",
+            "title_pt": "Irmaos de Guerra",
+            "title_en": "Band of Brothers",
+            "year": 2001,
+            "category": "tv",
+            "structure_type": "complete_series",
+            "tmdb_id": 4613
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/tv/The.Pitt.S01.2160p.HMAX.WEB-DL.DDP5.1.DV.HDR.H.265-Dual.RvT",
+            "title_pt": "The Pitt",
+            "title_en": "The Pitt",
+            "year": 2025,
+            "category": "tv",
+            "structure_type": "single_season",
+            "tmdb_id": 250307
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Demon.Slayer.Kimetsu.no.Yaiba.Entertainment.District.Arc.S03.2160p.B-Global.WEB-DL.AAC2.0.H.264.DUAL-OLYMPUS",
+            "title_pt": "Demon Slayer: Kimetsu no Yaiba",
+            "title_en": "Demon Slayer: Kimetsu no Yaiba",
+            "year": 2019,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 85937
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Demon.Slayer.Kimetsu.no.Yaiba.S01.2160p.B-Global.WEB-DL.AAC2.0.H.264.DUAL-OLYMPUS",
+            "title_pt": "Demon Slayer: Kimetsu no Yaiba",
+            "title_en": "Demon Slayer: Kimetsu no Yaiba",
+            "year": 2019,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 85937
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Demon.Slayer.Kimetsu.no.Yaiba.S05.1080p.CR.WEB-DL.AAC2.0.H.264.DUAL-lucano22",
+            "title_pt": "Demon Slayer: Kimetsu no Yaiba",
+            "title_en": "Demon Slayer: Kimetsu no Yaiba",
+            "year": 2019,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 85937
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Demon.Slayer.S02.1080p.BluRay.FLAC2.0.H.264.DUAL-Eternal",
+            "title_pt": "Demon Slayer: Kimetsu no Yaiba",
+            "title_en": "Demon Slayer: Kimetsu no Yaiba",
+            "year": 2019,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 85937
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Demon.Slayer.S04.1080p.BluRay.FLAC2.0.H.264.DUAL-Anitsu",
+            "title_pt": "Demon Slayer: Kimetsu no Yaiba",
+            "title_en": "Demon Slayer: Kimetsu no Yaiba",
+            "year": 2019,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 85937
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/doramas/Alchemy of Souls",
+            "title_pt": "Alquimia das Almas",
+            "title_en": "Alchemy of Souls: Light and Shadow",
+            "year": 2022,
+            "category": "dorama",
+            "structure_type": "complete_series",
+            "tmdb_id": 135157
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/doramas/Dear Hongrang",
+            "title_pt": "Querido Hongrang",
+            "title_en": "Tangeum",
+            "year": 2025,
+            "category": "dorama",
+            "structure_type": "complete_series",
+            "tmdb_id": 224819
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/doramas/Destined With You",
+            "title_pt": "Nosso Destino",
+            "title_en": "Destined with You",
+            "year": 2023,
+            "category": "dorama",
+            "structure_type": "complete_series",
+            "tmdb_id": 215001
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/doramas/When.Life.Gives.You.Tangerines.S01.1080p.NF.WEB-DL.DDP5.1.Atmos.H.264.DUAL-SiGLA",
+            "title_pt": "Se a Vida Te Der Tangerinas...",
+            "title_en": "When Life Gives You Tangerines",
+            "year": 2025,
+            "category": "dorama",
+            "structure_type": "single_season",
+            "tmdb_id": 219246
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Solo.Leveling.S01.2160p.B-Global.WEB-DL.AAC2.0.H.264.DUAL-Anitsu",
+            "title_pt": "Solo Leveling",
+            "title_en": "Solo Leveling",
+            "year": 2024,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 127532
+        },
+        {
+            "directory": "/media/mateus/Servidor/containers/media/downloads/animes/Solo.Leveling.S02.1080p.CR.WEB-DL.AAC2.0.H.264-DUAL-S74Ll10n",
+            "title_pt": "Solo Leveling",
+            "title_en": "Solo Leveling",
+            "year": 2024,
+            "category": "anime",
+            "structure_type": "single_season",
+            "tmdb_id": 127532
+        }
+    ]
+}

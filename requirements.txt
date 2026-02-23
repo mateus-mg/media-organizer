@@ -1,24 +1,28 @@
-# Core dependencies
-python-dotenv==1.0.0
-tinydb==4.8.0
-requests==2.31.0
+# Core Dependencies
+click>=8.1.0
+python-dotenv>=1.0.0
+rich>=13.0.0
+tinydb>=4.8.0
+mutagen>=1.46.0
 
-# CLI interface
-rich==13.7.0
-click==8.1.7
+# Optional Dependencies for Enhanced Features
 
-# File monitoring
+# For EPUB/PDF handling (Recommended)
+PyPDF2>=3.0.0
+ebooklib>=0.18
 
-# Torrent client integration
-qbittorrent-api==2024.1.58
+# For comic book metadata (Optional - but recommended for comics)
+comicbox>=2.1.0
 
-# Audio metadata
-mutagen==1.47.0
+# For music metadata enhancement
+music-tag>=0.4.3
 
-# EPUB conversion
-# Requires Calibre CLI (system package)
-# Ubuntu/Debian: sudo apt install calibre
-# Fedora: sudo dnf install calibre
-# macOS: brew install calibre
-# Windows: Download from https://calibre-ebook.com/download
-# Provides: ebook-convert command for PDF to EPUB conversion
+# For qBittorrent integration
+qbittorrent-api>=2023.10.27
+
+# For async operations
+aiofiles>=23.0.0
+aiohttp>=3.8.0
+
+# For rate limiting
+asyncio-throttle>=1.0.2
