@@ -103,6 +103,11 @@ from src.metadata import (
     MetadataResult,
 )
 
+# Subtitle Downloader (OpenSubtitles)
+from src.subtitle_config import SubtitleConfig, get_config
+from src.subtitle_downloader import OpenSubtitlesClient, SubtitleDownloader
+from src.subtitle_daemon import SubtitleDaemon
+
 
 __all__ = [
     # Version
@@ -188,4 +193,11 @@ __all__ = [
     "enrich_music_metadata_with_online_sources",
     "MetadataParser",
     "MetadataResult",
+    
+    # Subtitle Downloader (OpenSubtitles)
+    "SubtitleConfig",
+    "get_config",
+    "OpenSubtitlesClient",
+    "SubtitleDownloader",
+    "SubtitleDaemon",
 ]
