@@ -62,11 +62,12 @@ class SubtitleConfig:
         self.database_path = Path(os.getenv(
             'DATABASE_PATH', './data/organization.json'
         ))
-        
+
+        # Use same log file as main system for centralized logging
         self.log_file = Path(os.getenv(
-            'SUBTITLE_LOG_FILE', './logs/subtitle_downloader.log'
+            'SUBTITLE_LOG_FILE', './logs/organizer.log'  # Centralized log
         ))
-        
+
         # Ensure log directory exists
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         

@@ -54,10 +54,10 @@ class SubtitleDaemon:
         self.running = False
         self.shutdown_requested = False
         
-        # Initialize logger
+        # Initialize logger (uses centralized log file: logs/organizer.log)
         self.logger = get_logger(
             name="SubtitleDaemon",
-            log_file=self.config.log_file
+            log_file=str(self.config.log_file)
         )
         
         # Set console log level
