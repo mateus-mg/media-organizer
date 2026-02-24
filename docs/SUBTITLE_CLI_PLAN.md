@@ -23,6 +23,48 @@
 
 ---
 
+## 📊 Sistema de Logs Unificado
+
+### Centralização de Logs
+
+**DECISÃO:** Usar o **mesmo arquivo de log** para todo o sistema.
+
+| Componente | Arquivo | Configuração |
+|------------|---------|--------------|
+| Media Organizer | `logs/organizer.log` | `LOG_FILE` |
+| Subtitle Daemon | `logs/organizer.log` | `SUBTITLE_LOG_FILE` (padrão: mesmo arquivo) |
+
+### Vantagens da Unificação
+
+- ✅ Logs centralizados em um único lugar
+- ✅ Mesma política de rotação (50MB, 5 backups)
+- ✅ Mesmo formato de timestamp
+- ✅ Fácil correlação de eventos
+- ✅ Menos arquivos para gerenciar
+- ✅ Seguindo princípio DRY
+
+### Exemplo de Log Unificado
+
+```
+2026-02-24 18:30:00 - MediaOrganizer - INFO - Starting organization cycle
+2026-02-24 18:30:01 - MediaOrganizer - INFO - ✓ Organized: Movie.mkv
+2026-02-24 18:30:02 - SubtitleDaemon - INFO - Starting subtitle download
+2026-02-24 18:30:03 - SubtitleDaemon - INFO - ✓ Downloaded: Movie.pt.srt
+2026-02-24 18:30:04 - MediaOrganizer - INFO - Cycle complete: 5 files
+```
+
+### Configuração (.env)
+
+```bash
+# Log principal do sistema
+LOG_FILE="./logs/organizer.log"
+
+# Log do subtitle (padrão: mesmo arquivo principal)
+SUBTITLE_LOG_FILE="./logs/organizer.log"  # Unificado
+```
+
+---
+
 ## 📊 O Que Precisa Ser Criado/Alterado
 
 ### ✅ CRIAR
