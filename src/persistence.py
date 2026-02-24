@@ -126,6 +126,7 @@ class OrganizationDatabase(DatabaseInterface):
                     {
                         "metadata": metadata,
                         "last_checked": format_datetime_br(),
+                        "subtitles": existing[0].get('subtitles', []),  # Preserve subtitles
                         "errors": []
                     },
                     (Media.file_hash == file_hash) &
@@ -143,6 +144,7 @@ class OrganizationDatabase(DatabaseInterface):
                 "file_exists": True,
                 "hardlink_created": True,
                 "metadata": metadata,
+                "subtitles": [],  # NEW: Track subtitles
                 "errors": []
             }
             
@@ -238,6 +240,171 @@ class OrganizationDatabase(DatabaseInterface):
             key=lambda x: x.get('timestamp', ''),
             reverse=True
         )[:limit]
+
+    # ========================================================================
+    # SUBTITLE MANAGEMENT
+    # ========================================================================
+
+    def add_subtitle(
+        self,
+        file_hash: str,
+        subtitle_path: str,
+        language: str
+    ) -> bool:
+        """
+        Add subtitle to media record
+        
+        Args:
+            file_hash: File hash
+            subtitle_path: Path to subtitle file
+            language: Language code (e.g., 'pt', 'en')
+            
+        Returns:
+            True if successful
+        """
+        try:
+            Media = Query()
+            record = self.media_table.get(Media.file_hash == file_hash)
+            
+            if not record:
+                return False
+            
+            # Get existing subtitles
+            subtitles = record.get('subtitles', [])
+            
+            # Check if subtitle already exists
+            for sub in subtitles:
+                if sub.get('path') == subtitle_path:
+                    return True  # Already exists
+            
+            # Add new subtitle
+            subtitles.append({
+                'path': subtitle_path,
+                'language': language.lower(),
+                'added_date': format_datetime_br(),
+                'source': 'opensubtitles'
+            })
+            
+            # Update record
+            self.media_table.update(
+                {'subtitles': subtitles},
+                Media.file_hash == file_hash
+            )
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error adding subtitle: {e}")
+            return False
+
+    def has_subtitle(
+        self,
+        file_hash: str,
+        language: str = None
+    ) -> bool:
+        """
+        Check if media has subtitle
+        
+        Args:
+            file_hash: File hash
+            language: Optional language code to check
+            
+        Returns:
+            True if has subtitle
+        """
+        try:
+            Media = Query()
+            record = self.media_table.get(Media.file_hash == file_hash)
+            
+            if not record:
+                return False
+            
+            subtitles = record.get('subtitles', [])
+            
+            if not subtitles:
+                return False
+            
+            if language:
+                # Check for specific language
+                return any(
+                    sub.get('language', '').lower() == language.lower()
+                    for sub in subtitles
+                )
+            
+            return len(subtitles) > 0
+            
+        except Exception as e:
+            print(f"Error checking subtitle: {e}")
+            return False
+
+    def get_files_without_subtitles(
+        self,
+        media_type: str = None
+    ) -> List[Dict]:
+        """
+        Get list of files without subtitles
+        
+        Args:
+            media_type: Filter by media type (movie, tv, etc.)
+            
+        Returns:
+            List of file records without subtitles
+        """
+        try:
+            files = []
+            all_media = self.media_table.all()
+            
+            for record in all_media:
+                # Filter by media type if specified
+                if media_type:
+                    record_media_type = record.get('metadata', {}).get('media_type', '')
+                    if record_media_type != media_type:
+                        continue
+                
+                # Check if has subtitles
+                subtitles = record.get('subtitles', [])
+                if not subtitles:
+                    files.append(record)
+            
+            return files
+            
+        except Exception as e:
+            print(f"Error getting files without subtitles: {e}")
+            return []
+
+    def get_subtitle_statistics(self) -> Dict[str, Any]:
+        """
+        Get subtitle statistics
+        
+        Returns:
+            Dictionary with subtitle stats
+        """
+        try:
+            all_media = self.media_table.all()
+            
+            total = len(all_media)
+            with_subtitles = sum(1 for m in all_media if m.get('subtitles', []))
+            without_subtitles = total - with_subtitles
+            
+            # Count by language
+            languages = {}
+            for media in all_media:
+                for sub in media.get('subtitles', []):
+                    lang = sub.get('language', 'unknown')
+                    languages[lang] = languages.get(lang, 0) + 1
+            
+            return {
+                'total_files': total,
+                'with_subtitles': with_subtitles,
+                'without_subtitles': without_subtitles,
+                'coverage_percent': (with_subtitles / total * 100) if total > 0 else 0,
+                'languages': languages
+            }
+            
+        except Exception as e:
+            print(f"Error getting subtitle statistics: {e}")
+            return {}
+
     
     def create_backup(self) -> Optional[Path]:
         """Create timestamped backup"""

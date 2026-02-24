@@ -211,6 +211,62 @@ books/
 │       └── Another Book.pdf
 ```
 
+## Subtitle Downloader (OpenSubtitles)
+
+The system includes an optional subtitle downloader that automatically fetches subtitles from OpenSubtitles.com.
+
+### Configuration
+
+Add to your `.env` file:
+
+```bash
+# OpenSubtitles API Credentials
+# Get API key at: https://www.opensubtitles.com/en/consumers
+OPENSUBTITLES_API_KEY="your_api_key_here"
+OPENSUBTITLES_USERNAME="your_username_here"
+OPENSUBTITLES_PASSWORD="your_password_here"
+
+# Subtitle Settings
+SUBTITLE_LANGUAGES="pt,en,es"
+SUBTITLE_DOWNLOAD_INTERVAL="86400"  # 24 hours
+SUBTITLE_DAEMON_ENABLED="true"
+```
+
+### Usage
+
+```bash
+# Start subtitle daemon (runs every 24 hours)
+./scripts/subtitle-daemon.sh start
+
+# Check status
+./scripts/subtitle-daemon.sh status
+
+# View logs
+./scripts/subtitle-daemon.sh logs tail
+
+# Run manual download
+./scripts/subtitle-daemon.sh run
+
+# Stop daemon
+./scripts/subtitle-daemon.sh stop
+```
+
+### Features
+
+- **Automatic Downloads**: Runs every 24 hours to find missing subtitles
+- **Rate Limiting**: Respects OpenSubtitles limit (20 downloads/day)
+- **Priority Order**: Movies → Series → Doramas → Animes
+- **Language Priority**: Configurable (default: Portuguese, English, Spanish)
+- **Database Tracking**: Updates `organized.json` with subtitle information
+
+### Rate Limits
+
+OpenSubtitles free accounts are limited to **20 downloads per day**. The daemon:
+- Tracks downloads per day
+- Stops when limit is reached
+- Resets at midnight (configurable)
+
+
 ## Manual Mapping System
 
 The system uses `data/manual_mapping.json` to store mappings for movies and TV shows. **TMDB ID is required for all video files**.
