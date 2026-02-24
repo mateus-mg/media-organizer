@@ -292,8 +292,11 @@ def show_subtitle_menu():
         "1": "Download subtitles (manual)",
         "2": "View subtitle status",
         "3": "Files missing subtitles",
-        "4": "Configure OpenSubtitles",
-        "5": "Test API connection",
+        "4": "Start subtitle daemon",
+        "5": "Stop subtitle daemon",
+        "6": "Restart subtitle daemon",
+        "7": "Configure OpenSubtitles",
+        "8": "Test API connection",
         "0": "Back to main menu"
     }
     
@@ -309,9 +312,18 @@ def show_subtitle_menu():
         # Show missing
         show_subtitle_status(show_missing=True)
     elif choice == "4":
+        # Start daemon
+        start_subtitle_daemon()
+    elif choice == "5":
+        # Stop daemon
+        stop_subtitle_daemon()
+    elif choice == "6":
+        # Restart daemon
+        restart_subtitle_daemon()
+    elif choice == "7":
         # Setup wizard
         setup_subtitle_config()
-    elif choice == "5":
+    elif choice == "8":
         # Test API
         test_subtitle_config()
 ```
@@ -404,7 +416,7 @@ Adicionar seção:
 
 1. [ ] 3 novos comandos CLI funcionando
 2. [ ] Menu interativo com opção de legendas
-3. [ ] Submenu com 5 opções
+3. [ ] Submenu com 8 opções (inclui start/stop/restart)
 4. [ ] `--help` documentando todas as opções
 5. [ ] Logs estruturados nos comandos
 6. [ ] Testes passando (40+)
