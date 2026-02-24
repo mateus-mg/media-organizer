@@ -242,6 +242,74 @@ def cli(ctx, dry_run):
     ctx.obj['DRY_RUN'] = dry_run
 
 
+def show_subtitle_menu():
+    """Show subtitle downloader submenu"""
+    from src.subtitle_cli import (
+        run_manual_download,
+        show_subtitle_status,
+        start_subtitle_daemon,
+        stop_subtitle_daemon,
+        restart_subtitle_daemon,
+        setup_subtitle_config,
+        test_subtitle_config,
+    )
+    
+    while True:
+        console = Console()
+        console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
+        console.print("[bold]Select an operation:[/bold]\n")
+
+        options = {
+            "1": "Download subtitles (manual)",
+            "2": "View subtitle status",
+            "3": "Files missing subtitles",
+            "4": "Start subtitle daemon",
+            "5": "Stop subtitle daemon",
+            "6": "Restart subtitle daemon",
+            "7": "Configure OpenSubtitles",
+            "8": "Test API connection",
+            "0": "Back to main menu"
+        }
+
+        for key, value in options.items():
+            console.print(f"  [{key}] {value}")
+
+        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
+
+        if choice == "0":
+            console.print("\n[blue]Returning to main menu...[/blue]")
+            return
+        elif choice == "1":
+            # Manual download
+            console.print("\n[cyan]→ Running manual subtitle download...[/cyan]\n")
+            run_manual_download()
+        elif choice == "2":
+            # View status
+            show_subtitle_status()
+        elif choice == "3":
+            # Show missing
+            show_subtitle_status(show_missing=True)
+        elif choice == "4":
+            # Start daemon
+            start_subtitle_daemon()
+        elif choice == "5":
+            # Stop daemon
+            stop_subtitle_daemon()
+        elif choice == "6":
+            # Restart daemon
+            restart_subtitle_daemon()
+        elif choice == "7":
+            # Setup wizard
+            setup_subtitle_config()
+        elif choice == "8":
+            # Test API
+            test_subtitle_config()
+
+        # Pause before showing menu again
+        if choice != "0":
+            input("\nPress Enter to continue...")
+
+
 @cli.command()
 @click.pass_context
 def organize(ctx):
@@ -255,34 +323,43 @@ def organize(ctx):
 
         # Create menu options
         options = {
-            "1": ("Movies", app.config.download_path_movies),
-            "2": ("TV Shows", app.config.download_path_tv),
-            "3": ("Anime", app.config.download_path_animes),
-            "4": ("Doramas", app.config.download_path_doramas),
-            "5": ("Music", app.config.download_path_music),
-            "6": ("Books", app.config.download_path_books),
-            "7": ("Comics", app.config.download_path_comics),
-            "0": ("All directories", None),
+            "1": "Movies",
+            "2": "TV Shows",
+            "3": "Anime",
+            "4": "Doramas",
+            "5": "Music",
+            "6": "Books",
+            "7": "Comics",
+            "8": "Subtitle Downloader",  # NEW
+            "0": "All directories",
         }
 
         # Display menu
         console.print("[bold]Select directory to organize:[/bold]")
-        for key, (name, path) in options.items():
-            console.print(f"  [{key}] {name}")
+        for key, name in options.items():
+            if key == "0":
+                console.print(f"  [{key}] {name}")
+            elif key == "8":
+                console.print(f"  [{key}] {name} 📺")
+            else:
+                console.print(f"  [{key}] {name}")
 
         # Get user choice
-        choice = Prompt.ask("\nYour choice", choices=list(
-            options.keys()), default="0")
+        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
 
-        if choice == "0":
+        if choice == "8":
+            # Subtitle Downloader submenu
+            show_subtitle_menu()
+            return
+        elif choice == "0":
             # Organize all directories
             console.print("\n[cyan]→ Organizing all directories...[/cyan]\n")
 
             # Process all configured download paths
             total_processed = 0
-            for name, path_info in options.items():
-                if name != "0":  # Skip the "all" option
-                    _, path = path_info
+            for key, name in options.items():
+                if key not in ["0", "8"]:  # Skip "All" and "Subtitle Downloader"
+                    path = getattr(app.config, f'download_path_{name.lower().replace(" ", "_")}', None)
                     if path and path.exists():
                         processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
                         total_processed += processed
@@ -290,54 +367,21 @@ def organize(ctx):
 
             console.print(
                 f"\n[bold green]✓ Successfully organized {total_processed} file(s)[/bold green]")
-        elif choice == "1":
-            # Submenu for selecting specific download paths
-            console.print("\n[bold cyan]Select Media Type to Organize[/bold cyan]\n")
-            
-            # Create submenu options for all configured download paths
-            submenu_options = {
-                "1": ("Movies", app.config.download_path_movies),
-                "2": ("TV Shows", app.config.download_path_tv),
-                "3": ("Anime", app.config.download_path_animes),
-                "4": ("Doramas", app.config.download_path_doramas),
-                "5": ("Music", app.config.download_path_music),
-                "6": ("Books", app.config.download_path_books),
-                "7": ("Comics", app.config.download_path_comics),
-                "0": ("Back to main menu", None),
-            }
-            
-            # Display submenu
-            console.print("[bold]Select media type to organize:[/bold]")
-            for key, (name, path) in submenu_options.items():
-                if path:
-                    exists = "✓" if path.exists() else "✗"
-                    console.print(f"  [{key}] {name} {exists}")
-                else:
-                    console.print(f"  [{key}] {name}")
-            
-            submenu_choice = Prompt.ask("\nYour choice", choices=list(
-                submenu_options.keys()), default="0")
-            
-            if submenu_choice != "0":
-                name, path = submenu_options[submenu_choice]
-                console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
-                
-                if path and path.exists():
-                    asyncio.run(app.organize_directory(path))
-                else:
-                    console.print(f"[red]✗ Directory does not exist: {path}[/red]")
-                    return
-            else:
-                # Back to main menu
-                console.print("\n[blue]Returning to main menu...[/blue]")
-                return
         else:
             # Organize selected directory
-            name, path = options[choice]
-            console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
+            name = options[choice]
+            path = getattr(app.config, f'download_path_{name.lower().replace(" ", "_")}', None)
+            
+            if path:
+                console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
 
-            if not path.exists():
-                console.print(f"[red]✗ Directory does not exist: {path}[/red]")
+                if not path.exists():
+                    console.print(f"[red]✗ Directory does not exist: {path}[/red]")
+                    return
+
+                asyncio.run(app.organize_directory(path))
+            else:
+                console.print(f"[red]✗ Invalid path for {name}[/red]")
                 return
 
             asyncio.run(app.organize_directory(path))
@@ -538,6 +582,132 @@ def daemon(ctx):
         console.print("\n\n[yellow]⚠ Daemon stopped by user[/yellow]")
     finally:
         app.cleanup()
+
+
+# ============================================================================
+# SUBTITLE DOWNLOADER COMMANDS
+# ============================================================================
+
+@cli.command()
+@click.option('--manual', is_flag=True, help='Run manual download (one-time)')
+@click.option('--media-type', type=click.Choice(['movie', 'tv', 'dorama', 'anime']), 
+              help='Filter by media type')
+@click.option('--language', type=str, help='Specific language (e.g., pt, en)')
+def subtitle_download(manual, media_type, language):
+    """
+    Download subtitles from OpenSubtitles
+    
+    Run manual download or check download status.
+    """
+    from src.subtitle_cli import run_manual_download, show_subtitle_status
+    
+    if manual:
+        # Run manual download
+        stats = run_manual_download(
+            media_type=media_type,
+            language=language
+        )
+        
+        if 'error' in stats:
+            console.print(f"\n[red]✗ {stats['error']}[/red]\n")
+    else:
+        # Show status
+        show_subtitle_status()
+
+
+@cli.command()
+@click.option('--missing', is_flag=True, help='Show only files without subtitles')
+@click.option('--all', 'show_all', is_flag=True, help='Show all files with details')
+@click.option('--languages', is_flag=True, help='Show language breakdown')
+def subtitle_status(missing, show_all, languages):
+    """
+    Show subtitle statistics and status
+    
+    Display coverage statistics and files missing subtitles.
+    """
+    from src.subtitle_cli import show_subtitle_status
+    
+    show_subtitle_status(
+        show_missing=missing,
+        show_all=show_all,
+        show_languages=languages
+    )
+
+
+@cli.command()
+@click.option('--setup', is_flag=True, help='Run setup wizard')
+@click.option('--test', is_flag=True, help='Test API configuration')
+def subtitle_config(setup, test):
+    """
+    Configure OpenSubtitles integration
+    
+    Setup API credentials and test connectivity.
+    """
+    from src.subtitle_cli import setup_subtitle_config, test_subtitle_config
+    
+    if setup:
+        success = setup_subtitle_config()
+        if not success:
+            sys.exit(1)
+    elif test:
+        success = test_subtitle_config()
+        if not success:
+            sys.exit(1)
+    else:
+        # Default: show current config
+        console.print("\n[bold cyan]OpenSubtitles Configuration[/bold cyan]\n")
+        
+        from src.subtitle_config import get_config
+        config = get_config()
+        
+        console.print(f"API Key: {'[green]Set[/green]' if config.api_key and config.api_key != 'your_api_key_here' else '[red]Not set[/red]'}")
+        console.print(f"Username: {'[green]' + config.api_username + '[/green]' if config.api_username else '[red]Not set[/red]'}")
+        console.print(f"Languages: [cyan]{', '.join(config.preferred_languages)}[/cyan]")
+        console.print(f"Download limit: [yellow]{config.download_limit}/day[/yellow]")
+        console.print(f"Valid: {'[green]Yes[/green]' if config.is_valid else '[red]No[/red]'}")
+        
+        if not config.is_valid:
+            console.print("\n[red]Validation errors:[/red]")
+            for error in config.validation_errors:
+                console.print(f"  • {error}")
+
+
+@cli.command()
+def subtitle_daemon_start():
+    """Start subtitle daemon"""
+    from src.subtitle_cli import start_subtitle_daemon
+    
+    success = start_subtitle_daemon()
+    if not success:
+        sys.exit(1)
+
+
+@cli.command()
+def subtitle_daemon_stop():
+    """Stop subtitle daemon"""
+    from src.subtitle_cli import stop_subtitle_daemon
+    
+    success = stop_subtitle_daemon()
+    if not success:
+        sys.exit(1)
+
+
+@cli.command()
+def subtitle_daemon_restart():
+    """Restart subtitle daemon"""
+    from src.subtitle_cli import restart_subtitle_daemon
+    
+    success = restart_subtitle_daemon()
+    if not success:
+        sys.exit(1)
+
+
+@cli.command()
+def subtitle_daemon_status():
+    """Show subtitle daemon status"""
+    from src.subtitle_cli import show_daemon_status
+    
+    show_daemon_status()
 
 
 if __name__ == "__main__":
