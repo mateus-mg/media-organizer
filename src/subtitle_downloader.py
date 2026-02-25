@@ -102,13 +102,24 @@ class OpenSubtitlesClient:
     
     def login(self) -> bool:
         """
-        Authenticate with OpenSubtitles API
+        Authenticate with OpenSubtitles API using JWT
         
         Returns:
             True if authentication successful
         """
         try:
+            # OpenSubtitles uses Basic Auth + body params for login
             url = f"{self.base_url}/login"
+            
+            # Use Basic Auth (username:password)
+            import base64
+            credentials = f"{self.username}:{self.config.api_password}"
+            encoded_credentials = base64.b64encode(credentials.encode()).decode()
+            
+            headers = self._get_headers(include_token=False)
+            headers['Authorization'] = f'Basic {encoded_credentials}'
+            
+            # Also send in body (required by API)
             payload = {
                 'username': self.username,
                 'password': self.config.api_password
@@ -117,7 +128,7 @@ class OpenSubtitlesClient:
             self._apply_rate_limit_delay()
             response = self.session.post(
                 url,
-                headers=self._get_headers(include_token=False),
+                headers=headers,
                 json=payload,
                 timeout=30
             )
@@ -126,17 +137,22 @@ class OpenSubtitlesClient:
             
             if response.status_code == 200:
                 data = response.json()
+                # JWT token is returned in response
                 self.token = data.get('token')
                 
-                # Token expires in 1 day (per API docs)
-                self.token_expires = datetime.now() + timedelta(days=1)
-                
-                self.logger.info("✓ OpenSubtitles authentication successful")
-                return True
+                if self.token:
+                    # Token expires in 1 day (per API docs)
+                    self.token_expires = datetime.now() + timedelta(days=1)
+                    
+                    self.logger.info("✓ OpenSubtitles authentication successful (JWT)")
+                    return True
+                else:
+                    self.logger.error("✗ No token in response")
+                    return False
             else:
-                self.logger.error(
-                    f"✗ OpenSubtitles authentication failed: {response.status_code}"
-                )
+                error_data = response.json() if response.text else {}
+                error_msg = error_data.get('message', response.text)
+                self.logger.error(f"✗ OpenSubtitles authentication failed: {response.status_code} - {error_msg}")
                 return False
                 
         except Exception as e:
