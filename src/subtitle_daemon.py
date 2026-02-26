@@ -221,14 +221,17 @@ class SubtitleDaemon:
         # Calculate cycle duration
         cycle_end = datetime.now()
         duration = (cycle_end - cycle_start).total_seconds()
-        
+
         # Log summary
         self.log_cycle_summary(stats, duration)
-        
+
         # Update statistics
         self.cycles_completed += 1
         self.total_downloads += stats['subtitles_downloaded']
         
+        # Save rate limit state to database
+        self.downloader.save_rate_limit_state()
+
         return stats
     
     def log_cycle_summary(self, stats: dict, duration: float):

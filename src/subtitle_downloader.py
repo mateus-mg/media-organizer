@@ -305,11 +305,14 @@ class OpenSubtitlesClient:
                     f"✗ Download failed: {response.status_code}"
                 )
                 return None
-                
+
         except Exception as e:
             self.failed_downloads += 1
             self.logger.error(f"Download error: {e}")
             return None
+        finally:
+            # Always save rate limit state after download attempt
+            self.save_rate_limit_state()
     
     def get_user_info(self) -> Optional[Dict[str, Any]]:
         """Get current user information"""
@@ -402,7 +405,7 @@ class SubtitleDownloader:
     def __init__(self, config: SubtitleConfig, database, logger=None):
         """
         Initialize subtitle downloader
-        
+
         Args:
             config: SubtitleConfig instance
             database: OrganizationDatabase instance
@@ -411,14 +414,42 @@ class SubtitleDownloader:
         self.config = config
         self.database = database
         self.logger = logger or logging.getLogger(__name__)
-        
+
         # Initialize API client
         self.client = OpenSubtitlesClient(config, self.logger)
+
+        # Load persisted rate limit state from database
+        rate_limit_state = self.database.load_subtitle_rate_limit()
+        self.client.downloads_today = rate_limit_state.get('downloads_today', 0)
+        self.client.rate_limit_remaining = rate_limit_state.get('rate_limit_remaining', 20)
         
+        # Restore last_download_time if exists
+        last_time_str = rate_limit_state.get('last_download_time')
+        if last_time_str:
+            try:
+                self.client.last_download_time = datetime.fromisoformat(last_time_str)
+            except (ValueError, TypeError):
+                self.client.last_download_time = None
+        
+        # Check if rate limit should be reset on startup
+        self.client.reset_daily_counter()
+
         # Statistics
         self.files_processed = 0
         self.subtitles_downloaded = 0
         self.subtitles_skipped = 0
+
+    def save_rate_limit_state(self):
+        """Persist rate limit state to database"""
+        last_time_str = None
+        if self.client.last_download_time:
+            last_time_str = self.client.last_download_time.isoformat()
+        
+        self.database.save_subtitle_rate_limit(
+            downloads_today=self.client.downloads_today,
+            last_download_time=last_time_str,
+            rate_limit_remaining=self.client.rate_limit_remaining
+        )
     
     def ensure_authenticated(self) -> bool:
         """Ensure client is authenticated"""
