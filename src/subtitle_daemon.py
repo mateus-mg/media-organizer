@@ -127,25 +127,28 @@ class SubtitleDaemon:
     async def run_cycle(self) -> dict:
         """
         Run one download cycle
-        
+
         Returns:
             Statistics dictionary
         """
         cycle_start = datetime.now()
         log_info(self.logger, f"Starting download cycle #{self.cycles_completed + 1}")
-        
+
         # Ensure authenticated
         if not self.downloader.ensure_authenticated():
             log_error(self.logger, "Failed to authenticate with OpenSubtitles")
             return {'error': 'Authentication failed'}
-        
+
+        # Check and reset rate limit if 24 hours have passed
+        self.downloader.client.reset_daily_counter()
+
         # Check remaining downloads
         remaining = self.downloader.client.get_remaining_downloads()
         log_info(
             self.logger,
             f"Remaining downloads today: {remaining}/{self.config.download_limit}"
         )
-        
+
         if remaining <= 0:
             log_warning(self.logger, "No downloads remaining for today")
             return {'skipped': 'Rate limit reached'}
