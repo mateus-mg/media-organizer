@@ -63,6 +63,7 @@ class OpenSubtitlesClient:
         self.last_request_time = None
         self.rate_limit_remaining = 20
         self.rate_limit_reset = None
+        self.last_download_time = None  # Track when first download was made
         
         # Statistics
         self.total_requests = 0
@@ -275,21 +276,28 @@ class OpenSubtitlesClient:
             if response.status_code == 200:
                 # Ensure directory exists
                 save_path.parent.mkdir(parents=True, exist_ok=True)
-                
+
                 # Write file
                 with open(save_path, 'wb') as f:
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
-                
+
                 self.downloads_today += 1
                 self.successful_downloads += 1
                 self.rate_limit_remaining -= 1
                 
+                # Track time of first download for rate limit reset
+                if self.last_download_time is None:
+                    self.last_download_time = datetime.now()
+                    self.logger.info(
+                        f"📊 Rate limit window started: {self.last_download_time.strftime('%Y-%m-%d %H:%M:%S')}"
+                    )
+
                 self.logger.info(
                     f"✓ Downloaded subtitle: {save_path.name} "
                     f"({self.downloads_today}/{self.config.download_limit} today)"
                 )
-                
+
                 return save_path
             else:
                 self.failed_downloads += 1
@@ -335,10 +343,34 @@ class OpenSubtitlesClient:
         return self.config.download_limit - self.downloads_today
     
     def reset_daily_counter(self):
-        """Reset daily download counter"""
-        self.downloads_today = 0
-        self.rate_limit_remaining = self.config.download_limit
-        self.logger.info("Reset daily download counter")
+        """
+        Reset daily download counter if 24 hours have passed since last download
+        
+        OpenSubtitles rate limit is rolling 24 hours from first download,
+        NOT midnight. This method checks if enough time has passed.
+        """
+        if self.last_download_time is None:
+            # No downloads made yet, counter is already at 0
+            self.downloads_today = 0
+            self.rate_limit_remaining = self.config.download_limit
+            return
+        
+        # Check if 24 hours have passed since last download
+        now = datetime.now()
+        hours_since_download = (now - self.last_download_time).total_seconds() / 3600
+        
+        if hours_since_download >= 24:
+            self.downloads_today = 0
+            self.rate_limit_remaining = self.config.download_limit
+            self.last_download_time = None  # Reset for next cycle
+            self.logger.info(
+                f"✓ Rate limit reset after {hours_since_download:.1f} hours"
+            )
+        else:
+            hours_remaining = 24 - hours_since_download
+            self.logger.debug(
+                f"Rate limit still active: {hours_remaining:.1f}h remaining"
+            )
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get client statistics"""
