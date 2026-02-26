@@ -245,6 +245,74 @@ class OrganizationDatabase(DatabaseInterface):
     # SUBTITLE MANAGEMENT
     # ========================================================================
 
+    def save_subtitle_rate_limit(
+        self,
+        downloads_today: int,
+        last_download_time: str = None,
+        rate_limit_remaining: int = 20
+    ) -> bool:
+        """
+        Save subtitle rate limit state to database
+        
+        Args:
+            downloads_today: Number of downloads made today
+            last_download_time: ISO format timestamp of first download
+            rate_limit_remaining: Remaining downloads
+            
+        Returns:
+            True if successful
+        """
+        try:
+            # Use a dedicated table for rate limit state
+            rate_limit_table = self.db.table('subtitle_rate_limit')
+            
+            # Clear existing record
+            rate_limit_table.truncate()
+            
+            # Save new state
+            record = {
+                'downloads_today': downloads_today,
+                'last_download_time': last_download_time,
+                'rate_limit_remaining': rate_limit_remaining,
+                'updated_at': format_datetime_br()
+            }
+            
+            rate_limit_table.insert(record)
+            return True
+            
+        except Exception as e:
+            print(f"Error saving rate limit state: {e}")
+            return False
+
+    def load_subtitle_rate_limit(self) -> Dict[str, Any]:
+        """
+        Load subtitle rate limit state from database
+        
+        Returns:
+            Dictionary with rate limit state
+        """
+        try:
+            rate_limit_table = self.db.table('subtitle_rate_limit')
+            records = rate_limit_table.all()
+            
+            if records:
+                return records[0]
+            
+            # Default state
+            return {
+                'downloads_today': 0,
+                'last_download_time': None,
+                'rate_limit_remaining': 20
+            }
+            
+        except Exception as e:
+            print(f"Error loading rate limit state: {e}")
+            return {
+                'downloads_today': 0,
+                'last_download_time': None,
+                'rate_limit_remaining': 20
+            }
+
     def add_subtitle(
         self,
         file_hash: str,
