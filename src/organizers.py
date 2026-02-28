@@ -124,27 +124,40 @@ class BaseOrganizer(OrganizadorInterface):
                     skipped=True,
                     metadata=metadata
                 )
-            
+
             # Create destination
             dest_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             # Resolve conflicts
             final_dest_path, action = self.conflict_handler.resolve(
                 source_path, dest_path, self.dry_run
             )
-            
+
             if final_dest_path is None:
                 return OrganizationResult(
                     success=False,
                     error_message="Conflict resolution failed"
                 )
-            
+
             # Create hardlink
             if not self.dry_run:
                 dest_path.hardlink_to(source_path)
+                
+                # Register in Link Registry for deletion management
+                try:
+                    from src.deletion import LinkRegistry
+                    link_registry = LinkRegistry(self.config.link_registry_path)
+                    link_registry.register_link(
+                        source_path=source_path,
+                        dest_path=final_dest_path,
+                        metadata=metadata
+                    )
+                    link_registry.close()
+                except Exception as e:
+                    self.logger.warning(f"Could not register link: {e}")
             else:
                 self.logger.info(f"[DRY RUN] Would link: {source_path.name}")
-            
+
             # Update database
             file_hash = self.calculate_file_hash(source_path)
             self.database.adicionar_midia(
@@ -153,7 +166,7 @@ class BaseOrganizer(OrganizadorInterface):
                 organized_path=str(final_dest_path),
                 metadata=metadata
             )
-            
+
             # Move subtitles for video files
             if source_path.suffix.lower() in ['.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.m4v']:
                 try:
@@ -165,13 +178,13 @@ class BaseOrganizer(OrganizadorInterface):
                         self.logger.info(f"Moved {len(moved)} subtitle(s)")
                 except Exception as e:
                     self.logger.warning(f"Could not move subtitles: {e}")
-            
+
             return OrganizationResult(
                 success=True,
                 organized_path=final_dest_path,
                 metadata=metadata
             )
-            
+
         except Exception as e:
             self.logger.error(f"Error organizing {source_path.name}: {e}")
             return OrganizationResult(

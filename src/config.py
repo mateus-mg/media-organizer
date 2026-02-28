@@ -346,7 +346,40 @@ class Config:
     def comic_download_covers(self) -> bool:
         """Download comic covers automatically"""
         return os.getenv("COMIC_DOWNLOAD_COVERS", "true").lower() == "true"
-    
+
+    # ========== Trash & Deletion ==========
+    @property
+    def trash_enabled(self) -> bool:
+        """Enable trash system"""
+        return os.getenv("TRASH_ENABLED", "true").lower() == "true"
+
+    @property
+    def trash_path(self) -> Path:
+        """Path to trash directory"""
+        path = os.getenv("TRASH_PATH", "./data/trash")
+        return Path(path)
+
+    @property
+    def trash_retention_days(self) -> int:
+        """Days to keep items in trash"""
+        return int(os.getenv("TRASH_RETENTION_DAYS", "30"))
+
+    @property
+    def link_registry_path(self) -> Path:
+        """Path to link registry database"""
+        path = os.getenv("LINK_REGISTRY_PATH", "./data/link_registry.json")
+        return Path(path)
+
+    @property
+    def delete_confirmation_required(self) -> bool:
+        """Require confirmation for permanent deletion"""
+        return os.getenv("DELETE_CONFIRMATION_REQUIRED", "true").lower() == "true"
+
+    @property
+    def delete_dry_run_default(self) -> bool:
+        """Default to dry-run mode for deletions"""
+        return os.getenv("DELETE_DRY_RUN_DEFAULT", "true").lower() == "true"
+
     # ========== Helper Methods ==========
     
     def get_all_download_paths(self) -> Dict[str, Path]:

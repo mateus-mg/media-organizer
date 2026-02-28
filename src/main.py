@@ -254,7 +254,7 @@ def show_subtitle_menu():
         setup_subtitle_config,
         test_subtitle_config,
     )
-    
+
     while True:
         console = Console()
         console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
@@ -311,6 +311,62 @@ def show_subtitle_menu():
             input("\nPress Enter to continue...")
 
 
+def show_trash_menu():
+    """Show trash & deletion manager submenu"""
+    from src.deletion.cli import TrashCLI
+
+    trash_cli = TrashCLI(dry_run=False)
+
+    try:
+        while True:
+            console.print("\n[bold cyan]🗑️  Trash & Deletion Manager[/bold cyan]")
+            console.print("[bold]Select an operation:[/bold]\n")
+
+            options = {
+                "1": "Delete file (to trash)",
+                "2": "Delete permanent (direct)",
+                "3": "List trash items",
+                "4": "Restore from trash",
+                "5": "Empty trash",
+                "6": "Trash status",
+                "7": "Scan filesystem (rebuild registry)",
+                "8": "Link lookup",
+                "0": "Back to main menu"
+            }
+
+            for key, value in options.items():
+                console.print(f"  [{key}] {value}")
+
+            choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
+
+            if choice == "0":
+                console.print("\n[blue]Returning to main menu...[/blue]")
+                return
+            elif choice == "1":
+                trash_cli._delete_to_trash_interactive()
+            elif choice == "2":
+                trash_cli._delete_permanent_interactive()
+            elif choice == "3":
+                trash_cli._list_trash_interactive()
+            elif choice == "4":
+                trash_cli._restore_from_trash_interactive()
+            elif choice == "5":
+                trash_cli._empty_trash_interactive()
+            elif choice == "6":
+                trash_cli._show_status_interactive()
+            elif choice == "7":
+                trash_cli._scan_filesystem_interactive()
+            elif choice == "8":
+                trash_cli._lookup_links_interactive()
+
+            # Pause before showing menu again
+            if choice != "0":
+                input("\nPress Enter to continue...")
+
+    finally:
+        trash_cli.cleanup()
+
+
 @cli.command()
 @click.pass_context
 def organize(ctx):
@@ -331,7 +387,8 @@ def organize(ctx):
             "5": "Music",
             "6": "Books",
             "7": "Comics",
-            "8": "Subtitle Downloader",  # NEW
+            "8": "Subtitle Downloader",
+            "9": "Trash & Deletion",
             "0": "All directories",
         }
 
@@ -342,6 +399,8 @@ def organize(ctx):
                 console.print(f"  [{key}] {name}")
             elif key == "8":
                 console.print(f"  [{key}] {name} 📺")
+            elif key == "9":
+                console.print(f"  [{key}] {name} 🗑️")
             else:
                 console.print(f"  [{key}] {name}")
 
@@ -351,6 +410,10 @@ def organize(ctx):
         if choice == "8":
             # Subtitle Downloader submenu
             show_subtitle_menu()
+            return
+        elif choice == "9":
+            # Trash & Deletion submenu
+            show_trash_menu()
             return
         elif choice == "0":
             # Organize all directories
@@ -707,8 +770,153 @@ def subtitle_daemon_restart():
 def subtitle_daemon_status():
     """Show subtitle daemon status"""
     from src.subtitle_cli import show_daemon_status
-    
+
     show_daemon_status()
+
+
+# ============================================================================
+# TRASH & DELETION COMMANDS
+# ============================================================================
+
+@cli.group()
+def trash():
+    """
+    Trash & Deletion Manager
+    
+    Manage file deletion with hardlink awareness.
+    Provides trash-based and permanent deletion modes.
+    """
+    pass
+
+
+@trash.command()
+@click.argument('path', type=click.Path())
+@click.option('--dry-run', is_flag=True, help='Preview deletion without executing')
+def delete(path, dry_run):
+    """
+    Delete file to trash (safe, reversible)
+    
+    PATH: File path to delete
+    """
+    from src.deletion.cli import trash_delete
+    
+    trash_delete(path, dry_run=dry_run)
+
+
+@trash.command()
+@click.argument('path', type=click.Path())
+@click.option('--dry-run', is_flag=True, help='Preview deletion without executing')
+@click.option('--force', is_flag=True, help='Skip confirmation prompt')
+def delete_permanent(path, dry_run, force):
+    """
+    Delete file permanently (irreversible)
+    
+    PATH: File path to permanently delete
+    """
+    from src.deletion.cli import trash_delete_permanent
+    
+    trash_delete_permanent(path, dry_run=dry_run, force=force)
+
+
+@trash.command()
+@click.option('--all', 'show_all', is_flag=True, help='Show all items (including restored)')
+def list(show_all):
+    """
+    List trash items
+    
+    Shows files currently in trash with their IDs, sizes, and expiration dates.
+    """
+    from src.deletion.cli import trash_list
+    
+    trash_list(active_only=not show_all)
+
+
+@trash.command()
+@click.argument('trash_id', type=str)
+def restore(trash_id):
+    """
+    Restore item from trash
+    
+    TRASH_ID: ID of the item to restore (use 'trash list' to see IDs)
+    """
+    from src.deletion.cli import trash_restore
+    
+    trash_restore(trash_id)
+
+
+@trash.command()
+@click.option('--older-than', type=int, help='Only remove items older than N days')
+def empty(older_than):
+    """
+    Empty trash
+    
+    Permanently removes all items from trash.
+    """
+    from src.deletion.cli import trash_empty
+    
+    trash_empty(older_than_days=older_than if older_than else None)
+
+
+@trash.command()
+def status():
+    """
+    Show trash and deletion statistics
+    
+    Displays trash contents, link registry stats, and disk usage.
+    """
+    from src.deletion.cli import trash_status
+    
+    trash_status()
+
+
+@trash.command()
+@click.argument('path', type=click.Path())
+def lookup(path):
+    """
+    Lookup all hardlinks for a file
+    
+    PATH: File path to lookup
+    
+    Shows all hardlinks associated with a file and their status.
+    """
+    from src.deletion.cli import trash_lookup
+    
+    trash_lookup(path)
+
+
+@trash.command()
+def scan():
+    """
+    Scan filesystem to rebuild link registry
+    
+    Scans all configured download and library directories to find
+    and register hardlinks. Useful for recovery or initial setup.
+    """
+    from src.deletion.cli import TrashCLI
+    from src.config import Config
+    from pathlib import Path
+    
+    cli = TrashCLI()
+    try:
+        config = Config()
+        download_paths = config.get_all_download_paths()
+        library_paths = config.get_all_library_paths()
+
+        all_paths = list(download_paths.values()) + list(library_paths.values())
+        all_paths = [p for p in all_paths if p and p != Path("") and p.exists()]
+
+        if not all_paths:
+            console.print("[red]✗ No valid directories to scan.[/red]")
+            return
+
+        stats = cli.link_registry.scan_filesystem(all_paths)
+        console.print(f"\n[green]✓ Scan complete![/green]")
+        console.print(f"  Files scanned: {stats['files_scanned']}")
+        console.print(f"  Inodes registered: {stats['inodes_registered']}")
+        console.print(f"  Links found: {stats['links_found']}")
+        console.print(f"  Errors: {stats['errors']}")
+    finally:
+        cli.cleanup()
 
 
 if __name__ == "__main__":
