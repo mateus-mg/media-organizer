@@ -31,8 +31,8 @@ from rich.console import Console
 
 from src.log_config import get_logger, log_success, log_error, log_info, log_warning
 from src.log_formatter import LogSection
-from src.deletion.link_registry import LinkRegistry
-from src.deletion.trash_manager import TrashManager
+from src.link_registry import LinkRegistry
+from src.trash_manager import TrashManager
 
 
 console = Console()
