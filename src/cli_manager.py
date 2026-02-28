@@ -1,47 +1,52 @@
 #!/usr/bin/env python3
 """
-CLI Manager for Media Organizer System
-Command-line interface for organizing media files (movies, TV shows, anime, music)
+Unified CLI Manager for Media Organization System
+
+Consolidates all CLI functionality:
+- Media organization
+- Trash & deletion management
+- Subtitle downloader
+
+Usage:
+    from src.cli_manager import CLIManager, SubtitleCLI, DeletionCLI
 """
 
-# Flexible import to handle direct execution and importing
-try:
-    from .log_config import get_logger, log_success, log_error, log_warning, log_info, log_organize, log_move, log_scan
-    from .log_formatter import format_organization_session, format_media_processing, format_operation_complete, format_batch_summary, format_daemon_status
-    from .config.settings import Config
-    from .core.main_orchestrator import MediaOrganizerOrchestrator
-    from .persistence.unorganized_db import UnorganizedDatabase
-except ImportError:
-    # When executed directly, use absolute imports
-    import sys
-    from pathlib import Path
-    # Add src directory to path
-    src_dir = Path(__file__).parent
-    sys.path.insert(0, str(src_dir))
-
-    from log_config import get_logger, log_success, log_error, log_warning, log_info, log_organize, log_move, log_scan
-    from log_formatter import format_organization_session, format_media_processing, format_operation_complete, format_batch_summary, format_daemon_status
-    from config.settings import Config
-    from core.main_orchestrator import MediaOrganizerOrchestrator
-    from persistence.unorganized_db import UnorganizedDatabase
-
+import asyncio
+import logging
+import subprocess
 import sys
 import os
-import asyncio
+import json
+import time
+import re
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any, List
+from datetime import datetime, timedelta
+
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.box import SIMPLE
-from datetime import datetime, timedelta
-from rich.prompt import Prompt
-import json
-import time
+from rich.prompt import Prompt, Confirm
+from rich.text import Text
 
+from src.log_config import (
+    get_logger, log_success, log_error, log_warning, log_info,
+    log_organize, log_stats,
+)
+from src.log_formatter import LogSection
+from src.config import Config
+
+
+console = Console()
+
+
+# ============================================================================
+# MAIN CLI MANAGER
+# ============================================================================
 
 class CLIManager:
-    """CLI manager for Media Organizer System"""
+    """Main CLI manager for Media Organizer System"""
 
     def __init__(self):
         """Initialize CLI manager"""
@@ -53,12 +58,9 @@ class CLIManager:
 
         # Initialize logger
         self.logger = get_logger(__name__)
-        
+
         # Initialize config
         self.config = Config()
-        
-        # Initialize orchestrator
-        self.orchestrator = MediaOrganizerOrchestrator(config=self.config)
 
     def show_interactive_menu(self):
         """Show interactive main menu"""
@@ -76,7 +78,9 @@ class CLIManager:
                 "7": "Stop daemon",
                 "8": "View daemon status",
                 "9": "View statistics",
-                "10": "Exit"
+                "10": "Trash & Deletion",
+                "11": "Subtitle Downloader",
+                "12": "Exit"
             }
 
             for key, value in options.items():
@@ -84,7 +88,7 @@ class CLIManager:
 
             try:
                 choice = Prompt.ask("\nYour choice", choices=list(
-                    options.keys()), default="10")
+                    options.keys()), default="12")
 
                 if choice == '1':
                     self.organize_media_interactive()
@@ -105,6 +109,10 @@ class CLIManager:
                 elif choice == '9':
                     self.view_stats_interactive()
                 elif choice == '10':
+                    show_trash_menu()
+                elif choice == '11':
+                    show_subtitle_menu()
+                elif choice == '12':
                     console.print("[green]Exiting... Goodbye![/green]")
                     break
 
@@ -118,10 +126,14 @@ class CLIManager:
                 console.print(f"[red]Error: {e}[/red]")
 
     def organize_media_interactive(self):
-        """Interactive media organization with predefined paths"""
+        """Interactive media organization"""
+        from src.main import MediaOrganizerApp
+
         console.print("\n[bold cyan]📂 Organize Media Files[/bold cyan]")
-        
+
         try:
+            app = MediaOrganizerApp(dry_run=False)
+
             # Create menu options for all configured download paths
             options = {
                 "1": ("Movies", self.config.download_path_movies),
@@ -153,10 +165,10 @@ class CLIManager:
                 # Process all configured download paths
                 total_processed = 0
                 for name, path_info in options.items():
-                    if name != "0":  # Skip the "all" option
+                    if name != "0":
                         _, path = path_info
                         if path and path.exists():
-                            processed = asyncio.run(self.orchestrator.organizar_diretorio(path))
+                            processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
                             total_processed += processed
                             console.print(f"  Processed {processed} files in {name}")
 
@@ -171,9 +183,10 @@ class CLIManager:
                     console.print(f"[red]✗ Directory does not exist: {path}[/red]")
                     return
 
-                processed = asyncio.run(self.orchestrator.organizar_diretorio(path))
-                console.print(
-                    f"\n[bold green]✓ Successfully organized {processed} file(s)[/bold green]")
+                asyncio.run(app.organize_directory(path))
+
+            app.show_stats()
+            app.cleanup()
 
         except Exception as e:
             log_error(self.logger, f"Error during organization: {str(e)}")
@@ -202,7 +215,7 @@ class CLIManager:
             duration = (end_time - start_time).total_seconds()
 
             console.print(f"[green]Found {len(found_files)} files:[/green]")
-            for file in found_files[:10]:  # Show first 10 files
+            for file in found_files[:10]:
                 console.print(f"  • {file}")
 
             if len(found_files) > 10:
@@ -221,6 +234,7 @@ class CLIManager:
             # Show disk space
             console.print("\n[bold]Disk Space:[/bold]")
             try:
+                import shutil
                 total, used, free = shutil.disk_usage("/")
                 console.print(f"Total: {total / (1024**3):.2f} GB")
                 console.print(f"Used: {used / (1024**3):.2f} GB")
@@ -233,7 +247,6 @@ class CLIManager:
             env_file = self.script_dir / ".env"
             if env_file.exists():
                 console.print("[green].env file found[/green]")
-                # Show key configuration values without sensitive data
                 with open(env_file, 'r') as f:
                     for line in f:
                         if line.strip() and not line.strip().startswith('#'):
@@ -247,19 +260,20 @@ class CLIManager:
 
     def view_unorganized_interactive(self):
         """View unorganized files"""
+        from src.persistence import UnorganizedDatabase
+
         console.print("\n[bold cyan]📋 Unorganized Files[/bold cyan]")
 
         try:
-            # Load unorganized files
             unorganized_db = UnorganizedDatabase(Path("data/unorganized.json"))
             unorganized_data = unorganized_db.get_unorganized_files()
-            
+
             if not unorganized_data:
                 console.print("[green]No unorganized files found.[/green]")
                 return
-            
+
             console.print(f"\n[bold]Unorganized Files ({len(unorganized_data)} files):[/bold]")
-            
+
             for i, item in enumerate(unorganized_data, 1):
                 file_path = item.get('file_path', 'Unknown')
                 reason = item.get('reason', 'No reason provided')
@@ -301,26 +315,21 @@ class CLIManager:
         console.print("\n[bold cyan]🤖 Starting Daemon[/bold cyan]")
 
         try:
-            # Check if daemon is already running
             pid_file = self.script_dir / ".daemon.pid"
             if pid_file.exists():
                 with open(pid_file, 'r') as f:
                     pid = f.read().strip()
 
-                # Check if process is running
                 import subprocess
                 result = subprocess.run(['ps', '-p', pid], capture_output=True)
                 if result.returncode == 0:
                     console.print(f"[yellow]Daemon already running with PID: {pid}[/yellow]")
                     return
                 else:
-                    # PID file exists but process is not running, remove stale file
                     pid_file.unlink()
 
-            # In a real implementation, this would start the actual daemon
-            # For simulation, we'll just create a PID file
             import os
-            simulated_pid = os.getpid()  # In reality, this would be the daemon's PID
+            simulated_pid = os.getpid()
             with open(pid_file, 'w') as f:
                 f.write(str(simulated_pid))
 
@@ -343,8 +352,6 @@ class CLIManager:
             with open(pid_file, 'r') as f:
                 pid = f.read().strip()
 
-            # In a real implementation, this would stop the actual daemon
-            # For simulation, we'll just remove the PID file
             pid_file.unlink()
 
             log_success(self.logger, f"Daemon stopped (PID: {pid})")
@@ -366,24 +373,21 @@ class CLIManager:
             with open(pid_file, 'r') as f:
                 pid = f.read().strip()
 
-            # Check if process is running
             import subprocess
             result = subprocess.run(['ps', '-p', pid], capture_output=True)
             if result.returncode == 0:
                 console.print(f"[green]Daemon is running with PID: {pid}[/green]")
 
-                # Show additional status info
-                start_time = datetime.now() - timedelta(minutes=15)  # Simulated
-                uptime = str(datetime.now() - start_time).split('.')[0]  # Remove microseconds
-                next_check = (datetime.now() + timedelta(minutes=30)).strftime("%H:%M")  # Simulated
+                start_time = datetime.now() - timedelta(minutes=15)
+                uptime = str(datetime.now() - start_time).split('.')[0]
+                next_check = (datetime.now() + timedelta(minutes=30)).strftime("%H:%M")
 
                 console.print(f"  Uptime: {uptime}")
                 console.print(f"  Next check: {next_check}")
-                console.print(f"  Active downloads: 2")  # Simulated
-                console.print(f"  Queued items: 5")  # Simulated
+                console.print(f"  Active downloads: 2")
+                console.print(f"  Queued items: 5")
             else:
                 console.print(f"[yellow]Stale PID file found (PID: {pid}), process not running[/yellow]")
-                # Remove stale PID file
                 pid_file.unlink()
 
         except Exception as e:
@@ -391,18 +395,18 @@ class CLIManager:
 
     def view_stats_interactive(self):
         """View system statistics"""
+        from src.main import MediaOrganizerApp
+
         console.print("\n[bold cyan]📊 System Statistics[/bold cyan]")
 
         try:
-            # Show organization statistics
+            app = MediaOrganizerApp()
+            stats = app.orchestrator.get_stats()
+
             console.print("\n[bold]Organization Stats:[/bold]")
-            
-            stats = self.orchestrator.get_stats()
-            
             for key, value in stats.items():
                 console.print(f"  {key}: {value}")
 
-            # Show file counts in library directories
             console.print("\n[bold]Library Contents:[/bold]")
             library_dirs = ['MOVIES', 'TV', 'ANIME', 'MUSIC']
 
@@ -423,13 +427,13 @@ class CLIManager:
                 else:
                     console.print(f"  {lib_dir}: Path not configured")
 
+            app.cleanup()
+
         except Exception as e:
             log_error(self.logger, f"Error viewing stats: {str(e)}")
 
     def simulate_scan(self, scan_dir: Path, media_type: str) -> list:
         """Simulate file scanning process"""
-        # This would normally contain the actual scanning logic
-        # For now, we'll simulate by finding files
         try:
             media_extensions = {
                 'movies': ['.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm'],
@@ -438,7 +442,6 @@ class CLIManager:
                 'music': ['.mp3', '.flac', '.wav', '.aac', '.m4a', '.ogg', '.wma']
             }
 
-            # Determine which extensions to look for
             if media_type == 'auto':
                 extensions = []
                 for ext_list in media_extensions.values():
@@ -446,22 +449,16 @@ class CLIManager:
             else:
                 extensions = media_extensions.get(media_type, [])
 
-            # Find files with matching extensions
             found_files = []
             for ext in extensions:
                 found_files.extend([str(f.relative_to(scan_dir)) for f in scan_dir.rglob(f"*{ext}")])
 
-            # Limit to first 100 files for performance
             return found_files[:100]
         except Exception:
             return []
 
     def show_menu(self):
         """Show main menu with help information"""
-        from rich.panel import Panel
-        from rich.text import Text
-
-        # Create a panel with the help information
         help_text = Text()
         help_text.append("Available commands:\n", style="bold cyan")
         help_text.append("  organize                          - Organize media files\n")
@@ -472,13 +469,15 @@ class CLIManager:
         help_text.append("  start                             - Start daemon\n")
         help_text.append("  stop                              - Stop daemon\n")
         help_text.append("  stats                             - Show system statistics\n")
+        help_text.append("  trash                             - Trash & Deletion Manager\n")
+        help_text.append("  subtitle-*                        - Subtitle Downloader commands\n")
         help_text.append("  interactive                       - Start interactive menu\n")
         help_text.append("  help                              - Show this help\n")
         help_text.append("\nExamples:\n", style="bold green")
         help_text.append("  media-organizer interactive\n")
         help_text.append("  media-organizer organize\n")
-        help_text.append("  media-organizer scan\n")
-        help_text.append("  media-organizer start\n")
+        help_text.append("  media-organizer trash list\n")
+        help_text.append("  media-organizer subtitle-download --manual\n")
 
         console.print(
             "\n[bold cyan]🗄️  Media Organizer System - CLI Manager[/bold cyan]\n")
@@ -486,7 +485,128 @@ class CLIManager:
             Panel(help_text, title="📖 Commands Help", border_style="blue"))
 
 
-console = Console()
+# ============================================================================
+# TRASH & DELETION CLI (incorporated from deletion_cli.py)
+# ============================================================================
+
+def show_trash_menu():
+    """Show trash & deletion manager submenu"""
+    from src.deletion_cli import TrashCLI
+
+    trash_cli = TrashCLI(dry_run=False)
+
+    try:
+        while True:
+            console.print("\n[bold cyan]🗑️  Trash & Deletion Manager[/bold cyan]")
+            console.print("[bold]Select an operation:[/bold]\n")
+
+            options = {
+                "1": "Delete file (to trash)",
+                "2": "Delete permanent (direct)",
+                "3": "List trash items",
+                "4": "Restore from trash",
+                "5": "Empty trash",
+                "6": "Trash status",
+                "7": "Scan filesystem (rebuild registry)",
+                "8": "Link lookup",
+                "0": "Back to main menu"
+            }
+
+            for key, value in options.items():
+                console.print(f"  [{key}] {value}")
+
+            choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
+
+            if choice == "0":
+                console.print("\n[blue]Returning to main menu...[/blue]")
+                return
+            elif choice == "1":
+                trash_cli._delete_to_trash_interactive()
+            elif choice == "2":
+                trash_cli._delete_permanent_interactive()
+            elif choice == "3":
+                trash_cli._list_trash_interactive()
+            elif choice == "4":
+                trash_cli._restore_from_trash_interactive()
+            elif choice == "5":
+                trash_cli._empty_trash_interactive()
+            elif choice == "6":
+                trash_cli._show_status_interactive()
+            elif choice == "7":
+                trash_cli._scan_filesystem_interactive()
+            elif choice == "8":
+                trash_cli._lookup_links_interactive()
+
+            if choice != "0":
+                input("\nPress Enter to continue...")
+
+    finally:
+        trash_cli.cleanup()
+
+
+# ============================================================================
+# SUBTITLE CLI (incorporated from subtitle_cli.py)
+# ============================================================================
+
+def show_subtitle_menu():
+    """Show subtitle downloader submenu"""
+    while True:
+        console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
+        console.print("[bold]Select an operation:[/bold]\n")
+
+        options = {
+            "1": "Download subtitles (manual)",
+            "2": "View subtitle status",
+            "3": "Files missing subtitles",
+            "4": "Start subtitle daemon",
+            "5": "Stop subtitle daemon",
+            "6": "Restart subtitle daemon",
+            "7": "Configure OpenSubtitles",
+            "8": "Test API connection",
+            "0": "Back to main menu"
+        }
+
+        for key, value in options.items():
+            console.print(f"  [{key}] {value}")
+
+        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
+
+        if choice == "0":
+            console.print("\n[blue]Returning to main menu...[/blue]")
+            return
+        elif choice == "1":
+            from src.subtitle_cli import run_manual_download
+            console.print("\n[cyan]→ Running manual subtitle download...[/cyan]\n")
+            run_manual_download()
+        elif choice == "2":
+            from src.subtitle_cli import show_subtitle_status
+            show_subtitle_status()
+        elif choice == "3":
+            from src.subtitle_cli import show_subtitle_status
+            show_subtitle_status(show_missing=True)
+        elif choice == "4":
+            from src.subtitle_cli import start_subtitle_daemon
+            start_subtitle_daemon()
+        elif choice == "5":
+            from src.subtitle_cli import stop_subtitle_daemon
+            stop_subtitle_daemon()
+        elif choice == "6":
+            from src.subtitle_cli import restart_subtitle_daemon
+            restart_subtitle_daemon()
+        elif choice == "7":
+            from src.subtitle_cli import setup_subtitle_config
+            setup_subtitle_config()
+        elif choice == "8":
+            from src.subtitle_cli import test_subtitle_config
+            test_subtitle_config()
+
+        if choice != "0":
+            input("\nPress Enter to continue...")
+
+
+# ============================================================================
+# MAIN ENTRY POINT
+# ============================================================================
 
 def main():
     """Main entry point"""
@@ -519,8 +639,247 @@ def main():
             console.print(f"[yellow]Command '{command}' not recognized[/yellow]")
             cli_manager.show_menu()
     else:
-        # Default to interactive mode
         cli_manager.show_interactive_menu()
+
+
+# ============================================================================
+# EXPORTED FUNCTIONS FOR MAIN.PY (Trash CLI commands)
+# ============================================================================
+
+def trash_delete(path: str, dry_run: bool = False):
+    """Delete file to trash"""
+    from src.deletion_manager import DeletionManager
+    from src.link_registry import LinkRegistry
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    link_registry = LinkRegistry(config.link_registry_path)
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+    deletion_manager = DeletionManager(
+        link_registry=link_registry,
+        trash_manager=trash_manager,
+        organization_database=None,
+        require_confirmation=config.delete_confirmation_required,
+        default_dry_run=config.delete_dry_run_default
+    )
+
+    try:
+        result = asyncio.run(deletion_manager.delete_to_trash(
+            path=Path(path),
+            dry_run=dry_run
+        ))
+        if result.success:
+            log_success(get_logger(__name__), f"Deleted to trash: {path}")
+        else:
+            log_error(get_logger(__name__), f"Failed: {result.error_message}")
+    finally:
+        link_registry.close()
+        trash_manager.close()
+
+
+def trash_delete_permanent(path: str, dry_run: bool = False, force: bool = False):
+    """Delete file permanently"""
+    from src.deletion_manager import DeletionManager
+    from src.link_registry import LinkRegistry
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    link_registry = LinkRegistry(config.link_registry_path)
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+    deletion_manager = DeletionManager(
+        link_registry=link_registry,
+        trash_manager=trash_manager,
+        organization_database=None,
+        require_confirmation=config.delete_confirmation_required,
+        default_dry_run=config.delete_dry_run_default
+    )
+
+    try:
+        result = asyncio.run(deletion_manager.delete_permanent(
+            path=Path(path),
+            dry_run=dry_run,
+            force=force
+        ))
+        if result.success:
+            log_success(get_logger(__name__), f"Permanently deleted: {path}")
+        else:
+            log_error(get_logger(__name__), f"Failed: {result.error_message}")
+    finally:
+        link_registry.close()
+        trash_manager.close()
+
+
+def trash_list(active_only: bool = True):
+    """List trash items"""
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+
+    try:
+        items = trash_manager.list_items(active_only=active_only)
+        if not items:
+            console.print("[yellow]Trash is empty.[/yellow]")
+            return
+
+        table = Table(box=None, show_header=True, header_style="bold cyan")
+        table.add_column("ID", style="cyan")
+        table.add_column("Original Path", style="white")
+        table.add_column("Size", style="green")
+        table.add_column("Created", style="blue")
+        table.add_column("Days Left", style="yellow")
+
+        for item in items:
+            table.add_row(
+                item.get('trash_id', 'N/A'),
+                item.get('original_path', 'N/A')[:50] + "..." if len(item.get('original_path', '')) > 50 else item.get('original_path', 'N/A'),
+                item.get('size_display', 'N/A'),
+                item.get('created_at', 'N/A')[:10] if item.get('created_at') else 'N/A',
+                str(item.get('days_remaining', 'N/A'))
+            )
+
+        console.print(table)
+    finally:
+        trash_manager.close()
+
+
+def trash_restore(trash_id: str):
+    """Restore item from trash"""
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+
+    try:
+        success = trash_manager.restore_from_trash(trash_id)
+        if success:
+            log_success(get_logger(__name__), f"Restored: {trash_id}")
+        else:
+            log_error(get_logger(__name__), f"Failed to restore: {trash_id}")
+    finally:
+        trash_manager.close()
+
+
+def trash_empty(older_than_days: int = None):
+    """Empty trash"""
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+
+    try:
+        result = trash_manager.empty_trash(older_than_days=older_than_days)
+        log_success(get_logger(__name__), f"Emptied trash: {result['items_removed']} items removed")
+    finally:
+        trash_manager.close()
+
+
+def trash_status():
+    """Show trash status"""
+    from src.deletion_manager import DeletionManager
+    from src.link_registry import LinkRegistry
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    link_registry = LinkRegistry(config.link_registry_path)
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+    deletion_manager = DeletionManager(
+        link_registry=link_registry,
+        trash_manager=trash_manager,
+        organization_database=None
+    )
+
+    try:
+        stats = deletion_manager.get_stats()
+
+        console.print("\n[bold cyan]📊 Trash & Deletion Status[/bold cyan]\n")
+
+        # Trash stats
+        table1 = Table(title="Trash Statistics", box=None, show_header=True, header_style="bold cyan")
+        table1.add_column("Metric", style="cyan")
+        table1.add_column("Value", style="green")
+
+        trash_stats = stats.get('trash', {})
+        table1.add_row("Total Items", str(trash_stats.get('total_items', 0)))
+        table1.add_row("Active Items", str(trash_stats.get('active_items', 0)))
+        table1.add_row("Total Size", f"{trash_stats.get('total_size_gb', 0):.2f} GB")
+        table1.add_row("Retention Days", str(trash_stats.get('retention_days', 30)))
+
+        console.print(table1)
+
+        # Registry stats
+        registry_stats = stats.get('link_registry', {})
+        table2 = Table(title="Link Registry Statistics", box=None, show_header=True, header_style="bold cyan")
+        table2.add_column("Metric", style="cyan")
+        table2.add_column("Value", style="green")
+
+        table2.add_row("Total Inodes", str(registry_stats.get('total_inodes', 0)))
+        table2.add_row("Total Links", str(registry_stats.get('total_links', 0)))
+        table2.add_row("Total Size", f"{registry_stats.get('total_size_gb', 0):.2f} GB")
+
+        console.print(table2)
+    finally:
+        link_registry.close()
+        trash_manager.close()
+
+
+def trash_lookup(path: str):
+    """Lookup links for a file"""
+    from src.deletion_manager import DeletionManager
+    from src.link_registry import LinkRegistry
+    from src.trash_manager import TrashManager
+    from src.config import Config
+
+    config = Config()
+    link_registry = LinkRegistry(config.link_registry_path)
+    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
+    deletion_manager = DeletionManager(
+        link_registry=link_registry,
+        trash_manager=trash_manager,
+        organization_database=None
+    )
+
+    try:
+        preview = asyncio.run(deletion_manager.get_deletion_preview(Path(path)))
+        deletion_manager.print_preview(preview)
+    finally:
+        link_registry.close()
+        trash_manager.close()
+
+
+def trash_scan():
+    """Scan filesystem to rebuild registry"""
+    from src.link_registry import LinkRegistry
+    from src.config import Config
+
+    config = Config()
+    link_registry = LinkRegistry(config.link_registry_path)
+
+    try:
+        download_paths = config.get_all_download_paths()
+        library_paths = config.get_all_library_paths()
+
+        all_paths = list(download_paths.values()) + list(library_paths.values())
+        all_paths = [p for p in all_paths if p and p != Path("") and p.exists()]
+
+        if not all_paths:
+            console.print("[red]✗ No valid directories to scan.[/red]")
+            return
+
+        stats = link_registry.scan_filesystem(all_paths)
+        console.print(f"\n[green]✓ Scan complete![/green]")
+        console.print(f"  Files scanned: {stats['files_scanned']}")
+        console.print(f"  Inodes registered: {stats['inodes_registered']}")
+        console.print(f"  Links found: {stats['links_found']}")
+        console.print(f"  Errors: {stats['errors']}")
+    finally:
+        link_registry.close()
 
 
 if __name__ == "__main__":
