@@ -856,7 +856,377 @@ python tests/test_cli_commands.py
 
 ---
 
-## 2️⃣4️⃣ Testes de CLI Unificado (NOVO)
+## 2️⃣7️⃣ Testes de Renamer (NOVO)
+
+### 27.1 RenamerOrganizer - Classe Nativa
+
+- [ ] `RenamerOrganizer` herda de `BaseOrganizer` corretamente
+- [ ] Implementa `OrganizadorInterface` completamente
+- [ ] Registrado no `Orquestrador` com `MediaType.RENAMER`
+- [ ] Usa `ConflictHandler` do sistema
+- [ ] Usa `OrganizationDatabase` para tracking
+- [ ] Logger centralizado via `get_logger("Renamer")`
+
+### 27.2 Padrões de Renomeação
+
+**Movies:**
+- [ ] Padrão: `Title (Year).ext`
+- [ ] Exemplo: `The Matrix (1999).mkv`
+- [ ] Sanitização de título funciona
+- [ ] Ano extraído do input do usuário
+
+**TV Shows:**
+- [ ] Padrão: `Series.S01E01.ext`
+- [ ] Exemplo: `Breaking.Bad.S01E01.mkv`
+- [ ] Detecção automática de episódio (S01E01, 1x01, Ep01, E01)
+- [ ] Temporada formatada como `S01`, `S02`, etc.
+- [ ] Episódio formatado como `E01`, `E02`, etc.
+
+**Anime:**
+- [ ] Mesma lógica de TV Shows
+- [ ] Usa `LIBRARY_PATH_ANIMES` se organizado via organizer
+- [ ] Metadata type: `anime`
+
+**Doramas:**
+- [ ] Mesma lógica de TV Shows
+- [ ] Usa `LIBRARY_PATH_DORAMAS` se organizado via organizer
+- [ ] Metadata type: `dorama`
+
+**Music:**
+- [ ] Padrão: `## - Track.ext`
+- [ ] Exemplo: `01 - Track Name.mp3`
+- [ ] Track number formatado com zero à esquerda
+- [ ] Sanitização do título
+
+**Books:**
+- [ ] Padrão: `Author - Title (Year).ext`
+- [ ] Exemplo: `J.R.R. Tolkien - The Hobbit (1937).epub`
+- [ ] Autor sanitizado via `sanitize_author()`
+- [ ] Título sanitizado via `sanitize_title()`
+
+**Comics:**
+- [ ] Padrão: `Series #Issue.ext`
+- [ ] Exemplo: `Batman #001.cbz`
+- [ ] Issue number formatado com 3 dígitos
+- [ ] Suporta `.cbz`, `.cbr`, `.cb7`, `.cbt`
+
+**Subtitles:**
+- [ ] Padrão: `Series.S01E01.lang.ext`
+- [ ] Exemplo: `Breaking.Bad.S01E01.pt.srt`
+- [ ] Detecção de idioma existente (pt, en, es, fr)
+- [ ] Adiciona `.pt` por padrão se não detectado
+- [ ] Suporta `.srt`, `.ass`, `.vtt`, `.sub`
+
+### 27.3 Detecção de Episódios
+
+- [ ] Pattern `S01E01`, `s1e1`, `S01.E01`
+- [ ] Pattern `1x01`, `01x02`, `1X01`
+- [ ] Pattern `Ep01`, `EP01`, `ep.1`, `Episode 1`
+- [ ] Pattern `E01`, `E1` (sem S)
+- [ ] Retorna `None` se nenhum pattern detectado
+- [ ] Arquivo sem episódio detectado é reportado
+
+### 27.4 RenamerCLI - Interface de Linha de Comando
+
+- [ ] Módulo `src/renamer.py` importável
+- [ ] Classe `RenamerCLI` com menu interativo
+- [ ] `run()` como entry point
+- [ ] `_show_main_menu()` exibe opções corretamente
+- [ ] `_handle_rename_choice()` processa escolha do usuário
+- [ ] `_get_metadata_for_type()` coleta metadata por tipo
+- [ ] `_show_results()` exibe estatísticas formatadas
+
+### 27.5 Comandos CLI
+
+- [ ] `./run.sh renamer` abre menu interativo
+- [ ] `python -m src.renamer` funciona diretamente
+- [ ] `python -m src.renamer --dry-run` preview mode
+- [ ] `python -m src.renamer --help` exibe help
+- [ ] Opção `--type` para modo direto (futuro)
+- [ ] Opção `--path` para caminho (futuro)
+- [ ] Opção `--title` para título (futuro)
+
+### 27.6 Menu Principal Integrado
+
+- [ ] Opção [2] "Rename media files (Renamer) 📝" no menu
+- [ ] Acesso via `./run.sh organize` → Opção 2
+- [ ] Acesso via `./run.sh renamer` direto
+- [ ] Dry-run toggle dentro do submenu
+- [ ] Retorno ao menu principal (opção 0) funciona
+
+### 27.7 Dry-Run Mode
+
+- [ ] `--dry-run` flag ativa modo de simulação
+- [ ] Nenhum arquivo é modificado no dry-run
+- [ ] Logs indicam `[DRY-RUN] Would rename: ...`
+- [ ] Estatísticas são exibidas mesmo em dry-run
+- [ ] Mensagem de aviso amarela no final
+
+### 27.8 Conflict Resolution
+
+- [ ] Integra com `ConflictHandler` do sistema
+- [ ] Estratégia `skip` (padrão) mantém existente
+- [ ] Estratégia `rename` adiciona contador
+- [ ] Estratégia `overwrite` substitui arquivo
+- [ ] Detecta arquivos idênticos por hash
+
+### 27.9 Database Tracking
+
+- [ ] `calculate_file_hash()` calcula MD5 do arquivo
+- [ ] `adicionar_midia()` registra no `organization.json`
+- [ ] `is_file_organized()` detecta renomeações prévias
+- [ ] Metadata inclui: type, title, season, episode, year, etc.
+- [ ] Stats incrementadas corretamente
+
+### 27.10 Tratamento de Erros
+
+- [ ] Pasta inexistente: erro claro
+- [ ] Path não é diretório: erro claro
+- [ ] Input inválido (ano, temporada): ValueError tratado
+- [ ] KeyboardInterrupt: cancela graciosamente
+- [ ] Exception genérica: log + mensagem de erro
+
+### 27.10 Wrapper Shell Script
+
+- [ ] `src/renamer.sh` existe e é executável
+- [ ] Ativa virtual environment se existir
+- [ ] Configura PYTHONPATH corretamente
+- [ ] Executa `python -m src.renamer "$@"`
+- [ ] Repassa argumentos para Python
+
+### 27.11 Configurações (.env)
+
+- [ ] Não requer configurações específicas
+- [ ] Usa paths do sistema (DOWNLOAD_PATH_*)
+- [ ] Respeita `CONFLICT_STRATEGY` do .env
+- [ ] Respeita `DRY_RUN_MODE` do .env se setado
+
+### 27.12 Fluxos de Trabalho
+
+**Fluxo: Renomear Temporada de Série**
+1. [ ] Usuário seleciona "TV Shows" no menu
+2. [ ] Input: caminho da pasta
+3. [ ] Input: nome da série
+4. [ ] Input: número da temporada
+5. [ ] Scan na pasta por vídeos e legendas
+6. [ ] Detecção de episódio em cada arquivo
+7. [ ] Geração do novo nome: `Serie.S01E01.ext`
+8. [ ] Verificação de conflitos
+9. [ ] Renomeação (ou dry-run)
+10. [ ] Exibição de estatísticas
+
+**Fluxo: Renomear Filmes**
+1. [ ] Usuário seleciona "Movies" no menu
+2. [ ] Input: caminho da pasta
+3. [ ] Input: título do filme
+4. [ ] Input: ano
+5. [ ] Scan na pasta por vídeos
+6. [ ] Geração do novo nome: `Titulo (Ano).ext`
+7. [ ] Verificação de conflitos
+8. [ ] Renomeação
+9. [ ] Exibição de estatísticas
+
+**Fluxo: Renomear Músicas**
+1. [ ] Usuário seleciona "Music" no menu
+2. [ ] Input: caminho da pasta
+3. [ ] Input: número da track
+4. [ ] Input: título da track
+5. [ ] Scan na pasta por áudio
+6. [ ] Geração do novo nome: `## - Titulo.ext`
+7. [ ] Renomeação
+8. [ ] Exibição de estatísticas
+
+### 27.13 Validações e Segurança
+
+- [ ] Títulos sanitizados (remove `< > : " / \ | ? *`)
+- [ ] Títulos truncados (max 100 chars)
+- [ ] Autores truncados (max 50 chars)
+- [ ] Números validados (inteiros positivos)
+- [ ] Extensões suportadas validadas
+- [ ] Confirmação implícita no dry-run
+
+### 27.14 Estatísticas e Logs
+
+- [ ] `processed`: total de arquivos escaneados
+- [ ] `renamed`: arquivos renomeados com sucesso
+- [ ] `skipped`: arquivos já no padrão correto
+- [ ] `failed`: arquivos com falha na renomeação
+- [ ] Success rate calculado e exibido
+- [ ] Logs em `logs/organizer.log`
+
+---
+
+## 2️⃣8️⃣ Testes de CLI Unificado (Atualizado)
+
+### 28.1 Estrutura de Módulos
+
+- [ ] `cli_manager.py` unifica todos os comandos CLI
+- [ ] `renamer.py` módulo standalone completo
+- [ ] `subtitle_config.py` separado (configuração específica)
+- [ ] `subtitle_daemon.py` e `subtitle_downloader.py` intactos
+- [ ] Módulos de deleção em `src/` (não em subpasta)
+
+### 28.2 Imports e Dependências
+
+- [ ] `from src.cli_manager import CLIManager` funciona
+- [ ] `from src.cli_manager import show_trash_menu` funciona
+- [ ] `from src.cli_manager import show_subtitle_menu` funciona
+- [ ] `from src.cli_manager import show_renamer_menu` funciona
+- [ ] `from src.renamer import RenamerCLI` funciona
+- [ ] `from src.link_registry import LinkRegistry` funciona
+- [ ] `from src.trash_manager import TrashManager` funciona
+- [ ] `from src.deletion_manager import DeletionManager` funciona
+
+### 28.3 Comandos Unificados
+
+- [ ] `media-organizer interactive` - Menu unificado
+- [ ] `media-organizer organize` - Organização de mídia
+- [ ] `media-organizer renamer` - Renomeação de arquivos
+- [ ] `media-organizer trash *` - Comandos de deleção
+- [ ] `media-organizer subtitle-*` - Comandos de legendas
+- [ ] `media-organizer help` - Help atualizado
+
+### 28.4 Menu Interativo Principal
+
+- [ ] Opção [1]: Organize media files
+- [ ] Opção [2]: Rename media files (Renamer) 📝
+- [ ] Opção [3]: Scan for new files
+- [ ] Opção [4]: View system status
+- [ ] Opção [5]: View unorganized files
+- [ ] Opção [6]: View organization logs
+- [ ] Opção [7]: Start daemon
+- [ ] Opção [8]: Stop daemon
+- [ ] Opção [9]: View daemon status
+- [ ] Opção [10]: View statistics
+- [ ] Opção [11]: Trash & Deletion 🗑️
+- [ ] Opção [12]: Subtitle Downloader 📺
+- [ ] Opção [13]: Exit
+
+---
+
+## 2️⃣9️⃣ Testes de Estrutura de Arquivos (Atualizado)
+
+### 29.1 Nova Estrutura de Diretórios
+
+```
+media-organizer/
+├── src/
+│   ├── renamer.py               # Renamer CLI nativo
+│   ├── renamer.sh               # Wrapper shell
+│   ├── cli_manager.py           # CLI unificado
+│   ├── organizers.py            # Inclui RenamerOrganizer
+│   ├── core.py                  # Inclui MediaType.RENAMER
+│   ├── link_registry.py         # Registro de hardlinks
+│   ├── trash_manager.py         # Gerenciador de lixeira
+│   ├── deletion_manager.py      # Orquestrador de exclusão
+│   ├── subtitle_config.py       # Configuração OpenSubtitles
+│   ├── subtitle_daemon.py       # Daemon de legendas
+│   ├── subtitle_downloader.py   # Downloader de legendas
+│   └── ... (outros módulos)
+├── data/
+│   ├── organization.json        # Database principal
+│   ├── unorganized.json         # Arquivos falhos
+│   ├── link_registry.json       # Registry de hardlinks
+│   ├── backups/                 # Backups automáticos
+│   └── trash/                   # Lixeira
+│       ├── index.json           # Índice de itens
+│       └── files/               # Arquivos preservados
+├── logs/
+│   ├── organizer.log
+│   ├── daemon.log
+│   └── subtitle_downloader.log
+├── docs/
+│   └── DELETION_GUIDE.md        # Guia de exclusão
+└── .env.example                 # Atualizado com configs
+```
+
+### 29.2 Validação de Estrutura
+
+- [ ] `src/renamer.py` existe e é importável
+- [ ] `src/renamer.sh` existe e é executável
+- [ ] `MediaType.RENAMER` em `src/core.py`
+- [ ] `RenamerOrganizer` em `src/organizers.py`
+- [ ] `data/link_registry.json` é válido JSON
+- [ ] `data/trash/index.json` é válido JSON
+- [ ] `docs/DELETION_GUIDE.md` existe e está atualizado
+- [ ] `.env.example` inclui configurações de trash
+- [ ] Pasta `src/deletion/` removida (arquivos em `src/`)
+
+---
+
+## 3️⃣0️⃣ Matriz de Rastreabilidade (Atualizada)
+
+| Funcionalidade | Módulo | Testes | Status |
+|----------------|--------|--------|--------|
+| RenamerOrganizer | `src/organizers.py` | Seção 27.1 | ✅ Implementado |
+| Renamer CLI | `src/renamer.py` | Seção 27.4-27.5 | ✅ Implementado |
+| Renamer Menu | `src/cli_manager.py` | Seção 27.6 | ✅ Implementado |
+| MediaType.RENAMER | `src/core.py` | - | ✅ Implementado |
+| Link Registry | `src/link_registry.py` | Seção 23.1 | ✅ Implementado |
+| Trash Manager | `src/trash_manager.py` | Seção 23.2 | ✅ Implementado |
+| Deletion Manager | `src/deletion_manager.py` | Seção 23.3 | ✅ Implementado |
+| CLI Trash Commands | `src/cli_manager.py` | Seção 23.4 | ✅ Implementado |
+| CLI Unificado | `src/cli_manager.py` | Seção 28 | ✅ Implementado |
+| Configurações | `.env.example` | Seção 23.6 | ✅ Implementado |
+| Documentação | `README.md` | - | ✅ Implementado |
+
+---
+
+## ✅ Checklist de Aprovação para Produção (Atualizado)
+
+Antes de considerar o sistema pronto para produção, valide:
+
+- [ ] **Todos os testes acima passaram** (incluindo novas seções 23-30)
+- [ ] **Renamer testado** para todos os tipos de mídia
+- [ ] **Trash & Deletion testado** em ambiente controlado
+- [ ] **Restauração da lixeira validada** com arquivos reais
+- [ ] **Backup pré-exclusão verificado** e testado restore
+- [ ] **Performance aceitável** (scan de filesystem < 5 min)
+- [ ] **Recuperação de falhas testada** (reinício após crash)
+- [ ] **Backup e restore testados** (database e lixeira)
+- [ ] **Documentação atualizada** (`DELETION_GUIDE.md`, `README.md`)
+- [ ] **Equipe treinada nos procedimentos** de exclusão/restore
+- [ ] **Monitoramento configurado** (lixeira, registry, backups)
+- [ ] **Plano de rollback definido** (restaurar backup + lixeira)
+
+---
+
+## 📊 Matriz de Prioridade de Testes (Atualizada)
+
+| Prioridade | Área | Criticidade |
+|------------|------|-------------|
+| 🔴 Alta | Organização de Filmes/Séries | Crítico |
+| 🔴 Alta | Validação de Arquivos | Crítico |
+| 🔴 Alta | Database e Backups | Crítico |
+| 🔴 Alta | **Trash & Deletion Manager** | **Crítico** |
+| 🔴 Alta | **Link Registry** | **Crítico** |
+| 🔴 Alta | **Renamer (NATIVO)** | **Crítico** |
+| 🟠 Média | TMDB Integration | Importante |
+| 🟠 Média | qBittorrent Integration | Importante |
+| 🟠 Média | Modo Daemon | Importante |
+| 🟠 Média | **CLI Unificado** | **Importante** |
+| 🟡 Baixa | Download de Legendas | Nice-to-have |
+| 🟡 Baixa | Enriquecimento Online | Nice-to-have |
+| 🟡 Baixa | Conversão Calibre | Nice-to-have |
+
+---
+
+## 📞 Suporte e Referências
+
+- **Documentação Principal:** `README.md`
+- **Documentação Trash:** `docs/DELETION_GUIDE.md`
+- **Logs do Sistema:** `logs/organizer.log`
+- **Database:** `data/organization.json`
+- **Arquivos Falhos:** `data/unorganized.json`
+- **Link Registry:** `data/link_registry.json`
+- **Lixeira:** `data/trash/`
+- **Configuração:** `.env`
+
+---
+
+*Documento gerado para o Media Organizer System - Fevereiro de 2026*
+*Atualizado com Trash & Deletion Manager - Fevereiro de 2026*
+*Atualizado com Renamer Nativo - Fevereiro de 2026*
 
 ### 24.1 Estrutura de Módulos
 
