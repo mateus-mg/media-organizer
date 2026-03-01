@@ -151,6 +151,38 @@ Lists files that require manual mapping.
 ./run.sh test
 ```
 
+### Renamer - Rename Media Files
+```bash
+./run.sh renamer
+```
+Opens interactive menu to rename media files to standardized patterns.
+
+**Supported rename patterns:**
+- **Movies**: `Title (Year).ext` - e.g., `The Matrix (1999).mkv`
+- **TV Shows**: `Series.S01E01.ext` - e.g., `Breaking.Bad.S01E01.mkv`
+- **Anime**: `Anime.S01E01.ext` - e.g., `Naruto.S01E01.mkv`
+- **Doramas**: `Dorama.S01E01.ext` - e.g., `Goblin.S01E01.mkv`
+- **Music**: `## - Track.ext` - e.g., `01 - Track Name.mp3`
+- **Books**: `Author - Title (Year).ext` - e.g., `J.R.R. Tolkien - The Hobbit (1937).epub`
+- **Comics**: `Series #Issue.ext` - e.g., `Batman #001.cbz`
+- **Subtitles**: `Series.S01E01.pt.srt` - e.g., `Breaking.Bad.S01E01.pt.srt`
+
+**Features:**
+- Automatic episode detection from various formats (S01E01, 1x01, Ep01, E01)
+- Language preservation for subtitles (pt, en, es, fr)
+- Conflict detection and resolution
+- Dry-run mode to preview changes
+- Character sanitization for filenames
+- Integrated with media-organizer database for tracking
+
+**Example usage:**
+```bash
+# Interactive mode
+./run.sh renamer
+
+# Select media type → Enter folder path → Enter metadata → Rename!
+```
+
 ## File Organization Structure
 
 ### Recommended Filename Patterns for Auto-Detection

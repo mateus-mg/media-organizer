@@ -901,17 +901,265 @@ class CalibreManager:
         """Search books in Calibre library"""
         if not self.enabled:
             return []
-        
+
         try:
             cmd = ['calibredb', 'list', '--search', query, '--as-json']
             if self.library_path:
                 cmd.extend(['--library-path', str(self.library_path)])
-            
+
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
-            
+
             if result.returncode == 0:
                 data = json.loads(result.stdout)
                 return data.get('books', [])
             return []
         except Exception:
             return []
+
+
+# ============================================================================
+# SECTION 6: RENAMER ORGANIZER
+# ============================================================================
+
+class RenamerOrganizer(BaseOrganizer):
+    """
+    Renamer Organizer - Native media file renamer.
+    
+    Renames files to standardized patterns compatible with
+    Plex, Jellyfin, Emby, and Sonarr.
+    
+    Integrates with:
+    - BaseOrganizer (sanitize, conflict handling, database)
+    - MediaClassifier (file type detection)
+    - ConflictHandler (conflict resolution)
+    - OrganizationDatabase (tracking)
+    """
+    
+    VIDEO_EXTS = {'.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm', '.m4v'}
+    AUDIO_EXTS = {'.mp3', '.flac', '.m4a', '.ogg', '.opus', '.aac', '.wav'}
+    BOOK_EXTS = {'.epub', '.pdf', '.mobi', '.azw', '.azw3'}
+    COMIC_EXTS = {'.cbz', '.cbr', '.cb7', '.cbt'}
+    SUB_EXTS = {'.srt', '.ass', '.vtt', '.sub'}
+    
+    EPISODE_PATTERNS = [
+        r'[Ss](\d{1,2})[Ee](\d{1,2})',
+        r'(\d{1,2})x(\d{1,2})',
+        r'[Ee][Pp][\s\.]?(\d{1,2})',
+        r'[Ee][\s\.]?(\d{1,2})(?![a-z])',
+    ]
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.classifier = MediaClassifier(logger=self.logger)
+    
+    def pode_processar(self, file_path: Path) -> bool:
+        """Check if renamer can process this file"""
+        ext = file_path.suffix.lower()
+        return ext in (self.VIDEO_EXTS | self.AUDIO_EXTS | 
+                       self.BOOK_EXTS | self.COMIC_EXTS | self.SUB_EXTS)
+    
+    def obter_tipo_midia(self) -> MediaType:
+        return MediaType.RENAMER
+    
+    async def organizar(self, file_path: Path) -> OrganizationResult:
+        """
+        Organize (rename) single file.
+        
+        Uses metadata from file_path.parent to determine naming pattern.
+        """
+        from src.detection import MediaClassifier
+        
+        # Get metadata from context (environment variables or passed metadata)
+        metadata = self._extract_metadata_from_context(file_path)
+        
+        if not metadata:
+            return OrganizationResult(
+                success=False,
+                error_message="Could not determine rename pattern"
+            )
+        
+        # Build new name
+        new_name = self._build_new_name(file_path, metadata)
+        dest_path = file_path.parent / new_name
+        
+        # Check if already named correctly
+        if file_path == dest_path:
+            return OrganizationResult(
+                success=True,
+                organized_path=dest_path,
+                skipped=True,
+                metadata=metadata
+            )
+        
+        # Resolve conflicts
+        final_dest, action = self.conflict_handler.resolve(
+            file_path, dest_path, self.dry_run
+        )
+        
+        if final_dest is None:
+            return OrganizationResult(
+                success=False,
+                error_message="Conflict resolution failed"
+            )
+        
+        # Rename
+        if not self.dry_run:
+            file_path.rename(final_dest)
+            self.logger.info(f"Renamed: {file_path.name} → {final_dest.name}")
+            
+            # Track in database
+            file_hash = self.calculate_file_hash(final_dest)
+            self.database.adicionar_midia(
+                file_hash=file_hash,
+                original_path=str(file_path),
+                organized_path=str(final_dest),
+                metadata=metadata
+            )
+        else:
+            self.logger.info(f"[DRY-RUN] Would rename: {file_path.name} → {final_dest.name}")
+        
+        return OrganizationResult(
+            success=True,
+            organized_path=final_dest,
+            metadata=metadata
+        )
+    
+    def _extract_metadata_from_context(self, file_path: Path) -> Optional[Dict]:
+        """
+        Extract rename metadata from user-provided context.
+        
+        Context is passed via environment or config:
+        - RENAMER_TYPE: movie, tv, anime, dorama, music, book, comic
+        - RENAMER_TITLE: series/movie/artist name
+        - RENAMER_SEASON: season number (for TV/anime/dorama)
+        - RENAMER_YEAR: year (for movies/books)
+        - RENAMER_TRACK: track number (for music)
+        - RENAMER_ISSUE: issue number (for comics)
+        - RENAMER_AUTHOR: author name (for books)
+        """
+        import os
+        
+        rename_type = os.getenv('RENAMER_TYPE', 'tv')
+        title = os.getenv('RENAMER_TITLE', '')
+        season = int(os.getenv('RENAMER_SEASON', '1'))
+        year = int(os.getenv('RENAMER_YEAR', '2024'))
+        track = int(os.getenv('RENAMER_TRACK', '1'))
+        issue = int(os.getenv('RENAMER_ISSUE', '1'))
+        author = os.getenv('RENAMER_AUTHOR', '')
+        
+        return {
+            'type': rename_type,
+            'title': title,
+            'season': season,
+            'year': year,
+            'track': track,
+            'issue': issue,
+            'author': author,
+        }
+    
+    def _build_new_name(self, file_path: Path, metadata: Dict) -> str:
+        """Build new filename based on metadata"""
+        ext = file_path.suffix
+        title = self.sanitize_title(metadata['title'])
+        
+        if metadata['type'] == 'movie':
+            # Movie: "Title (Year).ext"
+            return f"{title} ({metadata['year']}){ext}"
+        
+        elif metadata['type'] in ['tv', 'anime', 'dorama']:
+            # TV/Anime/Dorama: "Series.S01E01.ext"
+            series = title.replace(' ', '.')
+            season_fmt = f"S{metadata['season']:02d}"
+            
+            # Detect episode number from original filename
+            episode = self._detect_episode(file_path.name)
+            if episode:
+                ep_fmt = f"E{episode:02d}"
+                return f"{series}.{season_fmt}{ep_fmt}{ext}"
+            
+            # Fallback: use original name
+            return file_path.name
+        
+        elif metadata['type'] == 'music':
+            # Music: "## - Track.ext"
+            track_fmt = f"{metadata['track']:02d}"
+            return f"{track_fmt} - {title}{ext}"
+        
+        elif metadata['type'] == 'book':
+            # Book: "Author - Title (Year).ext"
+            author = self.sanitize_author(metadata.get('author', 'Unknown'))
+            return f"{author} - {title} ({metadata['year']}){ext}"
+        
+        elif metadata['type'] == 'comic':
+            # Comic: "Series #Issue.ext"
+            issue_fmt = f"#{metadata['issue']:03d}"
+            return f"{title} {issue_fmt}{ext}"
+        
+        elif metadata['type'] == 'subtitle':
+            # Subtitle: "Series.S01E01.pt.ext"
+            series = title.replace(' ', '.')
+            season_fmt = f"S{metadata['season']:02d}"
+            
+            episode = self._detect_episode(file_path.name)
+            if episode:
+                ep_fmt = f"E{episode:02d}"
+                # Detect language
+                lang_match = re.search(r'\.(pt|en|es|fr)\.(srt|ass|vtt|sub)$', 
+                                       file_path.name, re.IGNORECASE)
+                lang = lang_match.group(1).lower() if lang_match else 'pt'
+                return f"{series}.{season_fmt}{ep_fmt}.{lang}{ext}"
+        
+        return file_path.name
+    
+    def _detect_episode(self, filename: str) -> Optional[int]:
+        """Detect episode number from filename"""
+        for pattern in self.EPISODE_PATTERNS:
+            match = re.search(pattern, filename)
+            if match:
+                # Return episode number (group 2 if available, else group 1)
+                if match.lastindex and match.lastindex >= 2:
+                    return int(match.group(2))
+                else:
+                    return int(match.group(1))
+        return None
+    
+    def rename_batch(self, folder: Path, metadata: Dict) -> Dict:
+        """
+        Rename all files in folder (batch mode).
+        
+        Used by CLI for interactive renaming.
+        Returns statistics.
+        """
+        import os
+        
+        stats = {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
+        
+        # Set context for batch operation
+        os.environ['RENAMER_TYPE'] = metadata.get('type', 'tv')
+        os.environ['RENAMER_TITLE'] = metadata.get('title', '')
+        os.environ['RENAMER_SEASON'] = str(metadata.get('season', 1))
+        os.environ['RENAMER_YEAR'] = str(metadata.get('year', 2024))
+        os.environ['RENAMER_TRACK'] = str(metadata.get('track', 1))
+        os.environ['RENAMER_ISSUE'] = str(metadata.get('issue', 1))
+        os.environ['RENAMER_AUTHOR'] = metadata.get('author', '')
+        
+        # Scan folder
+        extensions = self.VIDEO_EXTS | self.AUDIO_EXTS | self.BOOK_EXTS | self.COMIC_EXTS | self.SUB_EXTS
+        files = []
+        for ext in extensions:
+            files.extend(folder.glob(f'*{ext}'))
+            files.extend(folder.glob(f'*{ext.upper()}'))
+        
+        for file in files:
+            stats['processed'] += 1
+            result = asyncio.run(self.organizar(file))
+            
+            if result.success:
+                if result.skipped:
+                    stats['skipped'] += 1
+                else:
+                    stats['renamed'] += 1
+            else:
+                stats['failed'] += 1
+        
+        return stats

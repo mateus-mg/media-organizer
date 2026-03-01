@@ -70,49 +70,59 @@ class CLIManager:
 
             options = {
                 "1": "Organize media files",
-                "2": "Scan for new files",
-                "3": "View system status",
-                "4": "View unorganized files",
-                "5": "View organization logs",
-                "6": "Start daemon",
-                "7": "Stop daemon",
-                "8": "View daemon status",
-                "9": "View statistics",
-                "10": "Trash & Deletion",
-                "11": "Subtitle Downloader",
-                "12": "Exit"
+                "2": "Rename media files (Renamer)",
+                "3": "Scan for new files",
+                "4": "View system status",
+                "5": "View unorganized files",
+                "6": "View organization logs",
+                "7": "Start daemon",
+                "8": "Stop daemon",
+                "9": "View daemon status",
+                "10": "View statistics",
+                "11": "Trash & Deletion",
+                "12": "Subtitle Downloader",
+                "13": "Exit"
             }
 
             for key, value in options.items():
-                console.print(f"  [{key}] {value}")
+                if key == "2":
+                    console.print(f"  [{key}] {value} 📝")
+                elif key == "11":
+                    console.print(f"  [{key}] {value} 📺")
+                elif key == "10":
+                    console.print(f"  [{key}] {value} 🗑️")
+                else:
+                    console.print(f"  [{key}] {value}")
 
             try:
                 choice = Prompt.ask("\nYour choice", choices=list(
-                    options.keys()), default="12")
+                    options.keys()), default="13")
 
                 if choice == '1':
                     self.organize_media_interactive()
                 elif choice == '2':
-                    self.scan_files_interactive()
+                    show_renamer_menu()
                 elif choice == '3':
-                    self.show_status_interactive()
+                    self.scan_files_interactive()
                 elif choice == '4':
-                    self.view_unorganized_interactive()
+                    self.show_status_interactive()
                 elif choice == '5':
-                    self.view_logs_interactive()
+                    self.view_unorganized_interactive()
                 elif choice == '6':
-                    self.start_daemon_interactive()
+                    self.view_logs_interactive()
                 elif choice == '7':
-                    self.stop_daemon_interactive()
+                    self.start_daemon_interactive()
                 elif choice == '8':
-                    self.status_daemon_interactive()
+                    self.stop_daemon_interactive()
                 elif choice == '9':
-                    self.view_stats_interactive()
+                    self.status_daemon_interactive()
                 elif choice == '10':
-                    show_trash_menu()
+                    self.view_stats_interactive()
                 elif choice == '11':
-                    show_subtitle_menu()
+                    show_trash_menu()
                 elif choice == '12':
+                    show_subtitle_menu()
+                elif choice == '13':
                     console.print("[green]Exiting... Goodbye![/green]")
                     break
 
@@ -602,6 +612,121 @@ def show_subtitle_menu():
 
         if choice != "0":
             input("\nPress Enter to continue...")
+
+
+# ============================================================================
+# RENAMER CLI
+# ============================================================================
+
+def show_renamer_menu():
+    """Show renamer submenu - integrated with media-organizer style"""
+    from src.main import MediaOrganizerApp
+    from src.config import Config
+    
+    config = Config()
+    dry_run = False
+    
+    while True:
+        console.print("\n[bold cyan]📝 Renamer - Rename Media Files[/bold cyan]")
+        console.print("[bold]Select media type:[/bold]\n")
+        
+        options = {
+            "1": "Movies (Title (Year).ext)",
+            "2": "TV Shows (Serie.S01E01.ext)",
+            "3": "Anime (Anime.S01E01.ext)",
+            "4": "Doramas (Dorama.S01E01.ext)",
+            "5": "Music (## - Track.ext)",
+            "6": "Books (Author - Title (Year).ext)",
+            "7": "Comics (Series #Issue.ext)",
+            "8": f"Dry-run: [{'ON' if dry_run else 'OFF'}]",
+            "0": "Back to main menu"
+        }
+        
+        for key, value in options.items():
+            if key == "8":
+                status = "ON" if dry_run else "OFF"
+                color = "yellow" if dry_run else "green"
+                console.print(f"  [{key}] [{color}]{value}[/{color}]")
+            else:
+                console.print(f"  [{key}] {value}")
+        
+        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
+        
+        if choice == "0":
+            console.print("\n[blue]Returning to main menu...[/blue]")
+            return
+        elif choice == "8":
+            dry_run = not dry_run
+            console.print(f"[green]Dry-run turned {'ON' if dry_run else 'OFF'}[/green]")
+            continue
+        
+        # Common inputs
+        folder_str = Prompt.ask("Enter folder path")
+        folder = Path(folder_str)
+        
+        if not folder.exists():
+            console.print(f"[red]Folder does not exist: {folder}[/red]")
+            continue
+        
+        if not folder.is_dir():
+            console.print(f"[red]Path is not a directory: {folder}[/red]")
+            continue
+        
+        app = MediaOrganizerApp(dry_run=dry_run)
+        stats = {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
+        
+        # Execute rename by type
+        if choice == "1":  # Movies
+            title = Prompt.ask("Movie title")
+            year = int(Prompt.ask("Year", default="2024"))
+            metadata = {'type': 'movie', 'title': title, 'year': year}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "2":  # TV Shows
+            series = Prompt.ask("Series name")
+            season = int(Prompt.ask("Season", default="1"))
+            metadata = {'type': 'tv', 'title': series, 'season': season}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "3":  # Anime
+            anime = Prompt.ask("Anime name")
+            season = int(Prompt.ask("Season", default="1"))
+            metadata = {'type': 'anime', 'title': anime, 'season': season}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "4":  # Doramas
+            dorama = Prompt.ask("Dorama name")
+            season = int(Prompt.ask("Season", default="1"))
+            metadata = {'type': 'dorama', 'title': dorama, 'season': season}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "5":  # Music
+            track_num = int(Prompt.ask("Track number", default="1"))
+            title = Prompt.ask("Track title")
+            metadata = {'type': 'music', 'title': title, 'track': track_num}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "6":  # Books
+            author = Prompt.ask("Author")
+            title = Prompt.ask("Title")
+            year = int(Prompt.ask("Year", default="2024"))
+            metadata = {'type': 'book', 'title': title, 'author': author, 'year': year}
+            stats = app.rename_files_batch(folder, metadata)
+            
+        elif choice == "7":  # Comics
+            series = Prompt.ask("Series name")
+            issue = int(Prompt.ask("Issue number", default="1"))
+            metadata = {'type': 'comic', 'title': series, 'issue': issue}
+            stats = app.rename_files_batch(folder, metadata)
+        
+        # Display results (same style as media-organizer)
+        console.print("\n[bold cyan]📊 Results:[/bold cyan]")
+        console.print(f"  Processed: [green]{stats['processed']}[/green]")
+        console.print(f"  Renamed:   [green]{stats['renamed']}[/green]")
+        console.print(f"  Skipped:   [yellow]{stats['skipped']}[/yellow]")
+        console.print(f"  Failed:    [red]{stats['failed']}[/red]")
+        
+        app.cleanup()
 
 
 # ============================================================================
