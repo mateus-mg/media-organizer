@@ -66,11 +66,11 @@ class CLIManager:
         """Show interactive main menu"""
         while True:
             console.print("\n[bold cyan]🗄️  Media Organizer System[/bold cyan]")
-            console.print("[bold]Select an operation:[/bold]")
+            console.print("[bold]Select an operation:[/bold]\n")
 
             options = {
                 "1": "Organize media files",
-                "2": "Rename media files (Renamer)",
+                "2": "Rename media files",
                 "3": "Scan for new files",
                 "4": "View system status",
                 "5": "View unorganized files",
@@ -85,14 +85,7 @@ class CLIManager:
             }
 
             for key, value in options.items():
-                if key == "2":
-                    console.print(f"  [{key}] {value} 📝")
-                elif key == "11":
-                    console.print(f"  [{key}] {value} 📺")
-                elif key == "10":
-                    console.print(f"  [{key}] {value} 🗑️")
-                else:
-                    console.print(f"  [{key}] {value}")
+                console.print(f"  [{key}] {value}")
 
             try:
                 choice = Prompt.ask("\nYour choice", choices=list(
