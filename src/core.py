@@ -38,6 +38,7 @@ class MediaType(Enum):
     MUSIC = "music"
     BOOK = "book"
     COMIC = "comic"
+    RENAMER = "renamer"
     UNKNOWN = "unknown"
 
 

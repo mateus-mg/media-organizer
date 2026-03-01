@@ -10,7 +10,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import click
 from rich.table import Table
@@ -28,7 +28,7 @@ from src.detection import MediaClassifier, FileScanner
 from src.persistence import OrganizationDatabase, UnorganizedDatabase
 from src.organizers import (
     MovieOrganizer, TVOrganizer, MusicOrganizer, BookOrganizer,
-    BaseOrganizer
+    BaseOrganizer, RenamerOrganizer
 )
 from src.utils import ConflictHandler
 from src.integrations import FileCompletionValidator
@@ -157,6 +157,13 @@ class MediaOrganizerApp:
                 dry_run=self.dry_run,
                 book_type='comic'
             ),
+            MediaType.RENAMER: RenamerOrganizer(
+                config=self.config,
+                database=self.database,
+                conflict_handler=self.conflict_handler,
+                logger=self.logger,
+                dry_run=self.dry_run
+            ),
         }
 
         # Initialize orchestrator
@@ -186,6 +193,13 @@ class MediaOrganizerApp:
         )
         self.logger.info(f"Processed {len(processed_count)} files in {directory}")
         return len(processed_count)
+
+    def rename_files_batch(self, directory: Path, metadata: Dict):
+        """Rename files in batch mode using RenamerOrganizer"""
+        renamer = self.organizadores.get(MediaType.RENAMER)
+        if renamer:
+            return renamer.rename_batch(directory, metadata)
+        return {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
 
     def show_stats(self):
         """Show organization statistics"""
@@ -312,7 +326,7 @@ def show_subtitle_menu():
 
 
 # Import unified CLI functions from cli_manager
-from src.cli_manager import show_trash_menu, show_subtitle_menu
+from src.cli_manager import show_trash_menu, show_subtitle_menu, show_renamer_menu
 
 
 @cli.command()
@@ -402,6 +416,20 @@ def organize(ctx):
 
     finally:
         app.cleanup()
+
+
+@cli.command()
+@click.pass_context
+def renamer(ctx):
+    """Open renamer menu - rename media files to standard patterns"""
+    dry_run = ctx.obj.get('DRY_RUN', False)
+    
+    # Pass dry_run to the renamer menu
+    import os
+    if dry_run:
+        os.environ['DRY_RUN'] = 'true'
+    
+    show_renamer_menu()
 
 
 @cli.command()
