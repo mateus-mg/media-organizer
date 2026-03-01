@@ -422,14 +422,13 @@ def organize(ctx):
 @click.pass_context
 def renamer(ctx):
     """Open renamer menu - rename media files to standard patterns"""
+    from src.renamer import RenamerCLI
+    
     dry_run = ctx.obj.get('DRY_RUN', False)
     
-    # Pass dry_run to the renamer menu
-    import os
-    if dry_run:
-        os.environ['DRY_RUN'] = 'true'
-    
-    show_renamer_menu()
+    # Use the new RenamerCLI class
+    cli = RenamerCLI(dry_run=dry_run)
+    cli.run()
 
 
 @cli.command()

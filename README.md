@@ -152,9 +152,18 @@ Lists files that require manual mapping.
 ```
 
 ### Renamer - Rename Media Files
+
+**Interactive mode:**
 ```bash
 ./run.sh renamer
 ```
+
+**Direct mode:**
+```bash
+python -m src.renamer --dry-run
+python -m src.renamer --type movie --title "The Matrix" --year 1999 --path /downloads/
+```
+
 Opens interactive menu to rename media files to standardized patterns.
 
 **Supported rename patterns:**
@@ -165,7 +174,7 @@ Opens interactive menu to rename media files to standardized patterns.
 - **Music**: `## - Track.ext` - e.g., `01 - Track Name.mp3`
 - **Books**: `Author - Title (Year).ext` - e.g., `J.R.R. Tolkien - The Hobbit (1937).epub`
 - **Comics**: `Series #Issue.ext` - e.g., `Batman #001.cbz`
-- **Subtitles**: `Series.S01E01.pt.srt` - e.g., `Breaking.Bad.S01E01.pt.srt`
+- **Subtitles**: `Series.S01E01.lang.ext` - e.g., `Breaking.Bad.S01E01.pt.srt`
 
 **Features:**
 - Automatic episode detection from various formats (S01E01, 1x01, Ep01, E01)
@@ -174,13 +183,31 @@ Opens interactive menu to rename media files to standardized patterns.
 - Dry-run mode to preview changes
 - Character sanitization for filenames
 - Integrated with media-organizer database for tracking
+- Native Python implementation (no shell scripts)
+
+**CLI Options:**
+```bash
+python -m src.renamer --help
+
+Options:
+  --dry-run             Simulate changes without modifying files
+  --type TYPE           Media type: movie, tv, anime, dorama, music, book, comic
+  --path PATH           Folder path to process
+  --title TITLE         Title/name for the media
+  --season SEASON       Season number (for TV/Anime/Dorama)
+  --year YEAR           Year (for movies/books)
+```
 
 **Example usage:**
 ```bash
-# Interactive mode
+# Interactive mode (recommended)
 ./run.sh renamer
 
-# Select media type → Enter folder path → Enter metadata → Rename!
+# Direct mode with dry-run
+python -m src.renamer --dry-run --type tv --title "Breaking Bad" --season 1 --path /downloads/bb/
+
+# Preview changes without renaming
+python -m src.renamer --dry-run
 ```
 
 ## File Organization Structure
