@@ -748,14 +748,247 @@ python tests/test_cli_commands.py
 
 ---
 
+## 2️⃣3️⃣ Testes de Trash & Deletion Manager (NOVO)
+
+### 23.1 Link Registry
+
+- [ ] `LinkRegistry` rastreia hardlinks por inode corretamente
+- [ ] `register_link()` registra novo hardlink durante organização
+- [ ] `get_all_links()` retorna todos os hardlinks de um arquivo
+- [ ] `get_inode()` obtém inode de um arquivo
+- [ ] `unregister_link()` remove link após exclusão
+- [ ] `scan_filesystem()` varre diretórios e reconstrói registry
+- [ ] `get_stats()` retorna estatísticas de inodes/links
+- [ ] Database `data/link_registry.json` é criado/atualizado
+
+### 23.2 Trash Manager
+
+- [ ] `move_to_trash()` copia arquivo para lixeira e remove originais
+- [ ] `restore_from_trash()` restaura arquivo para local original
+- [ ] `empty_trash()` remove permanentemente itens da lixeira
+- [ ] `list_items()` lista itens na lixeira com dias restantes
+- [ ] `get_stats()` retorna estatísticas da lixeira
+- [ ] `cleanup_expired()` remove itens expirados (> retention_days)
+- [ ] Retention period configurável (`TRASH_RETENTION_DAYS=30`)
+- [ ] Estrutura `data/trash/files/{trash_id}/` criada corretamente
+
+### 23.3 Deletion Manager
+
+- [ ] `delete_to_trash()` move arquivo para lixeira (reversível)
+- [ ] `delete_permanent()` remove permanentemente com confirmação
+- [ ] `get_deletion_preview()` mostra preview do que será deletado
+- [ ] `print_preview()` exibe preview formatado no console
+- [ ] Confirmação requer digitar "DELETE" para exclusão permanente
+- [ ] Backup do database criado antes de exclusão permanente
+- [ ] Database de organização atualizado após exclusão
+- [ ] Link registry atualizado após exclusão
+
+### 23.4 Comandos CLI - Trash
+
+- [ ] `media-organizer trash` - Menu interativo funciona
+- [ ] `media-organizer trash delete <path>` - Delete para lixeira
+- [ ] `media-organizer trash delete-permanent <path>` - Delete permanente
+- [ ] `media-organizer trash delete --dry-run` - Preview sem executar
+- [ ] `media-organizer trash list` - Lista itens da lixeira
+- [ ] `media-organizer trash restore <trash_id>` - Restaura item
+- [ ] `media-organizer trash empty` - Esvazia lixeira
+- [ ] `media-organizer trash empty --older-than 7` - Remove antigos
+- [ ] `media-organizer trash status` - Exibe estatísticas
+- [ ] `media-organizer trash lookup <path>` - Busca hardlinks
+- [ ] `media-organizer trash scan` - Varre filesystem
+
+### 23.5 Menu Interativo Unificado
+
+- [ ] Opção 10: "Trash & Deletion" no menu principal
+- [ ] Opção 11: "Subtitle Downloader" no menu principal
+- [ ] Submenu trash exibe 8 opções corretamente
+- [ ] Submenu subtitle exibe 8 opções corretamente
+- [ ] Retorno ao menu principal funciona (opção 0)
+
+### 23.6 Configurações (.env)
+
+- [ ] `TRASH_ENABLED=true` habilita sistema de lixeira
+- [ ] `TRASH_PATH="./data/trash"` configura caminho da lixeira
+- [ ] `TRASH_RETENTION_DAYS=30` configura dias de retenção
+- [ ] `LINK_REGISTRY_PATH="./data/link_registry.json"` configura registry
+- [ ] `DELETE_CONFIRMATION_REQUIRED=true` requer confirmação
+- [ ] `DELETE_DRY_RUN_DEFAULT=true` padrão é dry-run
+
+### 23.7 Fluxos de Trabalho
+
+**Fluxo: Delete para Lixeira**
+1. [ ] Usuário solicita delete de arquivo
+2. [ ] Sistema identifica todos os hardlinks via LinkRegistry
+3. [ ] Preview exibido com todos os links afetados
+4. [ ] Usuário confirma
+5. [ ] Um link copiado para `data/trash/files/{id}/`
+6. [ ] Todos os hardlinks originais removidos
+7. [ ] Trash ID retornado para possível restore
+8. [ ] Database de organização atualizado
+
+**Fluxo: Delete Permanente**
+1. [ ] Usuário solicita delete permanente
+2. [ ] Preview exibido com aviso VERMELHO
+3. [ ] Usuário digita "DELETE" para confirmar
+4. [ ] Backup do database criado
+5. [ ] Todos os hardlinks removidos
+6. [ ] Espaço em disco liberado
+7. [ ] Database de organização atualizado
+8. [ ] Link registry limpo
+
+**Fluxo: Restauração da Lixeira**
+1. [ ] Usuário solicita restore com trash_id
+2. [ ] Item buscado na lixeira
+3. [ ] Arquivo copiado de volta para local original
+4. [ ] Hardlinks recriados se múltiplos paths
+5. [ ] Link registry atualizado
+6. [ ] Database de organização restaurado
+
+### 23.8 Segurança e Validações
+
+- [ ] Confirmação explícita para exclusão permanente
+- [ ] Dry-run obrigatório por padrão
+- [ ] Backup pré-exclusão sempre criado
+- [ ] Lock de concorrência durante exclusão
+- [ ] Validação de inode antes de remover
+- [ ] Permissões de escrita verificadas
+- [ ] Mensagens de erro claras e informativas
+
+---
+
+## 2️⃣4️⃣ Testes de CLI Unificado (NOVO)
+
+### 24.1 Estrutura de Módulos
+
+- [ ] `cli_manager.py` unifica todos os comandos CLI
+- [ ] `subtitle_config.py` separado (configuração específica)
+- [ ] `subtitle_daemon.py` e `subtitle_downloader.py` intactos
+- [ ] Módulos de deleção em `src/` (não em subpasta)
+
+### 24.2 Imports e Dependências
+
+- [ ] `from src.cli_manager import CLIManager` funciona
+- [ ] `from src.cli_manager import show_trash_menu` funciona
+- [ ] `from src.cli_manager import show_subtitle_menu` funciona
+- [ ] `from src.link_registry import LinkRegistry` funciona
+- [ ] `from src.trash_manager import TrashManager` funciona
+- [ ] `from src.deletion_manager import DeletionManager` funciona
+
+### 24.3 Comandos Unificados
+
+- [ ] `media-organizer interactive` - Menu unificado
+- [ ] `media-organizer organize` - Organização de mídia
+- [ ] `media-organizer trash *` - Comandos de deleção
+- [ ] `media-organizer subtitle-*` - Comandos de legendas
+- [ ] `media-organizer help` - Help atualizado
+
+---
+
+## 2️⃣5️⃣ Testes de Estrutura de Arquivos (Atualização)
+
+### 25.1 Nova Estrutura de Diretórios
+
+```
+media-organizer/
+├── src/
+│   ├── cli_manager.py           # CLI unificado
+│   ├── link_registry.py         # Registro de hardlinks
+│   ├── trash_manager.py         # Gerenciador de lixeira
+│   ├── deletion_manager.py      # Orquestrador de exclusão
+│   ├── subtitle_config.py       # Configuração OpenSubtitles
+│   ├── subtitle_daemon.py       # Daemon de legendas
+│   ├── subtitle_downloader.py   # Downloader de legendas
+│   └── ... (outros módulos)
+├── data/
+│   ├── organization.json        # Database principal
+│   ├── unorganized.json         # Arquivos falhos
+│   ├── link_registry.json       # Registry de hardlinks
+│   ├── backups/                 # Backups automáticos
+│   └── trash/                   # Lixeira
+│       ├── index.json           # Índice de itens
+│       └── files/               # Arquivos preservados
+├── logs/
+│   ├── organizer.log
+│   ├── daemon.log
+│   └── subtitle_downloader.log
+├── docs/
+│   └── DELETION_GUIDE.md        # Guia de exclusão
+└── .env.example                 # Atualizado com configs de trash
+```
+
+### 25.2 Validação de Estrutura
+
+- [ ] `data/link_registry.json` é válido JSON
+- [ ] `data/trash/index.json` é válido JSON
+- [ ] `docs/DELETION_GUIDE.md` existe e está atualizado
+- [ ] `.env.example` inclui configurações de trash
+- [ ] Pasta `src/deletion/` removida (arquivos em `src/`)
+
+---
+
+## 2️⃣6️⃣ Matriz de Rastreabilidade (NOVO)
+
+| Funcionalidade | Módulo | Testes | Status |
+|----------------|--------|--------|--------|
+| Link Registry | `src/link_registry.py` | Seção 23.1 | ✅ Implementado |
+| Trash Manager | `src/trash_manager.py` | Seção 23.2 | ✅ Implementado |
+| Deletion Manager | `src/deletion_manager.py` | Seção 23.3 | ✅ Implementado |
+| CLI Trash Commands | `src/cli_manager.py` | Seção 23.4 | ✅ Implementado |
+| Menu Interativo | `src/cli_manager.py` | Seção 23.5 | ✅ Implementado |
+| Configurações | `.env.example` | Seção 23.6 | ✅ Implementado |
+| Documentação | `docs/DELETION_GUIDE.md` | - | ✅ Implementado |
+
+---
+
+## ✅ Checklist de Aprovação para Produção (Atualizado)
+
+Antes de considerar o sistema pronto para produção, valide:
+
+- [ ] **Todos os testes acima passaram** (incluindo novas seções 23-26)
+- [ ] **Trash & Deletion testado** em ambiente controlado
+- [ ] **Restauração da lixeira validada** com arquivos reais
+- [ ] **Backup pré-exclusão verificado** e testado restore
+- [ ] **Performance aceitável** (scan de filesystem < 5 min)
+- [ ] **Recuperação de falhas testada** (reinício após crash)
+- [ ] **Backup e restore testados** (database e lixeira)
+- [ ] **Documentação atualizada** (`DELETION_GUIDE.md`, `README.md`)
+- [ ] **Equipe treinada nos procedimentos** de exclusão/restore
+- [ ] **Monitoramento configurado** (lixeira, registry, backups)
+- [ ] **Plano de rollback definido** (restaurar backup + lixeira)
+
+---
+
+## 📊 Matriz de Prioridade de Testes (Atualizada)
+
+| Prioridade | Área | Criticidade |
+|------------|------|-------------|
+| 🔴 Alta | Organização de Filmes/Séries | Crítico |
+| 🔴 Alta | Validação de Arquivos | Crítico |
+| 🔴 Alta | Database e Backups | Crítico |
+| 🔴 Alta | **Trash & Deletion Manager** | **Crítico** |
+| 🔴 Alta | **Link Registry** | **Crítico** |
+| 🟠 Média | TMDB Integration | Importante |
+| 🟠 Média | qBittorrent Integration | Importante |
+| 🟠 Média | Modo Daemon | Importante |
+| 🟠 Média | **CLI Unificado** | **Importante** |
+| 🟡 Baixa | Download de Legendas | Nice-to-have |
+| 🟡 Baixa | Enriquecimento Online | Nice-to-have |
+| 🟡 Baixa | Conversão Calibre | Nice-to-have |
+
+---
+
 ## 📞 Suporte e Referências
 
 - **Documentação Principal:** `README.md`
+- **Documentação Trash:** `docs/DELETION_GUIDE.md`
 - **Logs do Sistema:** `logs/organizer.log`
 - **Database:** `data/organization.json`
 - **Arquivos Falhos:** `data/unorganized.json`
+- **Link Registry:** `data/link_registry.json`
+- **Lixeira:** `data/trash/`
 - **Configuração:** `.env`
 
 ---
 
 *Documento gerado para o Media Organizer System - Fevereiro 2026*
+*Atualizado com Trash & Deletion Manager - Fevereiro 2026*
