@@ -1,6 +1,6 @@
 #!/bin/bash
 # Renamer - Media File Renamer for Media Organizer System
-# Wrapper script for integrated RenamerOrganizer
+# Wrapper script for standalone Renamer CLI
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/.."
@@ -13,5 +13,5 @@ fi
 # Set PYTHONPATH
 export PYTHONPATH="$SCRIPT_DIR/..:$PYTHONPATH"
 
-# Run renamer via Python module
-python -m src.main renamer "$@"
+# Run renamer Python module directly
+python -m src.renamer "$@"
