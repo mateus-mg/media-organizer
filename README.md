@@ -14,6 +14,10 @@ A powerful, automated system for organizing media files (movies, TV shows, anime
 - **Statistics Dashboard**: View organization and mapping statistics
 - **PDF to EPUB Conversion**: Optional conversion of PDF ebooks to EPUB format using Calibre
 - **MOBI Support**: Full support for Amazon MOBI format with metadata enrichment via Calibre
+- **Renamer (NATIVO)**: Rename media files to standardized patterns via interactive CLI
+- **Trash & Deletion**: Safe deletion with hardlink awareness and restore capability
+- **Link Registry**: Track all hardlinks for safe file management
+- **Unified CLI**: All commands in one place (organize, renamer, trash, subtitle)
 
 ## Supported Formats
 
@@ -488,73 +492,76 @@ Configuration options:
 ```
 media-organizer/
 ├── src/
-│   ├── core/              # Core system components
-│   │   ├── __init__.py
-│   │   ├── orchestrator.py    # Main orchestration logic
-│   │   ├── main_orchestrator.py # High-level orchestrator implementation
-│   │   ├── types.py           # Core data types and enums
-│   │   ├── interfaces.py      # Core interfaces definition
-│   │   └── validator.py       # Core validation components
-│   ├── detection/         # Media detection and classification
-│   │   ├── __init__.py
-│   │   ├── classifier.py      # Media type classification
-│   │   └── scanner.py         # File scanning utilities
-│   ├── io/                # Input/Output operations
-│   │   ├── __init__.py
-│   │   └── concurrency_manager.py # Concurrency control
-│   ├── integration/       # External service integrations
-│   │   ├── __init__.py
-│   │   ├── qbittorrent_client.py   # QBittorrent API client
-│   │   └── qbittorrent_validator.py # QBittorrent validation layer
-│   ├── organizers/        # Media organizers
-│   │   ├── __init__.py
-│   │   ├── base.py            # Base organizer class
-│   │   ├── movie.py           # Movie organizer (TMDB ID required)
-│   │   ├── tv.py              # TV show organizer (TMDB ID required)
-│   │   ├── music.py           # Music organizer
-│   │   └── book.py            # Book organizer
-│   ├── persistence/       # Data persistence
-│   │   ├── __init__.py
-│   │   ├── database.py        # Database operations
-│   │   ├── mapping_db.py      # Manual mapping database
-│   │   └── unorganized_db.py  # Unorganized files tracking
-│   ├── utils/             # Utility functions
-│   │   ├── __init__.py
-│   │   ├── file_ops.py        # File operations
-│   │   ├── conflict_handler.py # Conflict resolution
-│   │   ├── validators.py      # Validation utilities
-│   │   └── logger.py          # Logging utilities
-│   ├── config/            # Configuration management
-│   │   ├── __init__.py
-│   │   └── settings.py        # Configuration class
-│   ├── metadata/          # Metadata handling
-│   │   └── parsers.py         # Media type detection
-│   ├── monitors/          # Monitoring components
-│   │   └── torrent_monitor.py # Torrent monitoring
-│   ├── database.py        # Legacy database operations (deprecated)
-│   ├── database_unorganized.py # Legacy unorganized database (deprecated)
-│   ├── simple_mapping.py  # Legacy mapping database (deprecated)
-│   ├── config.py          # Legacy configuration (deprecated)
-│   └── main.py            # CLI entry point
+│   ├── renamer.py               # Renamer CLI - Native media file renamer
+│   ├── renamer.sh               # Renamer shell wrapper
+│   ├── cli_manager.py           # Unified CLI manager
+│   ├── main.py                  # Main entry point & CLI
+│   ├── config.py                # Configuration management
+│   ├── core.py                  # Core types, interfaces, validators, orchestrator
+│   ├── organizers.py            # All media organizers (Movie, TV, Music, Book, Renamer)
+│   ├── detection.py             # Media classification & file scanning
+│   ├── persistence.py           # Database operations (TinyDB)
+│   ├── utils.py                 # Utilities (conflict handler, file ops)
+│   ├── integrations.py          # External APIs (TMDB, qBittorrent, OpenSubtitles)
+│   ├── metadata.py              # Metadata extraction & enrichment
+│   ├── log_config.py            # Centralized logging configuration
+│   ├── log_formatter.py         # Log formatting utilities
+│   ├── link_registry.py         # Hardlink tracking registry
+│   ├── trash_manager.py         # Trash/deletion management
+│   ├── deletion_manager.py      # Deletion orchestration
+│   ├── subtitle_config.py       # Subtitle downloader config
+│   ├── subtitle_daemon.py       # Subtitle daemon service
+│   ├── subtitle_downloader.py   # OpenSubtitles downloader
+│   └── trash_cli.py             # Trash CLI commands
 ├── data/
-│   ├── manual_mapping.json  # User mappings (with TMDB IDs)
-│   ├── organization.json    # Database
-│   └── unorganized.json    # Failed files
-├── logs/                   # Log files
-├── tests/                  # Test suite
+│   ├── organization.json        # Main database (organized files)
+│   ├── unorganized.json         # Failed/unorganized files
+│   ├── link_registry.json       # Hardlink registry
+│   ├── backups/                 # Database backups (7 days retention)
+│   └── trash/                   # Trash directory (safe deletion)
+│       ├── index.json           # Trash items index
+│       └── files/               # Preserved files
+├── logs/
+│   ├── organizer.log            # Main system log
+│   ├── daemon.log               # Daemon process log
+│   └── subtitle_downloader.log  # Subtitle downloader log
+├── docs/
+│   └── DELETION_GUIDE.md        # Trash & deletion documentation
+├── tests/
 │   ├── __init__.py
-│   ├── test_refactored_system.py # Core system tests
-│   └── test_orchestrator_integration.py # Orchestrator integration tests
+│   ├── test_refactored_system.py        # Core system tests
+│   └── test_orchestrator_integration.py # Integration tests
 ├── scripts/
-│   ├── run-daemon.sh      # Daemon control
-│   ├── status-daemon.sh
-│   └── stop-daemon.sh
-├── .env                   # Configuration
-├── .env.example          # Example config
-├── requirements.txt      # Dependencies
-├── run.sh               # Main runner
-└── README.md           # This file
+│   ├── run-daemon.sh            # Daemon start script
+│   ├── status-daemon.sh         # Daemon status script
+│   ├── stop-daemon.sh           # Daemon stop script
+│   └── subtitle-daemon.sh       # Subtitle daemon control
+├── .env                         # Environment configuration
+├── .env.example                 # Configuration template
+├── requirements.txt             # Python dependencies
+├── run.sh                       # Main runner script
+├── media-organizer              # CLI executable
+├── media-daemon.sh              # Daemon runner script
+├── subtitle-daemon.sh           # Subtitle daemon runner
+└── README.md                    # This file
 ```
+
+### Key Modules:
+
+| Module | Description |
+|--------|-------------|
+| `renamer.py` | **Native Renamer CLI** - Rename media files to standardized patterns |
+| `cli_manager.py` | **Unified CLI** - All commands in one place (organize, trash, subtitle, renamer) |
+| `organizers.py` | **All Organizers** - Movie, TV, Anime, Dorama, Music, Book, Comic, Renamer |
+| `core.py` | **Core Types** - MediaType, Validators, Orchestrator, Interfaces |
+| `detection.py` | **Classification** - Media type detection by extension and context |
+| `persistence.py` | **Database** - TinyDB operations for tracking organized files |
+| `utils.py` | **Utilities** - ConflictHandler, file operations, validators |
+| `integrations.py` | **APIs** - TMDB, qBittorrent, OpenSubtitles integration |
+| `link_registry.py` | **Hardlinks** - Track all hardlinks for safe deletion |
+| `trash_manager.py` | **Trash** - Safe deletion with restore capability |
+| `deletion_manager.py` | **Deletion** - Orchestrate trash and permanent deletion |
+| `subtitle_*.py` | **Subtitles** - Download, daemon, and configuration |
 
 ## Logging
 
