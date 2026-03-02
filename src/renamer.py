@@ -84,13 +84,11 @@ class RenamerCLI:
                     console.print(f"  [{key}] [{color}]{value}[/{color}]")
                 else:
                     console.print(f"  [{key}] {value}")
-            
-            choice = Prompt.ask(
-                "\nYour choice",
-                choices=list(options.keys()),
-                default="0"
-            )
-            
+
+            # Get user choice using input() to avoid Click conflict
+            choice_str = input("\nYour choice [1/2/3/4/5/6/7/8/0] (0): ").strip() or "0"
+            choice = choice_str if choice_str in options.keys() else "0"
+
             if choice == "0":
                 console.print("\n[blue]Returning to main menu...[/blue]")
                 return
@@ -104,13 +102,13 @@ class RenamerCLI:
     def _handle_rename_choice(self, choice: str):
         """Handle rename operation based on user choice"""
         # Get folder path
-        folder_str = Prompt.ask("Enter folder path")
+        folder_str = input("Enter folder path: ").strip()
         folder = Path(folder_str)
-        
+
         if not folder.exists():
             console.print(f"[red]✗ Folder does not exist: {folder}[/red]")
             return
-        
+
         if not folder.is_dir():
             console.print(f"[red]✗ Path is not a directory: {folder}[/red]")
             return
@@ -140,41 +138,41 @@ class RenamerCLI:
         """Get metadata dictionary based on media type choice"""
         try:
             if choice == "1":  # Movies
-                title = Prompt.ask("Movie title")
-                year = int(Prompt.ask("Year", default=str(_get_current_year())))
+                title = input("Movie title: ").strip()
+                year = int(input("Year [2024]: ").strip() or str(_get_current_year()))
                 return {'type': 'movie', 'title': title, 'year': year}
-            
+
             elif choice == "2":  # TV Shows
-                series = Prompt.ask("Series name")
-                season = int(Prompt.ask("Season", default="1"))
+                series = input("Series name: ").strip()
+                season = int(input("Season [1]: ").strip() or "1")
                 return {'type': 'tv', 'title': series, 'season': season}
-            
+
             elif choice == "3":  # Anime
-                anime = Prompt.ask("Anime name")
-                season = int(Prompt.ask("Season", default="1"))
+                anime = input("Anime name: ").strip()
+                season = int(input("Season [1]: ").strip() or "1")
                 return {'type': 'anime', 'title': anime, 'season': season}
-            
+
             elif choice == "4":  # Doramas
-                dorama = Prompt.ask("Dorama name")
-                season = int(Prompt.ask("Season", default="1"))
+                dorama = input("Dorama name: ").strip()
+                season = int(input("Season [1]: ").strip() or "1")
                 return {'type': 'dorama', 'title': dorama, 'season': season}
-            
+
             elif choice == "5":  # Music
-                track_num = int(Prompt.ask("Track number", default="1"))
-                title = Prompt.ask("Track title")
+                track_num = int(input("Track number [1]: ").strip() or "1")
+                title = input("Track title: ").strip()
                 return {'type': 'music', 'title': title, 'track': track_num}
-            
+
             elif choice == "6":  # Books
-                author = Prompt.ask("Author")
-                title = Prompt.ask("Title")
-                year = int(Prompt.ask("Year", default=str(_get_current_year())))
+                author = input("Author: ").strip()
+                title = input("Title: ").strip()
+                year = int(input("Year [2024]: ").strip() or str(_get_current_year()))
                 return {'type': 'book', 'title': title, 'author': author, 'year': year}
-            
+
             elif choice == "7":  # Comics
-                series = Prompt.ask("Series name")
-                issue = int(Prompt.ask("Issue number", default="1"))
+                series = input("Series name: ").strip()
+                issue = int(input("Issue number [1]: ").strip() or "1")
                 return {'type': 'comic', 'title': series, 'issue': issue}
-            
+
         except KeyboardInterrupt:
             console.print("\n[yellow]Operation cancelled[/yellow]")
             return None

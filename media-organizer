@@ -71,7 +71,7 @@ fi
 # Execute the new CLI system
 # If no arguments provided, default to interactive mode
 if [ $# -eq 0 ]; then
-    exec python3 -m src.main organize
+    exec python3 -m src.main interactive
 else
     exec python3 -m src.main "$@"
 fi

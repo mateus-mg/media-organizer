@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-Unified CLI Manager for Media Organization System
+CLI Manager for Media Organization System
 
-Consolidates all CLI functionality:
-- Media organization
-- Trash & deletion management
-- Subtitle downloader
-
-Usage:
-    from src.cli_manager import CLIManager, SubtitleCLI, DeletionCLI
+Follows the same patterns as control-panel:
+- Icons only in menu titles (not in options)
+- Bold cyan for option numbers
+- Consistent prompt style
+- Return to main menu option in all submenus
 """
 
 import asyncio
@@ -68,54 +66,34 @@ class CLIManager:
             console.print("\n[bold cyan]🗄️  Media Organizer System[/bold cyan]")
             console.print("[bold]Select an operation:[/bold]\n")
 
+            # Options with submenus first, then other options
             options = {
                 "1": "Organize media files",
                 "2": "Rename media files",
-                "3": "Scan for new files",
-                "4": "View system status",
-                "5": "View unorganized files",
-                "6": "View organization logs",
-                "7": "Start daemon",
-                "8": "Stop daemon",
-                "9": "View daemon status",
-                "10": "View statistics",
-                "11": "Trash & Deletion",
-                "12": "Subtitle Downloader",
-                "13": "Exit"
+                "3": "View menu",
+                "4": "Trash & Deletion",
+                "5": "Subtitle Downloader",
+                "6": "Exit"
             }
 
             for key, value in options.items():
-                console.print(f"  [{key}] {value}")
+                console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
             try:
-                choice = Prompt.ask("\nYour choice", choices=list(
-                    options.keys()), default="13")
+                choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                    options.keys()), default="6")
 
                 if choice == '1':
-                    self.organize_media_interactive()
+                    self.show_organize_menu()
                 elif choice == '2':
-                    show_renamer_menu()
+                    self.show_renamer_menu()
                 elif choice == '3':
-                    self.scan_files_interactive()
+                    self.show_view_menu()
                 elif choice == '4':
-                    self.show_status_interactive()
+                    self.show_trash_menu()
                 elif choice == '5':
-                    self.view_unorganized_interactive()
+                    self.show_subtitle_menu()
                 elif choice == '6':
-                    self.view_logs_interactive()
-                elif choice == '7':
-                    self.start_daemon_interactive()
-                elif choice == '8':
-                    self.stop_daemon_interactive()
-                elif choice == '9':
-                    self.status_daemon_interactive()
-                elif choice == '10':
-                    self.view_stats_interactive()
-                elif choice == '11':
-                    show_trash_menu()
-                elif choice == '12':
-                    show_subtitle_menu()
-                elif choice == '13':
                     console.print("[green]Exiting... Goodbye![/green]")
                     break
 
@@ -128,106 +106,239 @@ class CLIManager:
             except Exception as e:
                 console.print(f"[red]Error: {e}[/red]")
 
-    def organize_media_interactive(self):
-        """Interactive media organization"""
-        from src.main import MediaOrganizerApp
+    def show_view_menu(self):
+        """Show view submenu"""
+        while True:
+            console.print("\n[bold cyan]📋 View Menu[/bold cyan]")
+            console.print("[bold]Select an operation:[/bold]\n")
 
-        console.print("\n[bold cyan]📂 Organize Media Files[/bold cyan]")
-
-        try:
-            app = MediaOrganizerApp(dry_run=False)
-
-            # Create menu options for all configured download paths
             options = {
-                "1": ("Movies", self.config.download_path_movies),
-                "2": ("TV Shows", self.config.download_path_tv),
-                "3": ("Anime", self.config.download_path_animes),
-                "4": ("Doramas", self.config.download_path_doramas),
-                "5": ("Music", self.config.download_path_music),
-                "6": ("Books", self.config.download_path_books),
-                "7": ("Comics", self.config.download_path_comics),
-                "0": ("All directories", None),
+                "1": "View system status",
+                "2": "View unorganized files",
+                "3": "View organization logs",
+                "4": "View statistics",
+                "5": "Return to main menu"
             }
 
-            # Display menu
-            console.print("[bold]Select directory to organize:[/bold]")
-            for key, (name, path) in options.items():
-                if key == "0":
-                    console.print(f"  [{key}] {name}")
-                else:
-                    console.print(f"  [{key}] {name}")
+            for key, value in options.items():
+                console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
-            # Get user choice
-            choice = Prompt.ask("\nYour choice", choices=list(
-                options.keys()), default="0")
+            try:
+                choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                    options.keys()), default="5")
 
-            if choice == "0":
-                # Organize all directories
-                console.print("\n[cyan]→ Organizing all directories...[/cyan]\n")
+                if choice == '1':
+                    self.show_status_interactive()
+                elif choice == '2':
+                    self.view_unorganized_interactive()
+                elif choice == '3':
+                    self.view_logs_interactive()
+                elif choice == '4':
+                    self.view_stats_interactive()
+                elif choice == '5':
+                    break
 
-                # Process all configured download paths
-                total_processed = 0
-                for name, path_info in options.items():
-                    if name != "0":
-                        _, path = path_info
+                # Pause before showing the menu again
+                input("\nPress Enter to continue...")
+
+            except KeyboardInterrupt:
+                console.print("\n[red]Operation cancelled by user.[/red]")
+                break
+            except Exception as e:
+                console.print(f"[red]Error: {e}[/red]")
+
+    def show_organize_menu(self):
+        """Show organize media submenu"""
+        from src.main import MediaOrganizerApp
+
+        while True:
+            console.print("\n[bold cyan]📂 Organize Media Files[/bold cyan]")
+            console.print("[bold]Select directory to organize:[/bold]\n")
+
+            options = {
+                "1": "Movies",
+                "2": "TV Shows",
+                "3": "Anime",
+                "4": "Doramas",
+                "5": "Music",
+                "6": "Books",
+                "7": "Comics",
+                "8": "All directories",
+                "9": "Return to main menu"
+            }
+
+            for key, value in options.items():
+                console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
+
+            try:
+                choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                    options.keys()), default="9")
+
+                if choice == "9":
+                    break
+
+                app = MediaOrganizerApp(dry_run=False)
+
+                if choice == "8":
+                    # Organize all directories
+                    console.print("\n[cyan]→ Organizing all directories...[/cyan]\n")
+
+                    total_processed = 0
+                    dir_options = {
+                        "1": ("Movies", self.config.download_path_movies),
+                        "2": ("TV Shows", self.config.download_path_tv),
+                        "3": ("Anime", self.config.download_path_animes),
+                        "4": ("Doramas", self.config.download_path_doramas),
+                        "5": ("Music", self.config.download_path_music),
+                        "6": ("Books", self.config.download_path_books),
+                        "7": ("Comics", self.config.download_path_comics),
+                    }
+
+                    for key, (name, path) in dir_options.items():
                         if path and path.exists():
-                            processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
+                            resultados = asyncio.run(app.orchestrator.organizar_arquivos(path))
+                            processed = len(resultados)
                             total_processed += processed
                             console.print(f"  Processed {processed} files in {name}")
 
-                console.print(
-                    f"\n[bold green]✓ Successfully organized {total_processed} file(s)[/bold green]")
-            else:
-                # Organize selected directory
-                name, path = options[choice]
-                console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
+                    console.print(
+                        f"\n[bold green]✓ Successfully organized {total_processed} file(s)[/bold green]")
+                else:
+                    # Organize selected directory
+                    dir_map = {
+                        "1": ("Movies", self.config.download_path_movies),
+                        "2": ("TV Shows", self.config.download_path_tv),
+                        "3": ("Anime", self.config.download_path_animes),
+                        "4": ("Doramas", self.config.download_path_doramas),
+                        "5": ("Music", self.config.download_path_music),
+                        "6": ("Books", self.config.download_path_books),
+                        "7": ("Comics", self.config.download_path_comics),
+                    }
 
-                if not path.exists():
-                    console.print(f"[red]✗ Directory does not exist: {path}[/red]")
-                    return
+                    name, path = dir_map.get(choice, (None, None))
 
-                asyncio.run(app.organize_directory(path))
+                    if path:
+                        console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
 
-            app.show_stats()
-            app.cleanup()
+                        if not path.exists():
+                            console.print(f"[red]✗ Directory does not exist: {path}[/red]")
+                            continue
 
-        except Exception as e:
-            log_error(self.logger, f"Error during organization: {str(e)}")
+                        asyncio.run(app.organize_directory(path))
+                        app.show_stats()
+                    else:
+                        console.print(f"[red]✗ Invalid option[/red]")
 
-    def scan_files_interactive(self):
-        """Interactive file scanning"""
-        console.print("\n[bold cyan]🔍 Scan for New Files[/bold cyan]")
+                app.cleanup()
 
-        try:
-            scan_dir = Prompt.ask("Enter directory to scan")
-            scan_directory = Path(scan_dir)
+            except Exception as e:
+                console.print(f"[red]Error: {e}[/red]")
 
-            if not scan_directory.exists() or not scan_directory.is_dir():
-                log_error(self.logger, f"Directory does not exist: {scan_directory}")
-                return
+    def show_renamer_menu(self):
+        """Show renamer submenu"""
+        from src.main import MediaOrganizerApp
+        from src.config import Config
 
-            media_type = Prompt.ask("Media type", choices=["auto", "movies", "tv", "anime", "music"], default="auto")
+        config = Config()
+        dry_run = False
 
-            console.print(f"[yellow]Scanning: {scan_directory}[/yellow]")
+        while True:
+            console.print("\n[bold cyan]📝 Rename Media Files[/bold cyan]")
+            console.print("[bold]Select media type:[/bold]\n")
 
-            # Simulate scan
-            start_time = datetime.now()
-            found_files = self.simulate_scan(scan_directory, media_type)
-            end_time = datetime.now()
+            options = {
+                "1": "Movies (Title (Year).ext)",
+                "2": "TV Shows (Serie.S01E01.ext)",
+                "3": "Anime (Anime.S01E01.ext)",
+                "4": "Doramas (Dorama.S01E01.ext)",
+                "5": "Music (## - Track.ext)",
+                "6": "Books (Author - Title (Year).ext)",
+                "7": "Comics (Series #Issue.ext)",
+                "8": f"Dry-run: [{'ON' if dry_run else 'OFF'}]",
+                "9": "Return to main menu"
+            }
 
-            duration = (end_time - start_time).total_seconds()
+            for key, value in options.items():
+                if key == "8":
+                    status = "ON" if dry_run else "OFF"
+                    color = "yellow" if dry_run else "green"
+                    console.print(f"  [bold cyan][{key}][/bold cyan]  [{color}]{value}[/{color}]")
+                else:
+                    console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
-            console.print(f"[green]Found {len(found_files)} files:[/green]")
-            for file in found_files[:10]:
-                console.print(f"  • {file}")
+            try:
+                choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                    options.keys()), default="9")
 
-            if len(found_files) > 10:
-                console.print(f"  ... and {len(found_files) - 10} more")
+                if choice == "9":
+                    break
+                elif choice == "8":
+                    dry_run = not dry_run
+                    console.print(f"[green]Dry-run turned {'ON' if dry_run else 'OFF'}[/green]")
+                    continue
 
-            log_scan(self.logger, f"Scan completed: {len(found_files)} files found in {duration:.2f}s")
+                # Get folder path
+                folder_str = input("Enter folder path: ").strip()
+                folder = Path(folder_str)
 
-        except Exception as e:
-            log_error(self.logger, f"Error during scan: {str(e)}")
+                if not folder.exists():
+                    console.print(f"[red]✗ Folder does not exist: {folder}[/red]")
+                    continue
+
+                if not folder.is_dir():
+                    console.print(f"[red]✗ Path is not a directory: {folder}[/red]")
+                    continue
+
+                app = MediaOrganizerApp(dry_run=dry_run)
+                stats = {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
+
+                # Get metadata based on type
+                metadata = None
+                if choice == "1":  # Movies
+                    title = input("Movie title: ").strip()
+                    year = int(input("Year [2024]: ").strip() or "2024")
+                    metadata = {'type': 'movie', 'title': title, 'year': year}
+                elif choice == "2":  # TV Shows
+                    series = input("Series name: ").strip()
+                    season = int(input("Season [1]: ").strip() or "1")
+                    metadata = {'type': 'tv', 'title': series, 'season': season}
+                elif choice == "3":  # Anime
+                    anime = input("Anime name: ").strip()
+                    season = int(input("Season [1]: ").strip() or "1")
+                    metadata = {'type': 'anime', 'title': anime, 'season': season}
+                elif choice == "4":  # Doramas
+                    dorama = input("Dorama name: ").strip()
+                    season = int(input("Season [1]: ").strip() or "1")
+                    metadata = {'type': 'dorama', 'title': dorama, 'season': season}
+                elif choice == "5":  # Music
+                    track_num = int(input("Track number [1]: ").strip() or "1")
+                    title = input("Track title: ").strip()
+                    metadata = {'type': 'music', 'title': title, 'track': track_num}
+                elif choice == "6":  # Books
+                    author = input("Author: ").strip()
+                    title = input("Title: ").strip()
+                    year = int(input("Year [2024]: ").strip() or "2024")
+                    metadata = {'type': 'book', 'title': title, 'author': author, 'year': year}
+                elif choice == "7":  # Comics
+                    series = input("Series name: ").strip()
+                    issue = int(input("Issue number [1]: ").strip() or "1")
+                    metadata = {'type': 'comic', 'title': series, 'issue': issue}
+
+                if metadata:
+                    console.print(f"\n[cyan]→ Renaming {metadata['type']} files in {folder}...[/cyan]\n")
+                    stats = app.rename_files_batch(folder, metadata)
+
+                    # Display results
+                    console.print("\n[bold cyan]📊 Results:[/bold cyan]")
+                    console.print(f"  Processed: [green]{stats['processed']}[/green]")
+                    console.print(f"  Renamed:   [green]{stats['renamed']}[/green]")
+                    console.print(f"  Skipped:   [yellow]{stats['skipped']}[/yellow]")
+                    console.print(f"  Failed:    [red]{stats['failed']}[/red]")
+
+                app.cleanup()
+
+            except Exception as e:
+                console.print(f"[red]Error: {e}[/red]")
 
     def show_status_interactive(self):
         """Show system status"""
@@ -289,7 +400,7 @@ class CLIManager:
 
     def view_logs_interactive(self):
         """View organization logs"""
-        console.print("\n[bold cyan]📋 Organization Logs[/bold cyan]")
+        console.print("\n[bold cyan]📜 Organization Logs[/bold cyan]")
 
         try:
             log_file = self.logs_dir / "media_organizer.log"
@@ -297,7 +408,14 @@ class CLIManager:
                 console.print("[yellow]No log file found.[/yellow]")
                 return
 
-            lines = Prompt.ask("Number of lines to show", default=50, choices=[10, 20, 50, 100])
+            console.print("\nNumber of lines options:")
+            console.print("  [1] 10")
+            console.print("  [2] 20")
+            console.print("  [3] 50")
+            console.print("  [4] 100")
+            lines_choice = input("Your choice [1-4] (3): ").strip() or "3"
+            lines_map = {"1": 10, "2": 20, "3": 50, "4": 100}
+            lines = lines_map.get(lines_choice, 50)
 
             try:
                 with open(log_file, 'r') as f:
@@ -312,89 +430,6 @@ class CLIManager:
 
         except Exception as e:
             log_error(self.logger, f"Error viewing logs: {str(e)}")
-
-    def start_daemon_interactive(self):
-        """Start daemon interactively"""
-        console.print("\n[bold cyan]🤖 Starting Daemon[/bold cyan]")
-
-        try:
-            pid_file = self.script_dir / ".daemon.pid"
-            if pid_file.exists():
-                with open(pid_file, 'r') as f:
-                    pid = f.read().strip()
-
-                import subprocess
-                result = subprocess.run(['ps', '-p', pid], capture_output=True)
-                if result.returncode == 0:
-                    console.print(f"[yellow]Daemon already running with PID: {pid}[/yellow]")
-                    return
-                else:
-                    pid_file.unlink()
-
-            import os
-            simulated_pid = os.getpid()
-            with open(pid_file, 'w') as f:
-                f.write(str(simulated_pid))
-
-            log_success(self.logger, f"Daemon started with PID: {simulated_pid}")
-            console.print(f"[green]Daemon started with PID: {simulated_pid}[/green]")
-
-        except Exception as e:
-            log_error(self.logger, f"Error starting daemon: {str(e)}")
-
-    def stop_daemon_interactive(self):
-        """Stop daemon interactively"""
-        console.print("\n[bold cyan]🤖 Stopping Daemon[/bold cyan]")
-
-        try:
-            pid_file = self.script_dir / ".daemon.pid"
-            if not pid_file.exists():
-                console.print("[yellow]Daemon is not running[/yellow]")
-                return
-
-            with open(pid_file, 'r') as f:
-                pid = f.read().strip()
-
-            pid_file.unlink()
-
-            log_success(self.logger, f"Daemon stopped (PID: {pid})")
-            console.print(f"[green]Daemon stopped (PID: {pid})[/green]")
-
-        except Exception as e:
-            log_error(self.logger, f"Error stopping daemon: {str(e)}")
-
-    def status_daemon_interactive(self):
-        """Check daemon status interactively"""
-        console.print("\n[bold cyan]🤖 Daemon Status[/bold cyan]")
-
-        try:
-            pid_file = self.script_dir / ".daemon.pid"
-            if not pid_file.exists():
-                console.print("[red]Daemon is not running[/red]")
-                return
-
-            with open(pid_file, 'r') as f:
-                pid = f.read().strip()
-
-            import subprocess
-            result = subprocess.run(['ps', '-p', pid], capture_output=True)
-            if result.returncode == 0:
-                console.print(f"[green]Daemon is running with PID: {pid}[/green]")
-
-                start_time = datetime.now() - timedelta(minutes=15)
-                uptime = str(datetime.now() - start_time).split('.')[0]
-                next_check = (datetime.now() + timedelta(minutes=30)).strftime("%H:%M")
-
-                console.print(f"  Uptime: {uptime}")
-                console.print(f"  Next check: {next_check}")
-                console.print(f"  Active downloads: 2")
-                console.print(f"  Queued items: 5")
-            else:
-                console.print(f"[yellow]Stale PID file found (PID: {pid}), process not running[/yellow]")
-                pid_file.unlink()
-
-        except Exception as e:
-            log_error(self.logger, f"Error checking daemon status: {str(e)}")
 
     def view_stats_interactive(self):
         """View system statistics"""
@@ -435,42 +470,127 @@ class CLIManager:
         except Exception as e:
             log_error(self.logger, f"Error viewing stats: {str(e)}")
 
-    def simulate_scan(self, scan_dir: Path, media_type: str) -> list:
-        """Simulate file scanning process"""
+    def show_trash_menu(self):
+        """Show trash & deletion manager submenu"""
+        from src.deletion_cli import TrashCLI
+
+        trash_cli = TrashCLI(dry_run=False)
+
         try:
-            media_extensions = {
-                'movies': ['.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm'],
-                'tv': ['.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm'],
-                'anime': ['.mkv', '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm'],
-                'music': ['.mp3', '.flac', '.wav', '.aac', '.m4a', '.ogg', '.wma']
+            while True:
+                console.print("\n[bold cyan]🗑️  Trash & Deletion Manager[/bold cyan]")
+                console.print("[bold]Select an operation:[/bold]\n")
+
+                options = {
+                    "1": "Delete file (to trash)",
+                    "2": "Delete permanent (direct)",
+                    "3": "List trash items",
+                    "4": "Restore from trash",
+                    "5": "Empty trash",
+                    "6": "Trash status",
+                    "7": "Scan filesystem (rebuild registry)",
+                    "8": "Link lookup",
+                    "9": "Return to main menu"
+                }
+
+                for key, value in options.items():
+                    console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
+
+                choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                    options.keys()), default="9")
+
+                if choice == "9":
+                    console.print("\n[blue]Returning to main menu...[/blue]")
+                    return
+                elif choice == "1":
+                    trash_cli._delete_to_trash_interactive()
+                elif choice == "2":
+                    trash_cli._delete_permanent_interactive()
+                elif choice == "3":
+                    trash_cli._list_trash_interactive()
+                elif choice == "4":
+                    trash_cli._restore_from_trash_interactive()
+                elif choice == "5":
+                    trash_cli._empty_trash_interactive()
+                elif choice == "6":
+                    trash_cli._show_status_interactive()
+                elif choice == "7":
+                    trash_cli._scan_filesystem_interactive()
+                elif choice == "8":
+                    trash_cli._lookup_links_interactive()
+
+                if choice != "9":
+                    input("\nPress Enter to continue...")
+
+        finally:
+            trash_cli.cleanup()
+
+    def show_subtitle_menu(self):
+        """Show subtitle downloader submenu"""
+        while True:
+            console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
+            console.print("[bold]Select an operation:[/bold]\n")
+
+            options = {
+                "1": "Download subtitles (manual)",
+                "2": "View subtitle status",
+                "3": "Files missing subtitles",
+                "4": "Start subtitle daemon",
+                "5": "Stop subtitle daemon",
+                "6": "Restart subtitle daemon",
+                "7": "Configure OpenSubtitles",
+                "8": "Test API connection",
+                "9": "Return to main menu"
             }
 
-            if media_type == 'auto':
-                extensions = []
-                for ext_list in media_extensions.values():
-                    extensions.extend(ext_list)
-            else:
-                extensions = media_extensions.get(media_type, [])
+            for key, value in options.items():
+                console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
-            found_files = []
-            for ext in extensions:
-                found_files.extend([str(f.relative_to(scan_dir)) for f in scan_dir.rglob(f"*{ext}")])
+            choice = Prompt.ask("\n[bold]Your choice[/bold]", choices=list(
+                options.keys()), default="9")
 
-            return found_files[:100]
-        except Exception:
-            return []
+            if choice == "9":
+                console.print("\n[blue]Returning to main menu...[/blue]")
+                return
+            elif choice == "1":
+                from src.subtitle_cli import run_manual_download
+                console.print("\n[cyan]→ Running manual subtitle download...[/cyan]\n")
+                run_manual_download()
+            elif choice == "2":
+                from src.subtitle_cli import show_subtitle_status
+                show_subtitle_status()
+            elif choice == "3":
+                from src.subtitle_cli import show_subtitle_status
+                show_subtitle_status(show_missing=True)
+            elif choice == "4":
+                from src.subtitle_cli import start_subtitle_daemon
+                start_subtitle_daemon()
+            elif choice == "5":
+                from src.subtitle_cli import stop_subtitle_daemon
+                stop_subtitle_daemon()
+            elif choice == "6":
+                from src.subtitle_cli import restart_subtitle_daemon
+                restart_subtitle_daemon()
+            elif choice == "7":
+                from src.subtitle_cli import setup_subtitle_config
+                setup_subtitle_config()
+            elif choice == "8":
+                from src.subtitle_cli import test_subtitle_config
+                test_subtitle_config()
+
+            if choice != "9":
+                input("\nPress Enter to continue...")
 
     def show_menu(self):
         """Show main menu with help information"""
         help_text = Text()
         help_text.append("Available commands:\n", style="bold cyan")
         help_text.append("  organize                          - Organize media files\n")
+        help_text.append("  renamer                           - Rename media files\n")
         help_text.append("  scan                              - Scan for new files\n")
         help_text.append("  status                            - Show system status\n")
         help_text.append("  unorganized                       - View unorganized files\n")
         help_text.append("  logs                              - Show organization logs\n")
-        help_text.append("  start                             - Start daemon\n")
-        help_text.append("  stop                              - Stop daemon\n")
         help_text.append("  stats                             - Show system statistics\n")
         help_text.append("  trash                             - Trash & Deletion Manager\n")
         help_text.append("  subtitle-*                        - Subtitle Downloader commands\n")
@@ -489,516 +609,22 @@ class CLIManager:
 
 
 # ============================================================================
-# TRASH & DELETION CLI (incorporated from deletion_cli.py)
+# Helper functions for main.py integration
 # ============================================================================
 
 def show_trash_menu():
     """Show trash & deletion manager submenu"""
-    from src.deletion_cli import TrashCLI
+    cli = CLIManager()
+    cli.show_trash_menu()
 
-    trash_cli = TrashCLI(dry_run=False)
-
-    try:
-        while True:
-            console.print("\n[bold cyan]🗑️  Trash & Deletion Manager[/bold cyan]")
-            console.print("[bold]Select an operation:[/bold]\n")
-
-            options = {
-                "1": "Delete file (to trash)",
-                "2": "Delete permanent (direct)",
-                "3": "List trash items",
-                "4": "Restore from trash",
-                "5": "Empty trash",
-                "6": "Trash status",
-                "7": "Scan filesystem (rebuild registry)",
-                "8": "Link lookup",
-                "0": "Back to main menu"
-            }
-
-            for key, value in options.items():
-                console.print(f"  [{key}] {value}")
-
-            choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
-
-            if choice == "0":
-                console.print("\n[blue]Returning to main menu...[/blue]")
-                return
-            elif choice == "1":
-                trash_cli._delete_to_trash_interactive()
-            elif choice == "2":
-                trash_cli._delete_permanent_interactive()
-            elif choice == "3":
-                trash_cli._list_trash_interactive()
-            elif choice == "4":
-                trash_cli._restore_from_trash_interactive()
-            elif choice == "5":
-                trash_cli._empty_trash_interactive()
-            elif choice == "6":
-                trash_cli._show_status_interactive()
-            elif choice == "7":
-                trash_cli._scan_filesystem_interactive()
-            elif choice == "8":
-                trash_cli._lookup_links_interactive()
-
-            if choice != "0":
-                input("\nPress Enter to continue...")
-
-    finally:
-        trash_cli.cleanup()
-
-
-# ============================================================================
-# SUBTITLE CLI (incorporated from subtitle_cli.py)
-# ============================================================================
 
 def show_subtitle_menu():
     """Show subtitle downloader submenu"""
-    while True:
-        console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
-        console.print("[bold]Select an operation:[/bold]\n")
+    cli = CLIManager()
+    cli.show_subtitle_menu()
 
-        options = {
-            "1": "Download subtitles (manual)",
-            "2": "View subtitle status",
-            "3": "Files missing subtitles",
-            "4": "Start subtitle daemon",
-            "5": "Stop subtitle daemon",
-            "6": "Restart subtitle daemon",
-            "7": "Configure OpenSubtitles",
-            "8": "Test API connection",
-            "0": "Back to main menu"
-        }
-
-        for key, value in options.items():
-            console.print(f"  [{key}] {value}")
-
-        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
-
-        if choice == "0":
-            console.print("\n[blue]Returning to main menu...[/blue]")
-            return
-        elif choice == "1":
-            from src.subtitle_cli import run_manual_download
-            console.print("\n[cyan]→ Running manual subtitle download...[/cyan]\n")
-            run_manual_download()
-        elif choice == "2":
-            from src.subtitle_cli import show_subtitle_status
-            show_subtitle_status()
-        elif choice == "3":
-            from src.subtitle_cli import show_subtitle_status
-            show_subtitle_status(show_missing=True)
-        elif choice == "4":
-            from src.subtitle_cli import start_subtitle_daemon
-            start_subtitle_daemon()
-        elif choice == "5":
-            from src.subtitle_cli import stop_subtitle_daemon
-            stop_subtitle_daemon()
-        elif choice == "6":
-            from src.subtitle_cli import restart_subtitle_daemon
-            restart_subtitle_daemon()
-        elif choice == "7":
-            from src.subtitle_cli import setup_subtitle_config
-            setup_subtitle_config()
-        elif choice == "8":
-            from src.subtitle_cli import test_subtitle_config
-            test_subtitle_config()
-
-        if choice != "0":
-            input("\nPress Enter to continue...")
-
-
-# ============================================================================
-# RENAMER CLI
-# ============================================================================
 
 def show_renamer_menu():
-    """Show renamer submenu - integrated with media-organizer style"""
-    from src.main import MediaOrganizerApp
-    from src.config import Config
-    
-    config = Config()
-    dry_run = False
-    
-    while True:
-        console.print("\n[bold cyan]📝 Renamer - Rename Media Files[/bold cyan]")
-        console.print("[bold]Select media type:[/bold]\n")
-        
-        options = {
-            "1": "Movies (Title (Year).ext)",
-            "2": "TV Shows (Serie.S01E01.ext)",
-            "3": "Anime (Anime.S01E01.ext)",
-            "4": "Doramas (Dorama.S01E01.ext)",
-            "5": "Music (## - Track.ext)",
-            "6": "Books (Author - Title (Year).ext)",
-            "7": "Comics (Series #Issue.ext)",
-            "8": f"Dry-run: [{'ON' if dry_run else 'OFF'}]",
-            "0": "Back to main menu"
-        }
-        
-        for key, value in options.items():
-            if key == "8":
-                status = "ON" if dry_run else "OFF"
-                color = "yellow" if dry_run else "green"
-                console.print(f"  [{key}] [{color}]{value}[/{color}]")
-            else:
-                console.print(f"  [{key}] {value}")
-        
-        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
-        
-        if choice == "0":
-            console.print("\n[blue]Returning to main menu...[/blue]")
-            return
-        elif choice == "8":
-            dry_run = not dry_run
-            console.print(f"[green]Dry-run turned {'ON' if dry_run else 'OFF'}[/green]")
-            continue
-        
-        # Common inputs
-        folder_str = Prompt.ask("Enter folder path")
-        folder = Path(folder_str)
-        
-        if not folder.exists():
-            console.print(f"[red]Folder does not exist: {folder}[/red]")
-            continue
-        
-        if not folder.is_dir():
-            console.print(f"[red]Path is not a directory: {folder}[/red]")
-            continue
-        
-        app = MediaOrganizerApp(dry_run=dry_run)
-        stats = {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
-        
-        # Execute rename by type
-        if choice == "1":  # Movies
-            title = Prompt.ask("Movie title")
-            year = int(Prompt.ask("Year", default="2024"))
-            metadata = {'type': 'movie', 'title': title, 'year': year}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "2":  # TV Shows
-            series = Prompt.ask("Series name")
-            season = int(Prompt.ask("Season", default="1"))
-            metadata = {'type': 'tv', 'title': series, 'season': season}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "3":  # Anime
-            anime = Prompt.ask("Anime name")
-            season = int(Prompt.ask("Season", default="1"))
-            metadata = {'type': 'anime', 'title': anime, 'season': season}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "4":  # Doramas
-            dorama = Prompt.ask("Dorama name")
-            season = int(Prompt.ask("Season", default="1"))
-            metadata = {'type': 'dorama', 'title': dorama, 'season': season}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "5":  # Music
-            track_num = int(Prompt.ask("Track number", default="1"))
-            title = Prompt.ask("Track title")
-            metadata = {'type': 'music', 'title': title, 'track': track_num}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "6":  # Books
-            author = Prompt.ask("Author")
-            title = Prompt.ask("Title")
-            year = int(Prompt.ask("Year", default="2024"))
-            metadata = {'type': 'book', 'title': title, 'author': author, 'year': year}
-            stats = app.rename_files_batch(folder, metadata)
-            
-        elif choice == "7":  # Comics
-            series = Prompt.ask("Series name")
-            issue = int(Prompt.ask("Issue number", default="1"))
-            metadata = {'type': 'comic', 'title': series, 'issue': issue}
-            stats = app.rename_files_batch(folder, metadata)
-        
-        # Display results (same style as media-organizer)
-        console.print("\n[bold cyan]📊 Results:[/bold cyan]")
-        console.print(f"  Processed: [green]{stats['processed']}[/green]")
-        console.print(f"  Renamed:   [green]{stats['renamed']}[/green]")
-        console.print(f"  Skipped:   [yellow]{stats['skipped']}[/yellow]")
-        console.print(f"  Failed:    [red]{stats['failed']}[/red]")
-        
-        app.cleanup()
-
-
-# ============================================================================
-# MAIN ENTRY POINT
-# ============================================================================
-
-def main():
-    """Main entry point"""
-    cli_manager = CLIManager()
-
-    if len(sys.argv) > 1:
-        command = sys.argv[1]
-
-        if command == "interactive":
-            cli_manager.show_interactive_menu()
-        elif command == "help" or command == "--help" or command == "-h":
-            cli_manager.show_menu()
-        elif command == "organize":
-            cli_manager.organize_media_interactive()
-        elif command == "scan":
-            cli_manager.scan_files_interactive()
-        elif command == "status":
-            cli_manager.show_status_interactive()
-        elif command == "unorganized":
-            cli_manager.view_unorganized_interactive()
-        elif command == "logs":
-            cli_manager.view_logs_interactive()
-        elif command == "start":
-            cli_manager.start_daemon_interactive()
-        elif command == "stop":
-            cli_manager.stop_daemon_interactive()
-        elif command == "stats":
-            cli_manager.view_stats_interactive()
-        else:
-            console.print(f"[yellow]Command '{command}' not recognized[/yellow]")
-            cli_manager.show_menu()
-    else:
-        cli_manager.show_interactive_menu()
-
-
-# ============================================================================
-# EXPORTED FUNCTIONS FOR MAIN.PY (Trash CLI commands)
-# ============================================================================
-
-def trash_delete(path: str, dry_run: bool = False):
-    """Delete file to trash"""
-    from src.deletion_manager import DeletionManager
-    from src.link_registry import LinkRegistry
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    link_registry = LinkRegistry(config.link_registry_path)
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-    deletion_manager = DeletionManager(
-        link_registry=link_registry,
-        trash_manager=trash_manager,
-        organization_database=None,
-        require_confirmation=config.delete_confirmation_required,
-        default_dry_run=config.delete_dry_run_default
-    )
-
-    try:
-        result = asyncio.run(deletion_manager.delete_to_trash(
-            path=Path(path),
-            dry_run=dry_run
-        ))
-        if result.success:
-            log_success(get_logger(__name__), f"Deleted to trash: {path}")
-        else:
-            log_error(get_logger(__name__), f"Failed: {result.error_message}")
-    finally:
-        link_registry.close()
-        trash_manager.close()
-
-
-def trash_delete_permanent(path: str, dry_run: bool = False, force: bool = False):
-    """Delete file permanently"""
-    from src.deletion_manager import DeletionManager
-    from src.link_registry import LinkRegistry
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    link_registry = LinkRegistry(config.link_registry_path)
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-    deletion_manager = DeletionManager(
-        link_registry=link_registry,
-        trash_manager=trash_manager,
-        organization_database=None,
-        require_confirmation=config.delete_confirmation_required,
-        default_dry_run=config.delete_dry_run_default
-    )
-
-    try:
-        result = asyncio.run(deletion_manager.delete_permanent(
-            path=Path(path),
-            dry_run=dry_run,
-            force=force
-        ))
-        if result.success:
-            log_success(get_logger(__name__), f"Permanently deleted: {path}")
-        else:
-            log_error(get_logger(__name__), f"Failed: {result.error_message}")
-    finally:
-        link_registry.close()
-        trash_manager.close()
-
-
-def trash_list(active_only: bool = True):
-    """List trash items"""
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-
-    try:
-        items = trash_manager.list_items(active_only=active_only)
-        if not items:
-            console.print("[yellow]Trash is empty.[/yellow]")
-            return
-
-        table = Table(box=None, show_header=True, header_style="bold cyan")
-        table.add_column("ID", style="cyan")
-        table.add_column("Original Path", style="white")
-        table.add_column("Size", style="green")
-        table.add_column("Created", style="blue")
-        table.add_column("Days Left", style="yellow")
-
-        for item in items:
-            table.add_row(
-                item.get('trash_id', 'N/A'),
-                item.get('original_path', 'N/A')[:50] + "..." if len(item.get('original_path', '')) > 50 else item.get('original_path', 'N/A'),
-                item.get('size_display', 'N/A'),
-                item.get('created_at', 'N/A')[:10] if item.get('created_at') else 'N/A',
-                str(item.get('days_remaining', 'N/A'))
-            )
-
-        console.print(table)
-    finally:
-        trash_manager.close()
-
-
-def trash_restore(trash_id: str):
-    """Restore item from trash"""
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-
-    try:
-        success = trash_manager.restore_from_trash(trash_id)
-        if success:
-            log_success(get_logger(__name__), f"Restored: {trash_id}")
-        else:
-            log_error(get_logger(__name__), f"Failed to restore: {trash_id}")
-    finally:
-        trash_manager.close()
-
-
-def trash_empty(older_than_days: int = None):
-    """Empty trash"""
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-
-    try:
-        result = trash_manager.empty_trash(older_than_days=older_than_days)
-        log_success(get_logger(__name__), f"Emptied trash: {result['items_removed']} items removed")
-    finally:
-        trash_manager.close()
-
-
-def trash_status():
-    """Show trash status"""
-    from src.deletion_manager import DeletionManager
-    from src.link_registry import LinkRegistry
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    link_registry = LinkRegistry(config.link_registry_path)
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-    deletion_manager = DeletionManager(
-        link_registry=link_registry,
-        trash_manager=trash_manager,
-        organization_database=None
-    )
-
-    try:
-        stats = deletion_manager.get_stats()
-
-        console.print("\n[bold cyan]📊 Trash & Deletion Status[/bold cyan]\n")
-
-        # Trash stats
-        table1 = Table(title="Trash Statistics", box=None, show_header=True, header_style="bold cyan")
-        table1.add_column("Metric", style="cyan")
-        table1.add_column("Value", style="green")
-
-        trash_stats = stats.get('trash', {})
-        table1.add_row("Total Items", str(trash_stats.get('total_items', 0)))
-        table1.add_row("Active Items", str(trash_stats.get('active_items', 0)))
-        table1.add_row("Total Size", f"{trash_stats.get('total_size_gb', 0):.2f} GB")
-        table1.add_row("Retention Days", str(trash_stats.get('retention_days', 30)))
-
-        console.print(table1)
-
-        # Registry stats
-        registry_stats = stats.get('link_registry', {})
-        table2 = Table(title="Link Registry Statistics", box=None, show_header=True, header_style="bold cyan")
-        table2.add_column("Metric", style="cyan")
-        table2.add_column("Value", style="green")
-
-        table2.add_row("Total Inodes", str(registry_stats.get('total_inodes', 0)))
-        table2.add_row("Total Links", str(registry_stats.get('total_links', 0)))
-        table2.add_row("Total Size", f"{registry_stats.get('total_size_gb', 0):.2f} GB")
-
-        console.print(table2)
-    finally:
-        link_registry.close()
-        trash_manager.close()
-
-
-def trash_lookup(path: str):
-    """Lookup links for a file"""
-    from src.deletion_manager import DeletionManager
-    from src.link_registry import LinkRegistry
-    from src.trash_manager import TrashManager
-    from src.config import Config
-
-    config = Config()
-    link_registry = LinkRegistry(config.link_registry_path)
-    trash_manager = TrashManager(config.trash_path, config.trash_retention_days)
-    deletion_manager = DeletionManager(
-        link_registry=link_registry,
-        trash_manager=trash_manager,
-        organization_database=None
-    )
-
-    try:
-        preview = asyncio.run(deletion_manager.get_deletion_preview(Path(path)))
-        deletion_manager.print_preview(preview)
-    finally:
-        link_registry.close()
-        trash_manager.close()
-
-
-def trash_scan():
-    """Scan filesystem to rebuild registry"""
-    from src.link_registry import LinkRegistry
-    from src.config import Config
-
-    config = Config()
-    link_registry = LinkRegistry(config.link_registry_path)
-
-    try:
-        download_paths = config.get_all_download_paths()
-        library_paths = config.get_all_library_paths()
-
-        all_paths = list(download_paths.values()) + list(library_paths.values())
-        all_paths = [p for p in all_paths if p and p != Path("") and p.exists()]
-
-        if not all_paths:
-            console.print("[red]✗ No valid directories to scan.[/red]")
-            return
-
-        stats = link_registry.scan_filesystem(all_paths)
-        console.print(f"\n[green]✓ Scan complete![/green]")
-        console.print(f"  Files scanned: {stats['files_scanned']}")
-        console.print(f"  Inodes registered: {stats['inodes_registered']}")
-        console.print(f"  Links found: {stats['links_found']}")
-        console.print(f"  Errors: {stats['errors']}")
-    finally:
-        link_registry.close()
-
-
-if __name__ == "__main__":
-    main()
+    """Show renamer submenu"""
+    cli = CLIManager()
+    cli.show_renamer_menu()

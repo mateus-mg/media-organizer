@@ -29,6 +29,7 @@ from src.core import (
     FileMetadata, ValidationResult
 )
 from src.config import Config
+from src.detection import MediaClassifier
 
 
 # ============================================================================
@@ -964,11 +965,9 @@ class RenamerOrganizer(BaseOrganizer):
     async def organizar(self, file_path: Path) -> OrganizationResult:
         """
         Organize (rename) single file.
-        
+
         Uses metadata from file_path.parent to determine naming pattern.
         """
-        from src.detection import MediaClassifier
-        
         # Get metadata from context (environment variables or passed metadata)
         metadata = self._extract_metadata_from_context(file_path)
         
