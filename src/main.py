@@ -257,178 +257,26 @@ def cli(ctx, dry_run):
     ctx.obj['DRY_RUN'] = dry_run
 
 
-def show_subtitle_menu():
-    """Show subtitle downloader submenu"""
-    from src.subtitle_cli import (
-        run_manual_download,
-        show_subtitle_status,
-        start_subtitle_daemon,
-        stop_subtitle_daemon,
-        restart_subtitle_daemon,
-        setup_subtitle_config,
-        test_subtitle_config,
-    )
-
-    while True:
-        console = Console()
-        console.print("\n[bold cyan]📺 Subtitle Downloader[/bold cyan]")
-        console.print("[bold]Select an operation:[/bold]\n")
-
-        options = {
-            "1": "Download subtitles (manual)",
-            "2": "View subtitle status",
-            "3": "Files missing subtitles",
-            "4": "Start subtitle daemon",
-            "5": "Stop subtitle daemon",
-            "6": "Restart subtitle daemon",
-            "7": "Configure OpenSubtitles",
-            "8": "Test API connection",
-            "0": "Back to main menu"
-        }
-
-        for key, value in options.items():
-            console.print(f"  [{key}] {value}")
-
-        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
-
-        if choice == "0":
-            console.print("\n[blue]Returning to main menu...[/blue]")
-            return
-        elif choice == "1":
-            # Manual download
-            console.print("\n[cyan]→ Running manual subtitle download...[/cyan]\n")
-            run_manual_download()
-        elif choice == "2":
-            # View status
-            show_subtitle_status()
-        elif choice == "3":
-            # Show missing
-            show_subtitle_status(show_missing=True)
-        elif choice == "4":
-            # Start daemon
-            start_subtitle_daemon()
-        elif choice == "5":
-            # Stop daemon
-            stop_subtitle_daemon()
-        elif choice == "6":
-            # Restart daemon
-            restart_subtitle_daemon()
-        elif choice == "7":
-            # Setup wizard
-            setup_subtitle_config()
-        elif choice == "8":
-            # Test API
-            test_subtitle_config()
-
-        # Pause before showing menu again
-        if choice != "0":
-            input("\nPress Enter to continue...")
-
-
 # Import unified CLI functions from cli_manager
-from src.cli_manager import show_trash_menu, show_subtitle_menu, show_renamer_menu
+from src.cli_manager import show_trash_menu, show_subtitle_menu, show_renamer_menu, CLIManager
 
 
 @cli.command()
 @click.pass_context
 def organize(ctx):
     """Organize media files - Interactive menu to select directory"""
-    dry_run = ctx.obj.get('DRY_RUN', False)
-    app = MediaOrganizerApp(dry_run=dry_run)
-
-    try:
-        console = Console()
-        console.print("\n[bold cyan]Media Organization[/bold cyan]\n")
-
-        # Create menu options
-        options = {
-            "1": "Movies",
-            "2": "TV Shows",
-            "3": "Anime",
-            "4": "Doramas",
-            "5": "Music",
-            "6": "Books",
-            "7": "Comics",
-            "8": "Subtitle Downloader",
-            "9": "Trash & Deletion",
-            "0": "All directories",
-        }
-
-        # Display menu
-        console.print("[bold]Select directory to organize:[/bold]")
-        for key, name in options.items():
-            if key == "0":
-                console.print(f"  [{key}] {name}")
-            elif key == "8":
-                console.print(f"  [{key}] {name} 📺")
-            elif key == "9":
-                console.print(f"  [{key}] {name} 🗑️")
-            else:
-                console.print(f"  [{key}] {name}")
-
-        # Get user choice
-        choice = Prompt.ask("\nYour choice", choices=list(options.keys()), default="0")
-
-        if choice == "8":
-            # Subtitle Downloader submenu
-            show_subtitle_menu()
-            return
-        elif choice == "9":
-            # Trash & Deletion submenu
-            show_trash_menu()
-            return
-        elif choice == "0":
-            # Organize all directories
-            console.print("\n[cyan]→ Organizing all directories...[/cyan]\n")
-
-            # Process all configured download paths
-            total_processed = 0
-            for key, name in options.items():
-                if key not in ["0", "8"]:  # Skip "All" and "Subtitle Downloader"
-                    path = getattr(app.config, f'download_path_{name.lower().replace(" ", "_")}', None)
-                    if path and path.exists():
-                        processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
-                        total_processed += processed
-                        console.print(f"  Processed {processed} files in {name}")
-
-            console.print(
-                f"\n[bold green]✓ Successfully organized {total_processed} file(s)[/bold green]")
-        else:
-            # Organize selected directory
-            name = options[choice]
-            path = getattr(app.config, f'download_path_{name.lower().replace(" ", "_")}', None)
-            
-            if path:
-                console.print(f"\n[cyan]→ Organizing {name}: {path}[/cyan]\n")
-
-                if not path.exists():
-                    console.print(f"[red]✗ Directory does not exist: {path}[/red]")
-                    return
-
-                asyncio.run(app.organize_directory(path))
-            else:
-                console.print(f"[red]✗ Invalid path for {name}[/red]")
-                return
-
-            asyncio.run(app.organize_directory(path))
-        
-        app.show_stats()
-
-    finally:
-        app.cleanup()
+    from src.cli_manager import CLIManager
+    
+    cli = CLIManager()
+    cli.show_organize_menu()
 
 
 @cli.command()
 @click.pass_context
 def renamer(ctx):
     """Open renamer menu - rename media files to standard patterns"""
-    from src.renamer import RenamerCLI
-    
-    dry_run = ctx.obj.get('DRY_RUN', False)
-    
-    # Use the new RenamerCLI class
-    cli = RenamerCLI(dry_run=dry_run)
-    cli.run()
+    cli = CLIManager()
+    cli.show_renamer_menu()
 
 
 @cli.command()
@@ -757,11 +605,33 @@ def subtitle_daemon_status():
 def trash():
     """
     Trash & Deletion Manager
-    
+
     Manage file deletion with hardlink awareness.
     Provides trash-based and permanent deletion modes.
     """
     pass
+
+
+@cli.command()
+def interactive():
+    """
+    Interactive media management menu
+
+    Opens the main interactive menu for all media operations.
+    """
+    cli = CLIManager()
+    cli.show_interactive_menu()
+
+
+@trash.command()
+def interactive():
+    """
+    Interactive trash management menu
+
+    Opens an interactive menu for trash and deletion operations.
+    """
+    cli = CLIManager()
+    cli.show_trash_menu()
 
 
 @trash.command()
@@ -770,11 +640,11 @@ def trash():
 def delete(path, dry_run):
     """
     Delete file to trash (safe, reversible)
-    
+
     PATH: File path to delete
     """
     from src.cli_manager import trash_delete
-    
+
     trash_delete(path, dry_run=dry_run)
 
 

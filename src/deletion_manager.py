@@ -356,10 +356,7 @@ class DeletionManager:
         console.print()
 
         # Require typing 'DELETE' to confirm
-        response = Prompt.ask(
-            "Type 'DELETE' to confirm",
-            default=""
-        )
+        response = input("Type 'DELETE' to confirm: ").strip()
 
         return response.upper() == 'DELETE'
 
