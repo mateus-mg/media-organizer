@@ -442,6 +442,20 @@ async def enrich_book_metadata_with_online_sources(
             return "https://" + text[len("http://"):]
         return text
 
+    def _needs_openlibrary_fallback(metadata: Dict[str, Any]) -> bool:
+        fallback_fields = (
+            "author",
+            "authors",
+            "year",
+            "language",
+            "publisher",
+            "description",
+            "isbn",
+            "series",
+            "genre",
+        )
+        return any(_is_missing(metadata.get(field)) for field in fallback_fields)
+
     try:
         title = str(existing_metadata.get("title") or "").strip()
         author = str(existing_metadata.get("author") or "").strip()
@@ -449,62 +463,7 @@ async def enrich_book_metadata_with_online_sources(
         if not title:
             return existing_metadata
 
-        encoded_title = urllib.parse.quote_plus(title)
-        encoded_author = urllib.parse.quote_plus(author)
-        url = (
-            "https://openlibrary.org/search.json"
-            f"?title={encoded_title}&author={encoded_author}&limit=25"
-        )
-
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                if response.status != 200:
-                    logger.warning(
-                        "OpenLibrary search failed for %s (status=%s)",
-                        file_path.name,
-                        response.status,
-                    )
-                else:
-                    data = await response.json()
-                    docs = data.get("docs") or []
-                    if docs:
-                        portuguese_docs = []
-                        for doc_candidate in docs:
-                            languages = _extract_doc_languages(doc_candidate)
-                            if any(_is_portuguese_language(lang) for lang in languages):
-                                portuguese_docs.append(doc_candidate)
-
-                        if not portuguese_docs:
-                            logger.info(
-                                "No Portuguese online metadata found for %s",
-                                file_path.name,
-                            )
-                        else:
-                            doc = portuguese_docs[0]
-
-                            isbn = _first_non_empty(doc.get("isbn") or [])
-                            publisher = _first_non_empty(
-                                doc.get("publisher") or [])
-                            language_candidates = _extract_doc_languages(doc)
-                            language = _first_non_empty(
-                                [lang for lang in language_candidates if _is_portuguese_language(
-                                    lang)]
-                            )
-                            year = _extract_year(doc.get("first_publish_year"))
-                            series = _first_non_empty(doc.get("series") or [])
-
-                            _set_if_missing(existing_metadata, "isbn", isbn)
-                            _set_if_missing(existing_metadata,
-                                            "publisher", publisher)
-                            _set_if_missing(existing_metadata,
-                                            "language", language)
-                            _set_if_missing(existing_metadata, "year", year)
-                            _set_if_missing(existing_metadata,
-                                            "series", series)
-
-                            logger.info(
-                                "Enriched from OpenLibrary: %s", file_path.name)
-
             if use_google_books:
                 cleaned_title = _clean_book_title_for_query(title)
                 base_title = _strip_collection_suffix(cleaned_title)
@@ -707,8 +666,71 @@ async def enrich_book_metadata_with_online_sources(
                         google_items_count,
                     )
 
+            # OpenLibrary acts as fallback after Google Books, filling only remaining gaps.
+            if _needs_openlibrary_fallback(existing_metadata):
+                title_for_openlibrary = str(
+                    existing_metadata.get("title") or title).strip()
+                author_for_openlibrary = str(
+                    existing_metadata.get("author") or author).strip()
+
+                encoded_title = urllib.parse.quote_plus(title_for_openlibrary)
+                encoded_author = urllib.parse.quote_plus(author_for_openlibrary)
+                openlibrary_url = (
+                    "https://openlibrary.org/search.json"
+                    f"?title={encoded_title}&author={encoded_author}&limit=25"
+                )
+
+                async with session.get(openlibrary_url) as response:
+                    if response.status != 200:
+                        logger.warning(
+                            "OpenLibrary search failed for %s (status=%s)",
+                            file_path.name,
+                            response.status,
+                        )
+                    else:
+                        data = await response.json()
+                        docs = data.get("docs") or []
+                        if docs:
+                            portuguese_docs = []
+                            for doc_candidate in docs:
+                                languages = _extract_doc_languages(doc_candidate)
+                                if any(_is_portuguese_language(lang) for lang in languages):
+                                    portuguese_docs.append(doc_candidate)
+
+                            if not portuguese_docs:
+                                logger.info(
+                                    "No Portuguese online metadata found for %s",
+                                    file_path.name,
+                                )
+                            else:
+                                doc = portuguese_docs[0]
+
+                                isbn = _first_non_empty(doc.get("isbn") or [])
+                                publisher = _first_non_empty(
+                                    doc.get("publisher") or [])
+                                language_candidates = _extract_doc_languages(doc)
+                                language = _first_non_empty(
+                                    [lang for lang in language_candidates if _is_portuguese_language(
+                                        lang)]
+                                )
+                                year = _extract_year(
+                                    doc.get("first_publish_year"))
+                                series = _first_non_empty(doc.get("series") or [])
+
+                                _set_if_missing(existing_metadata, "isbn", isbn)
+                                _set_if_missing(existing_metadata,
+                                                "publisher", publisher)
+                                _set_if_missing(existing_metadata,
+                                                "language", language)
+                                _set_if_missing(existing_metadata, "year", year)
+                                _set_if_missing(existing_metadata,
+                                                "series", series)
+
+                                logger.info(
+                                    "Enriched from OpenLibrary: %s", file_path.name)
+
     except Exception as exc:
-        logger.warning("OpenLibrary enrichment failed for %s: %s",
+        logger.warning("Book enrichment failed for %s: %s",
                        file_path.name, exc)
 
     return existing_metadata
