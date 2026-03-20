@@ -29,7 +29,7 @@ from src.log_formatter import LogSection
 class TrashManager:
     """
     Trash manager with retention policy.
-    
+
     Provides:
     - Safe move of files to trash (preserving one copy)
     - Restoration of trashed items
@@ -40,7 +40,7 @@ class TrashManager:
     def __init__(self, trash_path: Path, retention_days: int = 30):
         """
         Initialize Trash Manager
-        
+
         Args:
             trash_path: Path to trash directory
             retention_days: Days to keep items in trash
@@ -59,7 +59,8 @@ class TrashManager:
         self.db = TinyDB(str(self.index_path), indent=2, ensure_ascii=False)
         self.items_table = self.db.table('items')
 
-        log_info(self.logger, f"Trash Manager initialized: {trash_path} (retention: {retention_days} days)")
+        log_info(
+            self.logger, f"Trash Manager initialized: {trash_path} (retention: {retention_days} days)")
 
     def move_to_trash(
         self,
@@ -69,12 +70,12 @@ class TrashManager:
     ) -> Optional[str]:
         """
         Move file to trash, removing all hardlinks
-        
+
         Args:
             primary_path: Primary file path to preserve in trash
             all_links: List of all hardlink paths (from LinkRegistry)
             metadata: Optional metadata to store
-            
+
         Returns:
             Trash ID if successful, None otherwise
         """
@@ -94,9 +95,11 @@ class TrashManager:
                 preserved_path = trash_item_path / primary_path.name
                 try:
                     shutil.copy2(primary_path, preserved_path)
-                    log_info(self.logger, f"Copied to trash: {primary_path.name}")
+                    log_info(
+                        self.logger, f"Copied to trash: {primary_path.name}")
                 except Exception as e:
-                    log_error(self.logger, f"Failed to copy file to trash: {e}")
+                    log_error(
+                        self.logger, f"Failed to copy file to trash: {e}")
                     shutil.rmtree(trash_item_path)
                     return None
 
@@ -110,7 +113,8 @@ class TrashManager:
                         removed_links.append(str(link_path))
                         log_info(self.logger, f"Removed link: {link_path}")
                     except Exception as e:
-                        log_error(self.logger, f"Failed to remove link {link_path}: {e}")
+                        log_error(
+                            self.logger, f"Failed to remove link {link_path}: {e}")
 
             # Save links manifest
             manifest = {
@@ -127,7 +131,8 @@ class TrashManager:
                 json.dump(manifest, f, indent=2, ensure_ascii=False)
 
             # Calculate expiration date
-            expires_at = (datetime.utcnow() + timedelta(days=self.retention_days)).isoformat()
+            expires_at = (datetime.utcnow() +
+                          timedelta(days=self.retention_days)).isoformat()
 
             # Add to index
             item_record = {
@@ -144,7 +149,8 @@ class TrashManager:
 
             self.items_table.insert(item_record)
 
-            log_success(self.logger, f"Moved to trash: {primary_path.name} (ID: {trash_id})")
+            log_success(
+                self.logger, f"Moved to trash: {primary_path.name} (ID: {trash_id})")
             return trash_id
 
         except Exception as e:
@@ -154,11 +160,11 @@ class TrashManager:
     def restore_from_trash(self, trash_id: str, restore_paths: Optional[List[Path]] = None) -> bool:
         """
         Restore item from trash
-        
+
         Args:
             trash_id: Trash item ID
             restore_paths: Optional list of paths to restore to (uses original paths if not provided)
-            
+
         Returns:
             True if successful
         """
@@ -171,7 +177,8 @@ class TrashManager:
                 return False
 
             if record.get('status') != 'active':
-                log_error(self.logger, f"Trash item not active: {trash_id} (status: {record.get('status')})")
+                log_error(
+                    self.logger, f"Trash item not active: {trash_id} (status: {record.get('status')})")
                 return False
 
             # Load manifest
@@ -186,16 +193,18 @@ class TrashManager:
             # Get preserved file from trash
             preserved_path = Path(manifest.get('preserved_path', ''))
             if not preserved_path or not preserved_path.exists():
-                log_error(self.logger, f"Preserved file not found: {preserved_path}")
+                log_error(
+                    self.logger, f"Preserved file not found: {preserved_path}")
                 return False
 
             # Determine restore paths
             original_links = manifest.get('original_links', [])
-            
+
             if restore_paths is None:
                 # Use original paths from manifest
-                restore_paths = [Path(link['path']) for link in original_links if link.get('type') == 'original']
-            
+                restore_paths = [Path(link['path']) for link in original_links if link.get(
+                    'type') == 'original']
+
             if not restore_paths:
                 log_error(self.logger, "No restore paths specified")
                 return False
@@ -206,13 +215,14 @@ class TrashManager:
                 try:
                     # Create parent directories
                     dest_path.parent.mkdir(parents=True, exist_ok=True)
-                    
+
                     # Copy file
                     shutil.copy2(preserved_path, dest_path)
                     restored_count += 1
                     log_info(self.logger, f"Restored to: {dest_path}")
                 except Exception as e:
-                    log_error(self.logger, f"Failed to restore to {dest_path}: {e}")
+                    log_error(
+                        self.logger, f"Failed to restore to {dest_path}: {e}")
 
             if restored_count == 0:
                 return False
@@ -227,7 +237,8 @@ class TrashManager:
                 Item.trash_id == trash_id
             )
 
-            log_success(self.logger, f"Restored {restored_count} file(s) from trash: {trash_id}")
+            log_success(
+                self.logger, f"Restored {restored_count} file(s) from trash: {trash_id}")
             return True
 
         except Exception as e:
@@ -237,10 +248,10 @@ class TrashManager:
     def empty_trash(self, older_than_days: Optional[int] = None) -> Dict[str, Any]:
         """
         Empty trash
-        
+
         Args:
             older_than_days: Only remove items older than this (None = all items)
-            
+
         Returns:
             Statistics dictionary
         """
@@ -261,7 +272,7 @@ class TrashManager:
             try:
                 trash_id = item.get('trash_id', '')
                 created_at_str = item.get('created_at', '')
-                
+
                 # Parse created_at
                 try:
                     created_at = datetime.fromisoformat(created_at_str)
@@ -278,9 +289,10 @@ class TrashManager:
                 if item_path.exists():
                     # Calculate size before removal
                     try:
-                        size = sum(f.stat().st_size for f in item_path.rglob('*') if f.is_file())
+                        size = sum(f.stat().st_size for f in item_path.rglob(
+                            '*') if f.is_file())
                         stats['space_freed_bytes'] += size
-                    except:
+                    except OSError:
                         pass
 
                     shutil.rmtree(item_path)
@@ -294,16 +306,17 @@ class TrashManager:
                 stats['errors'] += 1
                 log_error(self.logger, f"Failed to remove trash item: {e}")
 
-        log_success(self.logger, f"Empty trash complete: {stats['items_removed']} items removed")
+        log_success(
+            self.logger, f"Empty trash complete: {stats['items_removed']} items removed")
         return stats
 
     def list_items(self, active_only: bool = True) -> List[Dict[str, Any]]:
         """
         List items in trash
-        
+
         Args:
             active_only: Only show active (not restored/expired) items
-            
+
         Returns:
             List of item dictionaries
         """
@@ -318,14 +331,14 @@ class TrashManager:
             result = []
             for item in items:
                 display_item = item.copy()
-                
+
                 # Calculate days remaining
                 expires_at_str = item.get('expires_at', '')
                 try:
                     expires_at = datetime.fromisoformat(expires_at_str)
                     days_remaining = (expires_at - datetime.utcnow()).days
                     display_item['days_remaining'] = max(0, days_remaining)
-                except:
+                except (ValueError, TypeError):
                     display_item['days_remaining'] = None
 
                 # Format size
@@ -350,10 +363,10 @@ class TrashManager:
     def get_item(self, trash_id: str) -> Optional[Dict[str, Any]]:
         """
         Get specific trash item
-        
+
         Args:
             trash_id: Trash item ID
-            
+
         Returns:
             Item dictionary or None
         """
@@ -367,7 +380,7 @@ class TrashManager:
     def get_stats(self) -> Dict[str, Any]:
         """
         Get trash statistics
-        
+
         Returns:
             Statistics dictionary
         """
@@ -376,9 +389,11 @@ class TrashManager:
 
             total_items = len(items)
             active_items = sum(1 for i in items if i.get('status') == 'active')
-            restored_items = sum(1 for i in items if i.get('status') == 'restored')
-            
-            total_size = sum(i.get('size_bytes', 0) for i in items if i.get('status') == 'active')
+            restored_items = sum(
+                1 for i in items if i.get('status') == 'restored')
+
+            total_size = sum(i.get('size_bytes', 0)
+                             for i in items if i.get('status') == 'active')
 
             # Check for expired items
             now = datetime.utcnow()
@@ -389,7 +404,7 @@ class TrashManager:
                     expires_at = datetime.fromisoformat(expires_at_str)
                     if expires_at < now and item.get('status') == 'active':
                         expired_items += 1
-                except:
+                except (ValueError, TypeError):
                     pass
 
             return {
@@ -409,7 +424,7 @@ class TrashManager:
     def cleanup_expired(self) -> int:
         """
         Remove expired items from trash
-        
+
         Returns:
             Number of items removed
         """
@@ -424,12 +439,12 @@ class TrashManager:
                 expires_at = datetime.fromisoformat(expires_at_str)
                 if expires_at < now:
                     trash_id = item.get('trash_id', '')
-                    
+
                     # Remove directory
                     item_path = self.files_path / trash_id
                     if item_path.exists():
                         shutil.rmtree(item_path)
-                    
+
                     # Remove from index
                     self.items_table.remove(Item.trash_id == trash_id)
                     removed_count += 1
@@ -437,7 +452,8 @@ class TrashManager:
             except Exception as e:
                 log_error(self.logger, f"Failed to cleanup expired item: {e}")
 
-        log_info(self.logger, f"Cleanup complete: {removed_count} expired items removed")
+        log_info(
+            self.logger, f"Cleanup complete: {removed_count} expired items removed")
         return removed_count
 
     def close(self):

@@ -1,0 +1,989 @@
+{
+  "files": {
+    "1": {
+      "inode": 95946074,
+      "size_bytes": 724690,
+      "created_at": "2026-03-20T20:27:39.044346",
+      "last_updated": "2026-03-20T20:27:39.044346",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Stephen Hawking - Breves respostas para grandes questões (2018).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:27:39.044346"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Stephen Hawking/Stephen Hawking - Breves respostas para grandes questões (2018).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:27:39.044346"
+        }
+      ],
+      "metadata": {
+        "title": "Breves respostas para grandes questões",
+        "author": "Stephen Hawking",
+        "authors": [
+          "Stephen Hawking"
+        ],
+        "year": 2018,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "description": "Desde Einstein, o mundo não via um cientista tão reverenciado quanto Stephen Hawking. Com seu trabalho revolucionário em física e cosmologia, ele encantou milhões de leitores com a origem do universo e a natureza dos buracos negros, além de inspirar todos pela coragem e determinação que mostrou em sua luta contra a doença do neurônio motor. Agora, nesta reunião póstuma de seus trabalhos, podemos conhecer seus pensamentos a respeito das grandes questões que povoam nossas mentes desde os primórdios e daquelas mais prementes na atualidade. Somos conduzidos assim a suas reflexões sobre a origem do universo, a existência de Deus e a natureza do tempo, assuntos sempre submetidos a seu intelecto afiado de cientista. Aliado à curiosidade que o impulsionou por toda a vida, ele projeta seu olhar também para o futuro, buscando soluções para problemas que ameaçam hoje o mundo como o conhecemos, tais como o aquecimento global, a fome e a urgência de um desenvolvimento sustentável. Com prefácio de Eddie Redmayne — que ganhou o Oscar por interpretar Hawking no cinema —, introdução do Nobel de física Kip Thorne e posfácio comovente de Lucy Hawking, sua filha, Breves respostas para grandes questõesnão é apenas a última mensagem de um grande gênio: é seu presente final para a humanidade.",
+        "isbn": "9788551004319",
+        "genre": "Fiction",
+        "google_books_id": "i1D1zwEACAAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=i1D1zwEACAAJ&dq=intitle:Breves+respostas+para+grandes+quest%C3%B5es+inauthor:Stephen+Hawking&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=i1D1zwEACAAJ&dq=intitle:Breves+respostas+para+grandes+quest%C3%B5es+inauthor:Stephen+Hawking&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+        "subjects": [
+          "Fiction"
+        ]
+      }
+    },
+    "2": {
+      "inode": 95944708,
+      "size_bytes": 693981,
+      "created_at": "2026-03-20T20:27:50.997120",
+      "last_updated": "2026-03-20T20:27:50.997120",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e as Relíquias da Morte [Harry Potter;7] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:27:50.997120"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e as Relíquias da Morte [Harry Potter;7] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:27:50.997120"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e as Relíquias da Morte Harry Potter7 (2015)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 7.0
+      }
+    },
+    "3": {
+      "inode": 95944714,
+      "size_bytes": 573265,
+      "created_at": "2026-03-20T20:27:58.557154",
+      "last_updated": "2026-03-20T20:27:58.557154",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Jenny Han - P.S. Ainda Amo Você [Para Todos os Garotos que já Amei;2] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:27:58.557154"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Jenny Han/Jenny Han - P.S. Ainda Amo Você [Para Todos os Garotos que já Amei;2] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:27:58.557154"
+        }
+      ],
+      "metadata": {
+        "title": "PS Ainda Amo Você",
+        "author": "Jenny Han",
+        "authors": [
+          "Jenny Han"
+        ],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Para Todos os Garotos que já Amei",
+        "series_index": 2.0,
+        "language": "pt-BR",
+        "publisher": "Editora Intrinseca",
+        "description": "Lara Jean sempre teve uma vida amorosa muito movimentada, pelo menos na cabeça dela. Para cada garoto por quem se apaixonou e desapaixonou platonicamente, ela escreveu uma bela carta de despedida. Cartas muito dela, muito pessoais, que de repente e sem explicação foram parar nas mãos dos destinatários. Em Para todos os garotos que já amei, Lara Jean não fazia ideia de como sair dessa enrascada, muito menos sabia que o namoro de mentirinha com Peter Kavinsky, inventado apenas para fugir do total constrangimento, se transformaria em algo mais. Agora, em P.S.: Ainda amo você, Lara Jean tem que aprender como é estar em um relacionamento que, pela primeira vez, não é de faz de conta. E quando ela parece estar conseguindo, um garoto do passado cai de paraquedas bem no meio de tudo, e os sentimentos de Lara por ele também retornam. Uma história delicada e comovente que vai mostrar que se apaixonar é a parte fácil: emocionante mesmo é o que vem depois. “Lara Jean, com seu humor e inocência, confere uma individualidade singular a esta bela história de amor.” Publishers Weekly “Uma sequência charmosa e tocante... Os fãs do primeiro livro vão adorar.” Booklist",
+        "isbn": "9788580578706",
+        "rating": 5.0,
+        "page_count": 303,
+        "genre": "Young Adult Fiction",
+        "google_books_id": "K88wCwAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=K88wCwAAQBAJ&dq=intitle:PS+Ainda+Amo+Voc%C3%AA+inauthor:Jenny+Han&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=K88wCwAAQBAJ&printsec=frontcover&dq=intitle:PS+Ainda+Amo+Voc%C3%AA+inauthor:Jenny+Han&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Young Adult Fiction"
+        ]
+      }
+    },
+    "4": {
+      "inode": 95946071,
+      "size_bytes": 934739,
+      "created_at": "2026-03-20T20:28:01.543193",
+      "last_updated": "2026-03-20T20:28:01.543193",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Napoleon Hill - Mais esperto que o diabo (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:01.543193"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Napoleon Hill/Napoleon Hill - Mais esperto que o diabo (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:01.543193"
+        }
+      ],
+      "metadata": {
+        "title": "Mais esperto que o diabo",
+        "author": "Napoleon Hill",
+        "authors": [
+          "Napoleon Hill"
+        ],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "subtitle": "( RESUMO COMPLETO )",
+        "language": "pt-BR",
+        "publisher": "EDITORA PRÊMIO",
+        "description": "Baseado em um manuscrito polêmico escrito em 1938 e mantido em segredo por mais de 70 anos, Mais Esperto que o Diabo é uma das obras mais provocantes e transformadoras de Napoleon Hill, autor do clássico Pense e Enriqueça. Neste livro, Hill narra uma entrevista imaginária e simbólica com o próprio “Diabo”, revelando os mecanismos mentais que mantêm as pessoas presas ao medo, à dúvida e à mediocridade. Por meio de uma linguagem direta e desafiadora, o autor expõe as estratégias invisíveis que sabotam o sucesso humano e mostra como o controle mental, o propósito definido e a autodisciplina são as verdadeiras armas para conquistar liberdade e poder pessoal. Este livro é um convite para romper com a manipulação do medo e assumir o comando total da própria mente — transformando pensamentos em prosperidade, coragem e realização. 💡 Tema central: A mente humana é o campo de batalha entre o medo e a fé. Domine-a, e nada poderá deter você.",
+        "page_count": 37,
+        "genre": "Business & Economics",
+        "google_books_id": "i6uWEQAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=i6uWEQAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=i6uWEQAAQBAJ&printsec=frontcover&dq=intitle:Mais+esperto+que+o+diabo+inauthor:Napoleon+Hill&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "5": {
+      "inode": 95946086,
+      "size_bytes": 1378544,
+      "created_at": "2026-03-20T20:28:04.633857",
+      "last_updated": "2026-03-20T20:28:04.633857",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Daniel Kahneman - Rapido e Devagar (2012).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:04.633857"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Daniel Kahneman/Daniel Kahneman - Rapido e Devagar (2012).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:04.633857"
+        }
+      ],
+      "metadata": {
+        "title": "Rapido e Devagar",
+        "author": "Daniel Kahneman",
+        "authors": [
+          "Daniel Kahneman"
+        ],
+        "year": 2012,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "por",
+        "subtitle": "Duas formas de pensar",
+        "publisher": "Objetiva",
+        "description": "Uma visão inovadora sobre como nossa mente funciona e como tomamos decisões. Daniel Kahneman, ganhador do Prêmio Nobel de Economia por pesquisas que colocam em xeque a ideia de que a nossa tomada de decisões é essencialmente racional, é um dos mais importantes pensadores do século XXI. Suas ideias tiveram um impacto profundo em muitas áreas, incluindo economia, psicologia, medicina e política, mas é a primeira vez que o autor reúne seus muitos anos de pesquisa e pensamento em um único livro. Rápido e devagar: duas formas de pensar apresenta uma visão tão inovadora quanto inquietante sobre como a mente funciona e como as decisões são tomadas. No livro, o autor explica as duas formas como se desenvolvem o pensamento humano: uma é rápida, intuitiva e emocional; a outra, mais lenta, deliberativa e lógica. Kahneman expõe as capacidades extraordinárias — e também os defeitos e vícios — do pensamento rápido e revela o peso das impressões intuitivas no processo de tomada de decisões. O autor revela quando é possível ou não confiar na intuição. Oferece insights práticos e esclarecedores sobre como são tomadas as decisões nos negócios e na vida pessoal, e como se pode usar diferentes técnicas para proteger contra falhas mentais que, muitas vezes, colocam o indivíduo em situações de apuro. Eleito um dos melhores livros de 2011 pelo New York Times Book Review",
+        "isbn": "9788539004010",
+        "rating": 5.0,
+        "page_count": 442,
+        "genre": "Business & Economics",
+        "google_books_id": "d3FloqhQHgQC",
+        "google_books_info_link": "http://books.google.pt/books?id=d3FloqhQHgQC&dq=intitle:Rapido+e+Devagar+inauthor:Daniel+Kahneman&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=d3FloqhQHgQC&dq=intitle:Rapido+e+Devagar+inauthor:Daniel+Kahneman&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "6": {
+      "inode": 95944720,
+      "size_bytes": 262171,
+      "created_at": "2026-03-20T20:28:07.493289",
+      "last_updated": "2026-03-20T20:28:07.493289",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/T.D. Jakes - A Dama, seu amado, e seu Senhor (2018).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:07.493289"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/T. D. Jakes/T.D. Jakes - A Dama, seu amado, e seu Senhor (2018).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:07.493289"
+        }
+      ],
+      "metadata": {
+        "title": "A Dama seu amado e seu Senhor",
+        "author": "T.D. Jakes",
+        "authors": [
+          "T.D. Jakes"
+        ],
+        "year": 2018,
+        "media_type": "book",
+        "media_subtype": "book",
+        "subtitle": "As três dimensões do amor feminino",
+        "language": "pt-BR",
+        "publisher": "Editora Mundo Cristão",
+        "description": "Amor. Que palavra! Apenas quatro letras! Mas tão poderosas que podem determinar o triunfo ou o fracasso em nossa vida, em especial na vida da mulher, a quem é atribuído o equilíbrio do lar, da família. Como conhecer o segredo de uma vida bem-sucedida? Como melhorar o relacionamento com o homem a quem você ama? E, acima de tudo, como estabelecer uma comunhão maior com o seu Senhor? Se essas questão a preocupam ou lhe interessam, este livro é para você. A Dama, seu Amado e seu Senhor trata dessas três dimensões do amor, considerando os três ângulos fundamentais que compõem os relacionamentos na vida de uma mulher: o amor a si mesma, o amor ao cônjuge e o amor a Deus. Você quer saber o que é necessário para manter a sua identidade, a atenção de seu amado e o favor do Senhor? Então, abra este livro e desvende o segredo!",
+        "isbn": "9786586027976",
+        "page_count": 248,
+        "genre": "Religion",
+        "google_books_id": "SnoqEAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=SnoqEAAAQBAJ&dq=intitle:A+Dama+seu+amado+e+seu+Senhor+inauthor:T.D.+Jakes&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=SnoqEAAAQBAJ&dq=intitle:A+Dama+seu+amado+e+seu+Senhor+inauthor:T.D.+Jakes&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Religion"
+        ]
+      }
+    },
+    "7": {
+      "inode": 95944713,
+      "size_bytes": 1040408,
+      "created_at": "2026-03-20T20:28:10.535573",
+      "last_updated": "2026-03-20T20:28:10.535573",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Jenny Han - Para Todos os Garotos que já Amei [Para Todos os Garotos que já Amei;1] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:10.535573"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Jenny Han/Jenny Han - Para Todos os Garotos que já Amei [Para Todos os Garotos que já Amei;1] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:10.535573"
+        }
+      ],
+      "metadata": {
+        "title": "Para Todos os Garotos que já Amei",
+        "author": "Jenny Han",
+        "authors": [
+          "Jenny Han"
+        ],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Para Todos os Garotos que já Amei",
+        "series_index": 1.0,
+        "language": "pt-BR",
+        "publisher": "Editora Intrinseca",
+        "description": "Lara Jean guarda suas cartas de amor em uma caixa azul-petróleo que ganhou da mãe. Não são cartas que ela recebeu de alguém, mas que ela mesma escreveu. Uma para cada garoto que amou — cinco ao todo. São cartas sinceras, sem joguinhos nem fingimentos, repletas de coisas que Lara Jean não diria a ninguém, confissões de seus sentimentos mais profundos. Até que um dia essas cartas secretas são misteriosamente enviadas aos destinatários, e de uma hora para outra a vida amorosa de Lara Jean sai do papel e se transforma em algo que ela não pode mais controlar. “Lara Jean, com seu humor e inocência, confere uma individualidade singular a esta charmosa história de amor.” Publishers Weekly “Os leitores vão se lembrar das irmãs Song e dos garotos de suas vidas mesmo depois de virar a última página deste belo romance.” School Library Journal",
+        "isbn": "9788580577273",
+        "rating": 3.5,
+        "page_count": 335,
+        "genre": "Young Adult Fiction",
+        "google_books_id": "YNbxCAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=YNbxCAAAQBAJ&dq=intitle:Para+Todos+os+Garotos+que+j%C3%A1+Amei+inauthor:Jenny+Han&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=YNbxCAAAQBAJ&printsec=frontcover&dq=intitle:Para+Todos+os+Garotos+que+j%C3%A1+Amei+inauthor:Jenny+Han&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Young Adult Fiction"
+        ]
+      }
+    },
+    "8": {
+      "inode": 95946070,
+      "size_bytes": 1540966,
+      "created_at": "2026-03-20T20:28:14.167558",
+      "last_updated": "2026-03-20T20:28:14.167558",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Napoleon Hill - Quem Pensa Enriquece (2022).pdf",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:14.167558"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Napoleon Hill/Napoleon Hill - Quem Pensa Enriquece (2022).pdf",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:14.167558"
+        }
+      ],
+      "metadata": {
+        "title": "Quem Pensa Enriquece",
+        "author": "Napoleon Hill",
+        "authors": [
+          "Napoleon Hill"
+        ],
+        "year": 2022,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "EDITORA PRÊMIO ",
+        "description": "Quem Pensa Enriquece é um dos livros mais influentes de todos os tempos sobre sucesso, realização pessoal e prosperidade financeira. Baseado em mais de vinte anos de pesquisas realizadas por Napoleon Hill com alguns dos homens mais bem-sucedidos do século XX, a obra revela os princípios mentais e comportamentais que conduzem à riqueza em todas as áreas da vida. Mais do que falar sobre dinheiro, este livro ensina como desenvolver uma mentalidade vencedora, fundamentada em propósito definido, fé, persistência, autoconfiança e ação disciplinada. Hill demonstra que o sucesso não é fruto do acaso, mas o resultado direto da forma como pensamos, decidimos e agimos diariamente. Ao longo dos capítulos, o leitor aprende a dominar os próprios pensamentos, utilizar o poder do subconsciente, transformar desejos em objetivos claros e superar os medos que bloqueiam o crescimento pessoal e profissional. Cada princípio apresentado é prático, aplicável e atemporal. Quem Pensa Enriquece é uma leitura indispensável para empreendedores, profissionais, estudantes e todos aqueles que desejam assumir o controle da própria vida, expandir seu potencial e construir uma trajetória de sucesso consciente e duradouro.",
+        "page_count": 70,
+        "genre": "Business & Economics",
+        "google_books_id": "Xr2lEQAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=Xr2lEQAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=Xr2lEQAAQBAJ&printsec=frontcover&dq=intitle:Quem+Pensa+Enriquece+inauthor:Napoleon+Hill&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "9": {
+      "inode": 95944715,
+      "size_bytes": 919007,
+      "created_at": "2026-03-20T20:28:26.317374",
+      "last_updated": "2026-03-20T20:28:26.317374",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e o Cálice de Fogo [Harry Potter;4] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:26.317374"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e o Cálice de Fogo [Harry Potter;4] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:26.317374"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e o Cálice de Fogo Harry Potter4 (2015)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 4.0
+      }
+    },
+    "10": {
+      "inode": 95944709,
+      "size_bytes": 1929449,
+      "created_at": "2026-03-20T20:28:39.159018",
+      "last_updated": "2026-03-20T20:28:39.159018",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e o Enigma do Príncipe [Harry Potter;6] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:39.159018"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e o Enigma do Príncipe [Harry Potter;6] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:39.159018"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e o Enigma do Príncipe Harry Potter6 (2015)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 6.0
+      }
+    },
+    "11": {
+      "inode": 95944710,
+      "size_bytes": 1012994,
+      "created_at": "2026-03-20T20:28:42.918064",
+      "last_updated": "2026-03-20T20:28:42.918064",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Gustavo Ferreira - Gatilhos mentais (2019).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:42.918064"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Gustavo Ferreira/Gustavo Ferreira - Gatilhos mentais (2019).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:42.918064"
+        }
+      ],
+      "metadata": {
+        "title": "Gatilhos mentais",
+        "author": "Gustavo Ferreira",
+        "authors": [
+          "Gustavo Ferreira"
+        ],
+        "year": 2019,
+        "media_type": "book",
+        "media_subtype": "book",
+        "subtitle": "O guia completo com estratégias de negócios e comunicações provadas para você aplicar",
+        "language": "pt-BR",
+        "publisher": "DVS Editora",
+        "description": "Nova versão: revisada, rediagramada e atualizada. Descubra todo o poder do Copywriting e das Palavras que Vendem. Nessa obra, você descobrirá como aplicar na prática 32 \"gatilhos\" no seu negócio, indo muito além de uma simples comunicação de vendas. Nesse livro você descobrirá: A Coroa de Ferro dos Gatilhos Mentais (e os 4 gatilhos que realmente importam na sua comunicação). A Joia da Coroa (e o principal motivo que o impede de realizar mais vendas). 18 Gatilhos Emocionais (e como você ativa as principais emoções no seu cliente para que ele compre). Os 6 Gatilhos Lógicos (que ajudam seu cliente a confirmar a decisão de compra). O Poder do Gatilho mais explosivo de todos... A Sua Arma Mais Poderosa na hora de convencer seu cliente a comprar de você. O Segredo de Aristóteles para mensagens altamente persuasivas (esse segredo ficou guardado por anos em grupos fechados). E muito mais. Essas são estratégias provadas para você construir um negócio sólido usando todos os recursos da mente humana a seu favor, de forma ética, íntegra e lucrativa.",
+        "isbn": "9788582892114",
+        "page_count": 168,
+        "genre": "Business & Economics",
+        "google_books_id": "ZSmRDwAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=ZSmRDwAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=ZSmRDwAAQBAJ&printsec=frontcover&dq=intitle:Gatilhos+mentais+inauthor:Gustavo+Ferreira&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "12": {
+      "inode": 95944712,
+      "size_bytes": 2139608,
+      "created_at": "2026-03-20T20:28:54.279156",
+      "last_updated": "2026-03-20T20:28:54.279156",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e a Ordem da Fênix [Harry Potter;5] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:54.279156"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e a Ordem da Fênix [Harry Potter;5] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:54.279156"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e a Ordem da Fênix Harry Potter5 (2015)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 5.0
+      }
+    },
+    "13": {
+      "inode": 95946076,
+      "size_bytes": 901898,
+      "created_at": "2026-03-20T20:28:57.906420",
+      "last_updated": "2026-03-20T20:28:57.906420",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Mark Manson - A sutil arte de ligar o foda-se (2017).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:28:57.906420"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Mark Manson/Mark Manson - A sutil arte de ligar o foda-se (2017).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:28:57.906420"
+        }
+      ],
+      "metadata": {
+        "title": "A sutil arte de ligar o foda-se",
+        "author": "Mark Manson",
+        "authors": [
+          "Mark Manson"
+        ],
+        "year": 2017,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "description": "Chega de tentar buscar um sucesso que só existe na sua cabeça. Chega de se torturar para pensar positivo enquanto sua vida vai ladeira abaixo. Chega de se sentir inferior por não ver o lado bom de estar no fundo do poço. Coaching, autoajuda, desenvolvimento pessoal, mentalização positiva - sem querer desprezar o valor de nada disso, a grande verdade é que às vezes nos sentimos quase sufocados diante da pressão infinita por parecermos otimistas o tempo todo. É um pecado social se deixar abater quando as coisas não vão bem. Ninguém pode fracassar simplesmente, sem aprender nada com isso. Não dá mais. É insuportável. E é aí que entra a revolucionária e sutil arte de ligar o foda-se. Mark Manson usa toda a sua sagacidade de escritor e seu olhar crítico para propor um novo caminho rumo a uma vida melhor, mais coerente com a realidade e consciente dos nossos limites. E ele faz isso da melhor maneira. Como um verdadeiro amigo, Mark se senta ao seu lado e diz, olhando nos seus olhos: você não é tão especial. Ele conta umas piadas aqui, dá uns exemplos inusitados ali, joga umas verdades na sua cara e pronto, você já se sente muito mais alerta e capaz de enfrentar esse mundo cão. Para os céticos e os descrentes, mas também para os amantes do gênero, enfim uma abordagem franca e inteligente que vai ajudar você a descobrir o que é realmente importante na sua vida, e f*da-se o resto. Livre-se agora da felicidade maquiada e superficial e abrace esta arte verdadeiramente transformadora.",
+        "isbn": "9788551002490",
+        "rating": 4.0,
+        "page_count": 224,
+        "google_books_id": "a6CXtAEACAAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=a6CXtAEACAAJ&dq=intitle:A+sutil+arte+de+ligar+o+foda-se+inauthor:Mark+Manson&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=a6CXtAEACAAJ&dq=intitle:A+sutil+arte+de+ligar+o+foda-se+inauthor:Mark+Manson&hl=&as_pt=BOOKS&cd=2&source=gbs_api"
+      }
+    },
+    "14": {
+      "inode": 95946072,
+      "size_bytes": 374993,
+      "created_at": "2026-03-20T20:30:00.397935",
+      "last_updated": "2026-03-20T20:30:00.397935",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Daniel Z. Lieberman, Michael E. Long - Dopamina a molécula do desejo (2023).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:00.397935"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Daniel Z. Lieberman/Daniel Z. Lieberman, Michael E. Long - Dopamina a molécula do desejo (2023).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:00.397935"
+        }
+      ],
+      "metadata": {
+        "title": "Dopamina a molécula do desejo",
+        "author": "Daniel Z. Lieberman",
+        "authors": [
+          "Daniel Z. Lieberman",
+          "Michael E. Long"
+        ],
+        "year": 2023,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "Sextante",
+        "description": "Como essa poderosa substância química em nosso cérebro impulsiona o amor, o sexo e a criatividade - e controla quem somos, o que sentimos e o que fazemos. “Uma leitura fascinante. Depois de descobrir o poder e o perigo da dopamina, você vai entender melhor a própria condição humana.” – Daniel Pink, autor de Motivação 3.0 A dopamina é o neurotransmissor que garantiu a sobrevivência dos nossos antepassados e que, ainda hoje, continua determinando a maioria dos nossos comportamentos. Graças a ela fomos à Lua, encontramos a cura de várias doenças e nos esforçamos para transformar o mundo em um lugar melhor. Mas ela também nos torna suscetíveis a arriscar nosso casamento por uma aventura passageira e é capaz de explicar por que o dependente químico está disposto a fazer qualquer coisa pela próxima dose. A dopamina é a causa de todos os nossos impulsos, o que nos faz querer sempre mais. Sem ela, não estaríamos aqui. Ao mesmo tempo, sua avidez insaciável pode ser uma verdadeira tortura que nos impede de aproveitar o aqui e agora. Com uma abordagem inovadora, este livro revela como essa substância química influencia nossas atitudes em todos os âmbitos da vida – no amor, na carreira, nos hábitos, na religião, na política – e explica o que podemos fazer para encontrar o equilíbrio delicado entre o desejo e a satisfação.",
+        "isbn": "9786555645767",
+        "page_count": 267,
+        "genre": "Psychology",
+        "google_books_id": "5M2tEAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=5M2tEAAAQBAJ&dq=intitle:Dopamina+a+mol%C3%A9cula+do+desejo+inauthor:Daniel+Z.+Lieberman&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=5M2tEAAAQBAJ&printsec=frontcover&dq=intitle:Dopamina+a+mol%C3%A9cula+do+desejo+inauthor:Daniel+Z.+Lieberman&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Psychology"
+        ]
+      }
+    },
+    "15": {
+      "inode": 95944719,
+      "size_bytes": 621137,
+      "created_at": "2026-03-20T20:30:10.830638",
+      "last_updated": "2026-03-20T20:30:10.830638",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Colleen Hoover - Todas as Suas (Im)Perfeições (2019).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:10.830638"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Colleen Hoover/Colleen Hoover - Todas as Suas (Im)Perfeições (2019).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:10.830638"
+        }
+      ],
+      "metadata": {
+        "title": "Todas as Suas (Im)Perfeições",
+        "author": "Colleen Hoover",
+        "authors": [
+          "Colleen Hoover"
+        ],
+        "year": 2019,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "Editora Record",
+        "description": "Uma história de amor perfeita é suficiente para manter vivo o casamento entre duas pessoas imperfeitas? Quando a dança começa, a sincronia é perfeita, os passos seguem o ritmo, as mãos não se soltam, os olhos jamais se deixam. Mas a música pode acabar a qualquer momento... É possível valsar no silêncio? Quinn e Graham se conhecem no pior dia de suas vidas; ela chega mais cedo de uma viagem para surpreender o noivo, ele testemunha a traição da namorada. E é assim que ambos acabam no corredor de um prédio, trocando confidências, biscoitos da sorte e palavras de conforto. Fim da dança... se o destino não tivesse outros planos para os dois. Meses mais tarde, os acordes tocam para o casal mais uma vez e eles se reencontram. Graham está convencido de que são almas gêmeas. Quinn jamais se sentiu dessa forma antes. A intensidade do sentimento os assusta, mas, ainda assim, eles mergulham de cabeça. O casamento é tudo o que sonhavam, a parceria perfeita. Mesmo nos momentos difíceis, sabem que podem contar com o outro. Nenhum deles desiste do amor que sentem. Até que a primeira nota dissonante abala a sinfonia do casal. Quinn parece estar disposta a trocar tudo o que é pela única coisa que não consegue ser: mãe. A luta do casal por um filho arrisca os alicerces da relação. Quinn não pode engravidar. Graham não é um candidato para adoção por conta de um erro do passado. O impasse os deixa parados no salão, no silêncio. A orquestra está em suspenso. Os dois parecem surdos para a música do amor de ambos. Será que é possível voltar a ouvir? A dançar? Ou será que vão descobrir a mais triste verdade de todas... que, às vezes, apenas amar não é o bastante?",
+        "isbn": "9788501117915",
+        "rating": 3.0,
+        "page_count": 285,
+        "genre": "Fiction",
+        "google_books_id": "luSmDwAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=luSmDwAAQBAJ&dq=intitle:Todas+as+Suas+(Im)Perfei%C3%A7%C3%B5es+inauthor:Colleen+Hoover&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=luSmDwAAQBAJ&dq=intitle:Todas+as+Suas+(Im)Perfei%C3%A7%C3%B5es+inauthor:Colleen+Hoover&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Fiction"
+        ]
+      }
+    },
+    "16": {
+      "inode": 95944711,
+      "size_bytes": 694658,
+      "created_at": "2026-03-20T20:30:14.053771",
+      "last_updated": "2026-03-20T20:30:14.053771",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Jenny Han - Agora e Para Sempre, Lara Jean [Para Todos os Garotos que já Amei;3] (2017).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:14.053771"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Jenny Han/Jenny Han - Agora e Para Sempre, Lara Jean [Para Todos os Garotos que já Amei;3] (2017).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:14.053771"
+        }
+      ],
+      "metadata": {
+        "title": "Agora e Para Sempre Lara Jean",
+        "author": "Jenny Han",
+        "authors": [
+          "Jenny Han"
+        ],
+        "year": 2017,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Para Todos os Garotos que já Amei",
+        "series_index": 3.0,
+        "language": "pt-BR",
+        "publisher": "Editora Intrinseca",
+        "description": "Na aguardada conclusão da série Para todos os garotos que já amei, Lara Jean vai ter que tomar as decisões mais difíceis de sua vida. Em Para todos os garotos que já amei, as cartas mais secretas de Lara Jean — aquelas em que se declara às suas paixonites platônicas para conseguir superá-las — foram enviadas aos destinatários sem explicação, e em P.S.: Ainda amo você Lara Jean descobriu os altos e baixos de estar em um relacionamento que não é de faz de conta. Na surpreendente e emocionante conclusão da série, o último ano de Lara Jean no colégio não podia estar melhor: ela está apaixonadíssima pelo namorado, Peter; seu pai vai se casar em breve com a vizinha, a sra. Rothschild; e sua irmã mais velha, Margot, vai passar o verão em casa. Mas, por mais que esteja se divertindo muito — organizando o casamento do pai e fazendo planos para os passeios de turma e para o baile de formatura —, Lara Jean não pode ignorar as grandes decisões que precisa tomar, e a principal delas envolve a universidade na qual vai estudar. A menina viu Margot passar pelos mesmos questionamentos, e agora é ela quem precisa decidir se vai deixar sua família — e, quem sabe, o amor de sua vida — para trás. Quando o coração e a razão apontam para direções diferentes, qual deles se deve ouvir? “Doce, delicado e muito, muito divertido. No fim, você vai desejar poder ficar mais um pouquinho com Lara Jean.” John Green, autor de A culpa é das estrelas e de Cidades de papel",
+        "isbn": "9788551001998",
+        "rating": 5.0,
+        "page_count": 291,
+        "genre": "Young Adult Fiction",
+        "google_books_id": "rFi8DgAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=rFi8DgAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=rFi8DgAAQBAJ&printsec=frontcover&dq=intitle:Agora+e+Para+Sempre+Lara+Jean+inauthor:Jenny+Han&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Young Adult Fiction"
+        ]
+      }
+    },
+    "17": {
+      "inode": 95944718,
+      "size_bytes": 1716301,
+      "created_at": "2026-03-20T20:30:17.222902",
+      "last_updated": "2026-03-20T20:30:17.222902",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/J. K. Rowling - Harry Potter e a Câmara Secreta  [Harry Potter;2] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:17.222902"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/J. K. Rowling/J. K. Rowling - Harry Potter e a Câmara Secreta  [Harry Potter;2] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:17.222902"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e a Câmara Secreta",
+        "author": "J. K. Rowling",
+        "authors": [
+          "J. K. Rowling"
+        ],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 2.0,
+        "language": "pt-BR",
+        "publisher": "Pottermore Publishing",
+        "description": "Há uma trama, Harry Potter. Uma trama para fazer coisas terríveis acontecerem na Escola de Magia e Bruxaria de Hogwarts este ano.' O verão de Harry Potter incluiu o pior aniversário de todos, avisos macabros de um elfo doméstico chamado Dobby, e ser resgatado dos Dursleys por seu amigo Rony Weasley em um carro voador mágico! De volta à Escola de Magia e Bruxaria de Hogwarts para seu segundo ano, Harry ouve estranhos sussurros ecoando pelos corredores vazios - e então, os ataques começam! Estudantes são encontrados transformados em pedra... As previsões sinistras de Dobby parecem estar se tornando realidade.",
+        "isbn": "9781781103692",
+        "rating": 5.0,
+        "page_count": 358,
+        "genre": "Juvenile Fiction",
+        "google_books_id": "hjcQCwAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=hjcQCwAAQBAJ&dq=intitle:Harry+Potter+e+a+C%C3%A2mara+Secreta+inauthor:J.+K.+Rowling&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=hjcQCwAAQBAJ&dq=intitle:Harry+Potter+e+a+C%C3%A2mara+Secreta+inauthor:J.+K.+Rowling&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Juvenile Fiction"
+        ]
+      }
+    },
+    "18": {
+      "inode": 95953661,
+      "size_bytes": 874096,
+      "created_at": "2026-03-20T20:30:20.105072",
+      "last_updated": "2026-03-20T20:30:20.105072",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/James Clear - Hábitos Atómicos (2019).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:20.105072"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/James Clear/James Clear - Hábitos Atómicos (2019).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:20.105072"
+        }
+      ],
+      "metadata": {
+        "title": "Hábitos Atómicos",
+        "author": "James Clear",
+        "authors": [
+          "James Clear"
+        ],
+        "year": 2019,
+        "media_type": "book",
+        "media_subtype": "book",
+        "subtitle": "Um Método Fácil e Comprovado de Criar Bons Hábitos e Se Livrar dos Maus.",
+        "language": "pt-BR",
+        "publisher": "Alta Books",
+        "description": "BEST-SELLER DO NEW YORK TIMES Pequenas Mudanças, Resultados Impressionantes. Não importa quais sejam seus objetivos, Hábitos Atômicos oferece um método eficaz para você se aprimorar — todos os dias. James Clear, um dos mais expoentes especialistas na criação de hábitos, revela as estratégicas práticas que o ensinarão, exatamente, como criar bons hábitos, abandonar os maus e fazer pequenas mudanças de comportamento que levam a resultados impressionantes. Se enfrenta dificuldades para mudar seus hábitos, o problema não é você, é o sistema escolhido. Os maus hábitos se repetem sem parar porque você está usando o sistema errado, e não porque não queira mudar. Assim, suas limitações não são a complexidade de seu objetivo, mas a inadequação de seus sistemas. Neste livro, você aprenderá um método comprovado capaz de levá-lo a novos patamares. Clear é conhecido por sua habilidade em transformar tópicos complexos em comportamentos simples que podem ser facilmente aplicados à vida cotidiana e profissional. Seu método, desenvolvido a partir de conceitos comprovados da biologia, psicologia e neurociência, é um guia descomplicado para tornar os bons hábitos inevitáveis e os maus, impossíveis. Ao longo desta jornada, os leitores serão inspirados e entretidos por histórias de medalhistas de ouro em Olimpíadas, artistas premiados, líderes de negócios, médicos que salvam vidas e astros da comédia que usaram a ciência dos pequenos hábitos para dominar seu ofício e se lançar ao topo de suas áreas de atuação. Hábitos Atômicos remodela sua forma de pensar em avanço e sucesso e traz as ferramentas e estratégias de que precisa para transformar seus hábitos — seja você técnico de um time almejando a conquista de um título, uma organização com pretensões de reinventar seu setor ou simplesmente um indivíduo que deseja parar de fumar, perder peso, reduzir o estresse ou atingir qualquer outra meta. Descubra o Segredo dos Resultados Permanentes Repleto de estratégias testadas e aprovadas de autoaprimoramento, Hábitos Atômicos ensinará você a construir hábitos que funcionem para — e não contra — você.",
+        "isbn": "9788550807577",
+        "rating": 5.0,
+        "page_count": 221,
+        "genre": "Self-Help",
+        "google_books_id": "qI6iDwAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=qI6iDwAAQBAJ&dq=intitle:H%C3%A1bitos+At%C3%B3micos+inauthor:James+Clear&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=qI6iDwAAQBAJ&dq=intitle:H%C3%A1bitos+At%C3%B3micos+inauthor:James+Clear&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Self-Help"
+        ]
+      }
+    },
+    "19": {
+      "inode": 95946103,
+      "size_bytes": 4333518,
+      "created_at": "2026-03-20T20:30:29.896870",
+      "last_updated": "2026-03-20T20:30:29.896870",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Robert Greene, Joost Elffers - As 48 leis do poder (2017).pdf",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:29.896870"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Robert Greene/Robert Greene, Joost Elffers - As 48 leis do poder (2017).pdf",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:29.896870"
+        }
+      ],
+      "metadata": {
+        "title": "As 48 leis do poder",
+        "author": "Robert Greene",
+        "authors": [
+          "Robert Greene",
+          "Joost Elffers"
+        ],
+        "year": 2017,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "description": "O que fazer para ser promovido? Como neutralizar quem vive tentando 'puxar o seu tapete'? A resposta para estas e tantas outras perguntas estão neste relançamento, em versão concisa, do best-seller de Robert Greene 'As 48 leis do poder'.",
+        "isbn": "9788532521668",
+        "genre": "Business & Economics",
+        "google_books_id": "C2b8zwEACAAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=C2b8zwEACAAJ&dq=intitle:As+48+leis+do+poder+inauthor:Robert+Greene&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=C2b8zwEACAAJ&dq=intitle:As+48+leis+do+poder+inauthor:Robert+Greene&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "20": {
+      "inode": 95944717,
+      "size_bytes": 2404949,
+      "created_at": "2026-03-20T20:30:42.996415",
+      "last_updated": "2026-03-20T20:30:42.996415",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e o Prisioneiro de Azkaban [Harry Potter;3] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:42.996415"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e o Prisioneiro de Azkaban [Harry Potter;3] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:42.996415"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e o Prisioneiro de Azkaban Harry Potter3 (2015)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 3.0
+      }
+    },
+    "21": {
+      "inode": 95946075,
+      "size_bytes": 494558,
+      "created_at": "2026-03-20T20:30:46.814670",
+      "last_updated": "2026-03-20T20:30:46.814670",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Napoleon Hill, Joseph Murphy, Dale Carnegie - Os Segredos que Vão Mudar Sua Vida (2014).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:46.814670"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Napoleon Hill/Napoleon Hill, Joseph Murphy, Dale Carnegie - Os Segredos que Vão Mudar Sua Vida (2014).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:46.814670"
+        }
+      ],
+      "metadata": {
+        "title": "Os Segredos que Vão Mudar Sua Vida",
+        "author": "Napoleon Hill",
+        "authors": [
+          "Napoleon Hill",
+          "Joseph Murphy",
+          "Dale Carnegie"
+        ],
+        "year": 2014,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "Editora Best Seller",
+        "description": "Pela primeira vez, as obras-primas Pense e enriqueça, O poder do subconsciente e Como falar em público e influenciar pessoas no mundo dos negócios foram reunidas em um único livro. Os segredos que vão mudar sua vida, dá acesso às principais características da filosofia dos três mestres do sucesso: Napoleon Hill, Joseph Murphy e Dale Carnegie. Apostando no conceito de que uma boa ideia é a coisa mais valiosa que você pode ter, Os segredos que vão mudar sua vida também ensina a usar seu pensamento para que essa ideia seja transformada em ação e a convencer, através de um discurso forte, claro e franco, outras pessoas a investirem em você e sua carreira. Além disso, há uma introdução que analisa os pormenores de cada um dos livros e atualiza os conselhos e as dicas para um mundo globalizado e amplamente conectado.",
+        "isbn": "9788576848769",
+        "page_count": 591,
+        "genre": "Business & Economics",
+        "google_books_id": "6pFcBAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=6pFcBAAAQBAJ&dq=intitle:Os+Segredos+que+V%C3%A3o+Mudar+Sua+Vida+inauthor:Napoleon+Hill&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=6pFcBAAAQBAJ&dq=intitle:Os+Segredos+que+V%C3%A3o+Mudar+Sua+Vida+inauthor:Napoleon+Hill&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "22": {
+      "inode": 95946092,
+      "size_bytes": 1388318,
+      "created_at": "2026-03-20T20:30:50.000598",
+      "last_updated": "2026-03-20T20:30:50.000598",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Charles Duhigg - O poder do hábito (2012).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:50.000598"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Charles Duhigg/Charles Duhigg - O poder do hábito (2012).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:50.000598"
+        }
+      ],
+      "metadata": {
+        "title": "O poder do hábito",
+        "author": "Charles Duhigg",
+        "authors": [
+          "Charles Duhigg"
+        ],
+        "year": 2012,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "WANDERSON RODRIGUES DE CARVALHO",
+        "description": "\"O Poder do Hábito\" Por que fazemos o que fazemos na vida e nos negócios? No best-seller internacional que conquistou milhões de leitores, o repórter investigativo do The New York Times, Charles Duhigg, mergulha na ciência fascinante por trás de um dos mistérios mais fundamentais da humanidade: os hábitos. Este não é apenas mais um livro de autoajuda. É uma jornada científica e narrativa poderosa que revela como os hábitos funcionam – e como podemos transformá-los. Duhigg apresenta o conceito revolucionário do \"Loop do Hábito\": um ciclo neurológico de Deixa, Rotina e Recompensa que domina desde nossas ações mais simples (como escovar os dentes) até os padrões mais complexos de organizações e sociedades. O que você descobrirá neste livro: O segredo para mudar qualquer hábito: A \"Regra de Ouro\" que permite substituir maus hábitos por bons, de forma duradoura. Os \"Hábitos Angulares\": Identifique os hábitos-chave que, uma vez modificados, podem desencadear uma reação em cadeia de transformação positiva em toda a sua vida ou empresa. Como a força de vontade pode se tornar um hábito: E por que ela é a chave para o sucesso, podendo ser cultivada e fortalecida. As táticas de grandes empresas: Descubra como gigantes como a Starbucks, a Target e a Alcoa usam o conhecimento dos hábitos para aumentar a produtividade, fidelizar clientes e impulsionar o crescimento. Como os movimentos sociais nascem: Entenda a anatomia dos hábitos sociais e como eles podem ser remodelados para criar mudanças profundas. Com casos reais que vão desde a história de um alcoólatra em recuperação até a transformação de uma corporação bilionária e a explosão do Movimento dos Direitos Civis nos EUA, Duhigg não apenas explica a teoria, mas a ilustra com exemplos inesquecíveis. \"O Poder do Hábito\" oferece uma tese poderosa: compreender a mecânica dos seus hábitos é a chave para exercer o controle sobre sua vida, sua carreira e sua sociedade. Se você sempre quis entender por que repete certos comportamentos e, mais importante, como finalmente pode mudá-los, este livro é a ferramenta essencial que você estava esperando. Prepare-se para nunca mais enxergar sua rotina, suas metas e suas ações da mesma maneira.",
+        "page_count": 28,
+        "genre": "Business & Economics",
+        "google_books_id": "2ICUEQAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=2ICUEQAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=2ICUEQAAQBAJ&printsec=frontcover&dq=intitle:O+poder+do+h%C3%A1bito+inauthor:Charles+Duhigg&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "23": {
+      "inode": 95944723,
+      "size_bytes": 485296,
+      "created_at": "2026-03-20T20:30:53.668720",
+      "last_updated": "2026-03-20T20:30:53.668720",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/J. K. Rowling - Harry Potter e a Pedra Filosofal [Harry Potter;1] (2015).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:30:53.668720"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/J. K. Rowling/J. K. Rowling - Harry Potter e a Pedra Filosofal [Harry Potter;1] (2015).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:30:53.668720"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e a Pedra Filosofal",
+        "author": "J. K. Rowling",
+        "authors": [
+          "J. K. Rowling"
+        ],
+        "year": 2015,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 1.0,
+        "language": "pt-BR",
+        "publisher": "Pottermore Publishing",
+        "description": "Harry Potter não é um herói habitual. É apenas um miúdo magricela, míope e desajeitado com uma estranha cicatriz na testa. Estranha, de facto, porque afinal encerra misteriosos poderes que o distinguem do cinzento mundo dos muggles (os complicados humanos) e que irá fazer dele uma criança especialmente dotada para o universo da magia. Admitido na escola de Hogwarts onde se formam os mais famosos feiticeiros do mundo, Harry Potter irá viver todas as aventuras que a sua imaginação lhe irá proporcionar.",
+        "isbn": "9781781103074",
+        "rating": 4.5,
+        "page_count": 329,
+        "genre": "Juvenile Fiction",
+        "google_books_id": "PDcQCwAAQBAJ",
+        "google_books_info_link": "https://play.google.com/store/books/details?id=PDcQCwAAQBAJ&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=PDcQCwAAQBAJ&printsec=frontcover&dq=intitle:Harry+Potter+e+a+Pedra+Filosofal+inauthor:J.+K.+Rowling&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Juvenile Fiction"
+        ]
+      }
+    },
+    "24": {
+      "inode": 95946073,
+      "size_bytes": 382598,
+      "created_at": "2026-03-20T20:31:06.648764",
+      "last_updated": "2026-03-20T20:31:06.648764",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Gary Chapman - As cinco linguagens do amor de Deus (2014).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:31:06.648764"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Gary Chapman/Gary Chapman - As cinco linguagens do amor de Deus (2014).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:31:06.648764"
+        }
+      ],
+      "metadata": {
+        "title": "As cinco linguagens do amor de Deus",
+        "author": "Gary Chapman",
+        "authors": [
+          "Gary Chapman"
+        ],
+        "year": 2014,
+        "media_type": "book",
+        "media_subtype": "book",
+        "language": "pt-BR",
+        "publisher": "Editora Mundo Cristão",
+        "description": "• Autor do best-seller As 5 linguagens do amor • Como transformar seu relacionamento como o Criador Amar e ser amado. Existe algo mais importante? Após o enorme sucesso de seus três livros sobre as cinco linguagens do amor, o Dr. Gary Chapman estende a discussão da comunicação do amor, agora entre Deus e nós. As linguagens do amor nos relacionamentos humanos são um reflexo do amor divino. Segundo Chapman, fomos criados à imagem e à semelhança de Deus, e por isso podemos esperar encontrar todas as cinco linguagens contidas no caráter e na natureza de Deus. Retomando o conceito das cinco linguagens (Qualidade do Tempo, Toque Físico, Receber Presentes, Formas de Servir e Palavras de Afirmação), o autor revela que se descobrirmos com qual das linguagens nos comunicamos melhor no relacionamento humano, poderemos supor que será através dessa linguagem de amor que Deus se comunicará conosco, e nós, com ele. Milhões de pessoas têm renovado seus relacionamentos pelo entendimento das \"linguagens do amor\". O que você está prestes a fazer é transformar, como nunca antes pensou ser possível, o seu relacionamento com Deus. Pode haver descoberta mais importante? Sobre o autor: O Dr. Gary Chapman é autor de vários livros sobre relacionamento conjugal, dentre eles As Cinco Linguagens do Amor, As Cinco Linguagens do Amor das Crianças e As Cinco Linguagens do Amor dos Adolescentes.",
+        "isbn": "9788543300030",
+        "page_count": 212,
+        "genre": "Religion",
+        "google_books_id": "lq17BAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=lq17BAAAQBAJ&dq=intitle:As+cinco+linguagens+do+amor+de+Deus+inauthor:Gary+Chapman&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=lq17BAAAQBAJ&printsec=frontcover&dq=intitle:As+cinco+linguagens+do+amor+de+Deus+inauthor:Gary+Chapman&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Religion"
+        ]
+      }
+    },
+    "25": {
+      "inode": 95944716,
+      "size_bytes": 851608,
+      "created_at": "2026-03-20T20:31:09.279190",
+      "last_updated": "2026-03-20T20:31:09.279190",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Morgan Housel - A psicologia financeira (2021).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:31:09.279190"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Morgan Housel/Morgan Housel - A psicologia financeira (2021).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:31:09.279190"
+        }
+      ],
+      "metadata": {
+        "title": "A psicologia financeira",
+        "author": "Morgan Housel",
+        "authors": [
+          "Morgan Housel"
+        ],
+        "year": 2021,
+        "media_type": "book",
+        "media_subtype": "book",
+        "subtitle": "lições atemporais sobre fortuna, ganância e felicidade",
+        "language": "pt-BR",
+        "publisher": "HARLEQUIN",
+        "description": "O livro de educação financeira mais comentado dos últimos anos, com mais de 1 milhão de exemplares vendidos no mundo todo! O sucesso financeiro tem menos a ver com a sua inteligência e muito mais a ver com o seu comportamento. E a forma como alguém se comporta é uma coisa difícil de se ensinar, mesmo para pessoas bastante inteligentes. A maneira como lidamos com o dinheiro — finanças pessoais, investimentos, decisões de negócios — costuma ser explicada como um campo puramente matemático, no qual dados e fórmulas nos dizem o que fazer. A verdade, porém, é que grandes decisões monetárias não são tomadas diante de uma planilha, mas durante jantares com a família e reuniões com os colegas de trabalho. Além disso, cada uma delas é um reflexo da história pessoal e das dificuldades enfrentadas pelo indivíduo que as tomou. Abordando a gestão financeira de maneira inédita, Morgan Housel apresenta casos de sucessos e fracassos de investidores que demonstram a importância do fator psicológico no gerenciamento das finanças, oferecendo aprendizados para administrar e fazer o dinheiro render em busca do grande objetivo de todos nós: ser feliz. \" [A psicologia Financeira] é uma leitura essencial para qualquer pessoa interessada em administrar melhor seu dinheiro.\" — James Clear, autor do best-seller Hábitos Atômicos",
+        "isbn": "9786555111156",
+        "page_count": 265,
+        "genre": "Business & Economics",
+        "google_books_id": "hY0bEAAAQBAJ",
+        "google_books_info_link": "http://books.google.pt/books?id=hY0bEAAAQBAJ&dq=intitle:A+psicologia+financeira+inauthor:Morgan+Housel&hl=&as_pt=BOOKS&source=gbs_api",
+        "google_books_preview_link": "http://books.google.pt/books?id=hY0bEAAAQBAJ&dq=intitle:A+psicologia+financeira+inauthor:Morgan+Housel&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "subjects": [
+          "Business & Economics"
+        ]
+      }
+    },
+    "26": {
+      "inode": 95944707,
+      "size_bytes": 932848,
+      "created_at": "2026-03-20T20:31:21.463864",
+      "last_updated": "2026-03-20T20:31:21.463864",
+      "links": [
+        {
+          "path": "/media/mateus/Servidor/containers/media/downloads/books/Harry Potter e a Criança Amaldiçoada [Harry Potter;8] (2016).epub",
+          "type": "original",
+          "registered_at": "2026-03-20T20:31:21.463864"
+        },
+        {
+          "path": "/media/mateus/Servidor/containers/media/library/books/Unknown Author/Harry Potter e a Criança Amaldiçoada [Harry Potter;8] (2016).epub",
+          "type": "organized",
+          "registered_at": "2026-03-20T20:31:21.463864"
+        }
+      ],
+      "metadata": {
+        "title": "Harry Potter e a Criança Amaldiçoada Harry Potter8 (2016)",
+        "author": "Unknown Author",
+        "authors": [],
+        "year": 2016,
+        "media_type": "book",
+        "media_subtype": "book",
+        "series": "Harry Potter",
+        "series_index": 8.0
+      }
+    }
+  }
+}
