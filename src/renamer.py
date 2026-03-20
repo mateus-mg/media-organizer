@@ -1,281 +1,103 @@
 #!/usr/bin/env python3
-"""
-Renamer - Media File Renamer for Media Organizer System
+"""Standalone Renamer CLI for music, books, and comics."""
 
-Standalone CLI application for renaming media files to standardized patterns.
-Integrates natively with Media Organizer System.
-
-Supported patterns:
-- Movies: Title (Year).ext
-- TV Shows: Series.S01E01.ext
-- Anime: Anime.S01E01.ext
-- Doramas: Drama.S01E01.ext
-- Music: ## - Track.ext
-- Books: Author - Title (Year).ext
-- Comics: Series #Issue.ext
-- Subtitles: Series.S01E01.lang.ext
-
-Usage:
-    python -m src.renamer              # Interactive mode
-    python -m src.renamer --dry-run    # Preview changes
-    ./run.sh renamer                   # Via run.sh
-"""
-
-import asyncio
-import os
 import sys
 from pathlib import Path
-from typing import Dict, Optional
 
 from rich.console import Console
-from rich.prompt import Prompt, Confirm
 
-from src.config import Config
 from src.main import MediaOrganizerApp
-from src.log_config import get_logger
-
 
 console = Console()
 
 
 class RenamerCLI:
-    """
-    Command-line interface for Renamer.
-    
-    Provides interactive menu for renaming media files
-    using the integrated RenamerOrganizer.
-    """
-    
+    """Command-line interface for renaming supported media files."""
+
     def __init__(self, dry_run: bool = False):
-        """Initialize RenamerCLI"""
         self.dry_run = dry_run
-        self.config = Config()
-        self.logger = get_logger("RenamerCLI")
-        self.app: Optional[MediaOrganizerApp] = None
-    
+
     def run(self):
-        """Main entry point - run interactive menu"""
-        console.print("\n[bold cyan]📝 Renamer - Media File Renamer[/bold cyan]")
-        console.print("[dim]Integrated with Media Organizer System[/dim]\n")
-        
-        self._show_main_menu()
-    
-    def _show_main_menu(self):
-        """Show main renamer menu"""
         while True:
-            console.print("\n[bold cyan]📝 Renamer - Rename Media Files[/bold cyan]")
+            console.print("\n[bold cyan]Renamer[/bold cyan]")
             console.print("[bold]Select media type:[/bold]\n")
-            
-            options = {
-                "1": "Movies (Title (Year).ext)",
-                "2": "TV Shows (Serie.S01E01.ext)",
-                "3": "Anime (Anime.S01E01.ext)",
-                "4": "Doramas (Dorama.S01E01.ext)",
-                "5": "Music (## - Track.ext)",
-                "6": "Books (Author - Title (Year).ext)",
-                "7": "Comics (Series #Issue.ext)",
-                "8": f"Dry-run: [{'ON' if self.dry_run else 'OFF'}]",
-                "0": "Back to main menu"
-            }
-            
-            for key, value in options.items():
-                if key == "8":
-                    color = "yellow" if self.dry_run else "green"
-                    console.print(f"  [{key}] [{color}]{value}[/{color}]")
-                else:
-                    console.print(f"  [{key}] {value}")
+            console.print("  [1] Music (## - Track.ext)")
+            console.print("  [2] Books (Author - Title (Year).ext)")
+            console.print("  [3] Comics (Series #Issue.ext)")
+            console.print(
+                f"  [4] Dry-run: [{'ON' if self.dry_run else 'OFF'}]")
+            console.print("  [0] Exit")
 
-            # Get user choice using input() to avoid Click conflict
-            choice_str = input("\nYour choice [1/2/3/4/5/6/7/8/0] (0): ").strip() or "0"
-            choice = choice_str if choice_str in options.keys() else "0"
-
+            choice = input("\nYour choice [1/2/3/4/0] (0): ").strip() or "0"
             if choice == "0":
-                console.print("\n[blue]Returning to main menu...[/blue]")
                 return
-            elif choice == "8":
+            if choice == "4":
                 self.dry_run = not self.dry_run
-                console.print(f"[green]Dry-run turned {'ON' if self.dry_run else 'OFF'}[/green]")
                 continue
-            
-            self._handle_rename_choice(choice)
-    
-    def _handle_rename_choice(self, choice: str):
-        """Handle rename operation based on user choice"""
-        # Get folder path
-        folder_str = input("Enter folder path: ").strip()
-        folder = Path(folder_str)
+            if choice not in {"1", "2", "3"}:
+                console.print("[red]Invalid option[/red]")
+                continue
 
-        if not folder.exists():
-            console.print(f"[red]✗ Folder does not exist: {folder}[/red]")
-            return
+            folder = Path(input("Enter folder path: ").strip())
+            if not folder.exists() or not folder.is_dir():
+                console.print(f"[red]Invalid folder path: {folder}[/red]")
+                continue
 
-        if not folder.is_dir():
-            console.print(f"[red]✗ Path is not a directory: {folder}[/red]")
-            return
-        
-        # Initialize app
-        self.app = MediaOrganizerApp(dry_run=self.dry_run)
-        stats = {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
-        
-        # Get metadata based on type
-        metadata = self._get_metadata_for_type(choice)
-        if not metadata:
-            return
-        
-        # Execute rename
-        console.print(f"\n[cyan]→ Renaming {metadata['type']} files in {folder}...[/cyan]\n")
-        
-        try:
-            stats = self.app.rename_files_batch(folder, metadata)
-            self._show_results(stats)
-        except Exception as e:
-            console.print(f"[red]✗ Error: {e}[/red]")
-            self.logger.error(f"Rename failed: {e}")
-        finally:
-            self.app.cleanup()
-    
-    def _get_metadata_for_type(self, choice: str) -> Optional[Dict]:
-        """Get metadata dictionary based on media type choice"""
-        try:
-            if choice == "1":  # Movies
-                title = input("Movie title: ").strip()
-                year = int(input("Year [2024]: ").strip() or str(_get_current_year()))
-                return {'type': 'movie', 'title': title, 'year': year}
-
-            elif choice == "2":  # TV Shows
-                series = input("Series name: ").strip()
-                season = int(input("Season [1]: ").strip() or "1")
-                return {'type': 'tv', 'title': series, 'season': season}
-
-            elif choice == "3":  # Anime
-                anime = input("Anime name: ").strip()
-                season = int(input("Season [1]: ").strip() or "1")
-                return {'type': 'anime', 'title': anime, 'season': season}
-
-            elif choice == "4":  # Doramas
-                dorama = input("Dorama name: ").strip()
-                season = int(input("Season [1]: ").strip() or "1")
-                return {'type': 'dorama', 'title': dorama, 'season': season}
-
-            elif choice == "5":  # Music
+            metadata = None
+            if choice == "1":
                 track_num = int(input("Track number [1]: ").strip() or "1")
                 title = input("Track title: ").strip()
-                return {'type': 'music', 'title': title, 'track': track_num}
-
-            elif choice == "6":  # Books
+                metadata = {"type": "music",
+                            "title": title, "track": track_num}
+            elif choice == "2":
                 author = input("Author: ").strip()
                 title = input("Title: ").strip()
-                year = int(input("Year [2024]: ").strip() or str(_get_current_year()))
-                return {'type': 'book', 'title': title, 'author': author, 'year': year}
-
-            elif choice == "7":  # Comics
+                year = int(input("Year [2024]: ").strip() or "2024")
+                metadata = {"type": "book", "title": title,
+                            "author": author, "year": year}
+            elif choice == "3":
                 series = input("Series name: ").strip()
                 issue = int(input("Issue number [1]: ").strip() or "1")
-                return {'type': 'comic', 'title': series, 'issue': issue}
+                metadata = {"type": "comic", "title": series, "issue": issue}
 
-        except KeyboardInterrupt:
-            console.print("\n[yellow]Operation cancelled[/yellow]")
-            return None
-        except ValueError as e:
-            console.print(f"[red]✗ Invalid input: {e}[/red]")
-            return None
-        
-        return None
-    
-    def _show_results(self, stats: Dict):
-        """Display rename results"""
-        console.print("\n[bold cyan]📊 Results:[/bold cyan]")
-        
-        total = stats['processed']
-        renamed = stats['renamed']
-        skipped = stats['skipped']
-        failed = stats['failed']
-        
-        # Progress bar
-        if total > 0:
-            success_rate = ((renamed + skipped) / total) * 100
-            console.print(f"\n[dim]Success rate: {success_rate:.1f}%[/dim]")
-        
-        console.print(f"  Processed: [green]{total}[/green]")
-        console.print(f"  Renamed:   [green]{renamed}[/green]")
-        console.print(f"  Skipped:   [yellow]{skipped}[/yellow]")
-        console.print(f"  Failed:    [red]{failed}[/red]")
-        
-        if self.dry_run:
-            console.print("\n[yellow]⚠ DRY-RUN MODE - No files were modified[/yellow]")
+            if not metadata:
+                continue
 
-
-def _get_current_year() -> int:
-    """Get current year"""
-    from datetime import datetime
-    return datetime.now().year
+            app = MediaOrganizerApp(dry_run=self.dry_run)
+            try:
+                stats = app.rename_files_batch(folder, metadata)
+                console.print("\n[bold cyan]Results:[/bold cyan]")
+                console.print(
+                    f"  Processed: [green]{stats['processed']}[/green]")
+                console.print(
+                    f"  Renamed:   [green]{stats['renamed']}[/green]")
+                console.print(
+                    f"  Skipped:   [yellow]{stats['skipped']}[/yellow]")
+                console.print(f"  Failed:    [red]{stats['failed']}[/red]")
+            finally:
+                app.cleanup()
 
 
 def main():
-    """Main entry point for renamer CLI"""
     import argparse
-    
+
     parser = argparse.ArgumentParser(
-        description="Rename media files to standardized patterns",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python -m src.renamer                 # Interactive mode
-  python -m src.renamer --dry-run       # Preview changes
-  python -m src.renamer --type movie    # Direct mode (future)
-        """
-    )
-    
-    parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Simulate changes without modifying files'
-    )
-    
-    parser.add_argument(
-        '--type',
-        choices=['movie', 'tv', 'anime', 'dorama', 'music', 'book', 'comic'],
-        help='Media type (future: direct mode)'
-    )
-    
-    parser.add_argument(
-        '--path',
-        type=Path,
-        help='Folder path (future: direct mode)'
-    )
-    
-    parser.add_argument(
-        '--title',
-        type=str,
-        help='Title/name (future: direct mode)'
-    )
-    
-    parser.add_argument(
-        '--season',
-        type=int,
-        help='Season number for TV/Anime/Dorama (future: direct mode)'
-    )
-    
-    parser.add_argument(
-        '--year',
-        type=int,
-        help='Year for movies/books (future: direct mode)'
-    )
-    
+        description="Rename supported media files")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Simulate changes without modifying files")
     args = parser.parse_args()
-    
-    # Initialize and run
+
     cli = RenamerCLI(dry_run=args.dry_run)
-    
+
     try:
         cli.run()
     except KeyboardInterrupt:
-        console.print("\n\n[yellow]⚠ Renamer interrupted by user[/yellow]")
+        console.print("\nRenamer interrupted")
         sys.exit(0)
-    except Exception as e:
-        console.print(f"\n[red]✗ Error: {e}[/red]")
+    except Exception as exc:
+        console.print(f"\n[red]Error: {exc}[/red]")
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

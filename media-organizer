@@ -1,6 +1,5 @@
 #!/bin/bash
-# Media Organizer CLI Wrapper - NEW VERSION WITH PYTHON CLI
-# Uses Python CLI with Rich interface and structured logging
+# Media Organizer CLI Wrapper
 
 # ============================================
 # DETERMINAR O DIRETÓRIO REAL DO PROJETO
@@ -34,20 +33,6 @@ cd "$PROJECT_DIR" || {
 # FUNÇÕES AUXILIARES
 # ============================================
 
-# Verificar se daemon está rodando
-check_daemon_running() {
-    if [ -f ".daemon.pid" ]; then
-        PID=$(cat ".daemon.pid" 2>/dev/null)
-        if ps -p "$PID" > /dev/null 2>&1; then
-            return 0  # running
-        else
-            rm -f ".daemon.pid"
-            return 1  # not running
-        fi
-    fi
-    return 1  # not running
-}
-
 # Verificar configuração
 check_configuration() {
     if [ ! -f ".env" ]; then
@@ -60,7 +45,7 @@ check_configuration() {
 }
 
 # ============================================
-# EXECUTAR O NOVO SISTEMA PYTHON
+# EXECUTAR O SISTEMA PYTHON
 # ============================================
 
 # Check and activate virtual environment

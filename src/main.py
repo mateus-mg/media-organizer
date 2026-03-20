@@ -1,145 +1,104 @@
 """
-Media Organization System - Main Entry Point
-CLI interface for organizing media files
+Media Organization System - Main entry point.
 
-Consolidated version - uses simplified module structure.
+Current scope:
+- Music
+- Books
+- Comics
 """
 
 import asyncio
-import json
 import logging
-import sys
+import json
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import Dict
 
 import click
-from rich.table import Table
-from rich.prompt import Prompt, Confirm
 from rich.console import Console
+from rich.table import Table
 
+from src.cli_manager import CLIManager
 from src.config import Config
-from src.log_config import get_logger, set_console_log_level, log_info, log_success, log_error, log_warning
 from src.core import (
-    Orquestrador, MediaType,
-    FileExistenceValidator, FileTypeValidator,
-    IncompleteFileValidator, JunkFileValidator
+    FileExistenceValidator,
+    FileTypeValidator,
+    IncompleteFileValidator,
+    JunkFileValidator,
+    MediaType,
+    Orquestrador,
 )
-from src.detection import MediaClassifier, FileScanner
-from src.persistence import OrganizationDatabase, UnorganizedDatabase
-from src.organizers import (
-    MovieOrganizer, TVOrganizer, MusicOrganizer, BookOrganizer,
-    BaseOrganizer, RenamerOrganizer
-)
-from src.utils import ConflictHandler
+from src.detection import FileScanner, MediaClassifier
 from src.integrations import FileCompletionValidator
+from src.log_config import get_logger, set_console_log_level
+from src.media_constants import SUPPORTED_MEDIA_EXTS
+from src.metadata import enrich_book_metadata_with_online_sources
+from src.organizers import BookOrganizer, LyricsOrganizer, MusicOrganizer, RenamerOrganizer
+from src.persistence import format_datetime_br
+from src.persistence import OrganizationDatabase
+from src.utils import ConflictHandler
 
 
 class MediaOrganizerApp:
-    """Main application class"""
+    """Main application class."""
 
     def __init__(self, dry_run: bool = False):
-        """Initialize application"""
         self.config = Config()
         self.dry_run = dry_run
 
-        # Initialize logger
         self.logger = get_logger(name="MediaOrganizer", dry_run=dry_run)
-        
-        # Set console log level based on dry_run mode
-        if dry_run:
-            set_console_log_level(logging.INFO)
-        else:
-            set_console_log_level(logging.WARNING)
+        set_console_log_level(logging.INFO if dry_run else logging.WARNING)
 
-        # Check configuration validity
         is_valid, errors = self.config.is_valid()
         if not is_valid:
-            log_error(self.logger, "Configuration is invalid:")
             for error in errors:
-                log_error(self.logger, f"  - {error}")
-            import sys
-            sys.exit(1)
+                self.logger.error(f"Configuration error: {error}")
+            raise SystemExit(1)
 
-        # Initialize database
         self.database = OrganizationDatabase(
             db_path=self.config.database_path,
             backup_enabled=self.config.database_backup_enabled,
-            backup_keep_days=self.config.database_backup_keep_days
+            backup_keep_days=self.config.database_backup_keep_days,
         )
 
-        # Initialize conflict handler
         self.conflict_handler = ConflictHandler(
             strategy=self.config.conflict_strategy,
             rename_pattern=self.config.conflict_rename_pattern,
-            max_attempts=self.config.conflict_max_attempts
+            max_attempts=self.config.conflict_max_attempts,
         )
 
-        # Initialize validators
         self.validators = [
             FileExistenceValidator(logger=self.logger),
             FileTypeValidator(
-                supported_types=[
-                    '.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.m4v',
-                    '.mp3', '.flac', '.ogg', '.m4a', '.wma', '.aac', '.opus', '.wav', '.m4b',
-                    '.epub', '.pdf', '.mobi', '.azw', '.azw3',
-                    '.cbz', '.cbr', '.cb7', '.cbt'
-                ],
-                logger=self.logger
+                supported_types=sorted(SUPPORTED_MEDIA_EXTS),
+                logger=self.logger,
             ),
             IncompleteFileValidator(logger=self.logger),
             JunkFileValidator(logger=self.logger),
         ]
 
-        # Initialize classifier and scanner
         self.classifier = MediaClassifier(logger=self.logger)
         self.scanner = FileScanner(logger=self.logger)
 
-        # Initialize file completion validator
         self.file_completion_validator = FileCompletionValidator(
             min_file_age_seconds=300,
             size_check_duration=5,
-            logger=self.logger
+            logger=self.logger,
         )
 
-        # Initialize organizers
         self.organizadores = {
-            MediaType.MOVIE: MovieOrganizer(
-                config=self.config,
-                database=self.database,
-                conflict_handler=self.conflict_handler,
-                logger=self.logger,
-                dry_run=self.dry_run
-            ),
-            MediaType.TV_SHOW: TVOrganizer(
-                config=self.config,
-                database=self.database,
-                conflict_handler=self.conflict_handler,
-                logger=self.logger,
-                dry_run=self.dry_run,
-                media_subtype='tv'
-            ),
-            MediaType.ANIME: TVOrganizer(
-                config=self.config,
-                database=self.database,
-                conflict_handler=self.conflict_handler,
-                logger=self.logger,
-                dry_run=self.dry_run,
-                media_subtype='anime'
-            ),
-            MediaType.DORAMA: TVOrganizer(
-                config=self.config,
-                database=self.database,
-                conflict_handler=self.conflict_handler,
-                logger=self.logger,
-                dry_run=self.dry_run,
-                media_subtype='dorama'
-            ),
             MediaType.MUSIC: MusicOrganizer(
                 config=self.config,
                 database=self.database,
                 conflict_handler=self.conflict_handler,
                 logger=self.logger,
-                dry_run=self.dry_run
+                dry_run=self.dry_run,
+            ),
+            MediaType.LYRICS: LyricsOrganizer(
+                config=self.config,
+                database=self.database,
+                conflict_handler=self.conflict_handler,
+                logger=self.logger,
+                dry_run=self.dry_run,
             ),
             MediaType.BOOK: BookOrganizer(
                 config=self.config,
@@ -147,7 +106,7 @@ class MediaOrganizerApp:
                 conflict_handler=self.conflict_handler,
                 logger=self.logger,
                 dry_run=self.dry_run,
-                book_type='book'
+                book_type="book",
             ),
             MediaType.COMIC: BookOrganizer(
                 config=self.config,
@@ -155,18 +114,17 @@ class MediaOrganizerApp:
                 conflict_handler=self.conflict_handler,
                 logger=self.logger,
                 dry_run=self.dry_run,
-                book_type='comic'
+                book_type="comic",
             ),
             MediaType.RENAMER: RenamerOrganizer(
                 config=self.config,
                 database=self.database,
                 conflict_handler=self.conflict_handler,
                 logger=self.logger,
-                dry_run=self.dry_run
+                dry_run=self.dry_run,
             ),
         }
 
-        # Initialize orchestrator
         self.orchestrator = Orquestrador(
             validators=self.validators,
             organizadores=self.organizadores,
@@ -174,572 +132,517 @@ class MediaOrganizerApp:
             scanner=self.scanner,
             database=self.database,
             file_completion_validator=self.file_completion_validator,
-            logger=self.logger
+            logger=self.logger,
         )
 
-        if dry_run:
-            self.logger.info(
-                "⚠ Running in DRY-RUN mode (no files will be modified)")
-
-    async def organize_directory(self, directory: Path):
-        """Organize all files in a directory"""
+    async def organize_directory(
+        self,
+        directory: Path,
+        validate_completion: bool = True,
+        source_label: str | None = None,
+        progress_unit: str = "files",
+    ) -> int:
         if not directory.exists() or not directory.is_dir():
             self.logger.error(f"Directory not found: {directory}")
-            return
+            return 0
 
-        processed_count = await self.orchestrator.organizar_arquivos(
+        processed = await self.orchestrator.organizar_arquivos(
             diretorio_origem=directory,
-            validar_completude_arquivo=True
+            validar_completude_arquivo=validate_completion,
+            source_label=source_label,
+            progress_unit=progress_unit,
         )
-        self.logger.info(f"Processed {len(processed_count)} files in {directory}")
-        return len(processed_count)
+        return len(processed)
 
     def rename_files_batch(self, directory: Path, metadata: Dict):
-        """Rename files in batch mode using RenamerOrganizer"""
         renamer = self.organizadores.get(MediaType.RENAMER)
         if renamer:
             return renamer.rename_batch(directory, metadata)
-        return {'processed': 0, 'renamed': 0, 'failed': 0, 'skipped': 0}
+        return {"processed": 0, "renamed": 0, "failed": 0, "skipped": 0}
 
     def show_stats(self):
-        """Show organization statistics"""
-        stats = self.orchestrator.get_stats()
+        stats = self.database.get_stats()
 
-        # First table: Organization Statistics
-        table1 = Table(title="📊 Organization Statistics")
-        table1.add_column("Metric", style="cyan")
-        table1.add_column("Value", style="green")
+        table = Table(title="Organization Statistics")
+        table.add_column("Metric", style="cyan")
+        table.add_column("Value", style="green")
 
-        table1.add_row("Total Files Organized", str(
-            stats.get('total_files_organized', 0)))
-        table1.add_row("Movies", str(stats.get('movies', 0)))
-        table1.add_row("Series", str(stats.get('series', 0)))
-        table1.add_row("Anime", str(stats.get('animes', 0)))
-        table1.add_row("Doramas", str(stats.get('doramas', 0)))
-        table1.add_row("Music Tracks", str(stats.get('music_tracks', 0)))
-        table1.add_row("Books", str(stats.get('books', 0)))
-        table1.add_row("Comics", str(stats.get('comics', 0)))
-        table1.add_row("Failed Operations", str(
-            stats.get('failed_operations', 0)))
+        table.add_row("Total Files Organized", str(
+            stats.get("total_files_organized", 0)))
+        table.add_row("Music Tracks", str(stats.get("music_tracks", 0)))
+        table.add_row("Lyrics Files", str(stats.get("lyrics_files", 0)))
+        table.add_row("Books", str(stats.get("books", 0)))
+        table.add_row("Comics", str(stats.get("comics", 0)))
+        table.add_row("Failed Operations", str(
+            stats.get("failed_operations", 0)))
 
-        console = Console()
-        console.print(table1)
-
-
-    def _get_mapping_stats(self):
-        """Get statistics - manual mapping is no longer used"""
-        # Since we removed manual mapping, return empty stats
-        return {
-            'movies': 0,
-            'tv_series': 0,
-            'anime': 0,
-            'dorama': 0,
-            'total': 0
-        }
+        Console().print(table)
 
     def cleanup(self):
-        """Cleanup and save state"""
-        # Close orchestrator resources
-        if hasattr(self.orchestrator, 'cleanup'):
-            self.orchestrator.cleanup()
-        
-        # Close database
-        if hasattr(self, 'database'):
+        if hasattr(self, "database"):
             self.database.close()
 
 
 @click.group()
-@click.option('--dry-run', is_flag=True, help='Simulate operations without modifying files')
+@click.option("--dry-run", is_flag=True, help="Simulate operations without modifying files")
 @click.pass_context
 def cli(ctx, dry_run):
-    """Media Organization System - Organize your media files automatically"""
+    """Media Organization System."""
     ctx.ensure_object(dict)
-    ctx.obj['DRY_RUN'] = dry_run
-
-
-# Import unified CLI functions from cli_manager
-from src.cli_manager import show_trash_menu, show_subtitle_menu, show_renamer_menu, CLIManager
+    ctx.obj["DRY_RUN"] = dry_run
 
 
 @cli.command()
-@click.pass_context
-def organize(ctx):
-    """Organize media files - Interactive menu to select directory"""
-    from src.cli_manager import CLIManager
-    
-    cli = CLIManager()
-    cli.show_organize_menu()
+def organize():
+    """Open organize interactive menu."""
+    CLIManager().show_organize_menu()
 
 
 @cli.command()
-@click.pass_context
-def renamer(ctx):
-    """Open renamer menu - rename media files to standard patterns"""
-    cli = CLIManager()
-    cli.show_renamer_menu()
-
-
-@cli.command()
-def unorganized():
-    """Show list of unorganized files"""
-    console = Console()
-    
-    # Load unorganized files
-    unorganized_path = Path("data/unorganized.json")
-    if not unorganized_path.exists():
-        console.print("[yellow]No unorganized files found.[/yellow]")
-        return
-    
-    try:
-        with open(unorganized_path, 'r', encoding='utf-8') as f:
-            unorganized_data = json.load(f)
-        
-        unorganized_files = unorganized_data.get('unorganized_files', [])
-        
-        if not unorganized_files:
-            console.print("[green]No unorganized files found.[/green]")
-            return
-        
-        console.print(f"\n[bold cyan]Unorganized Files ({len(unorganized_files)} files)[/bold cyan]\n")
-        
-        for i, item in enumerate(unorganized_files, 1):
-            file_path = item.get('file_path', 'Unknown')
-            reason = item.get('reason', 'No reason provided')
-            console.print(f"{i:3d}. {file_path}")
-            console.print(f"     Reason: {reason}")
-            console.print()
-    
-    except Exception as e:
-        console.print(f"[red]Error reading unorganized files: {e}[/red]")
+def interactive():
+    """Open full interactive menu."""
+    CLIManager().show_interactive_menu()
 
 
 @cli.command()
 def stats():
-    """Show organization statistics"""
+    """Show organization statistics."""
     app = MediaOrganizerApp()
-
-    app.show_stats()
-    app.cleanup()
+    try:
+        app.show_stats()
+    finally:
+        app.cleanup()
 
 
 @cli.command()
 def test():
-    """Test configuration and connectivity"""
+    """Test configuration and database access."""
     console = Console()
-    console.print(
-        "\n[bold cyan]Testing Media Organization System[/bold cyan]\n")
-
     app = MediaOrganizerApp()
-
-    # Test configuration
-    console.print("✓ Configuration loaded", style="green")
-
-    # Test database
     try:
-        stats = app.orchestrator.get_stats()
+        stats_data = app.database.get_stats()
+        console.print("Configuration loaded", style="green")
         console.print(
-            f"✓ Database accessible ({stats.get('total_files_organized', 0)} files tracked)", style="green")
-    except Exception as e:
-        console.print(f"✗ Database error: {e}", style="red")
-
-    console.print("\n[bold green]System is ready![/bold green]\n")
-    app.cleanup()
+            f"Database accessible ({stats_data.get('total_files_organized', 0)} files tracked)",
+            style="green",
+        )
+    finally:
+        app.cleanup()
 
 
 @cli.command()
 @click.pass_context
 def process_new_media(ctx):
-    """
-    Process new media from downloads and qBittorrent (for scheduled execution)
-    """
-    console = Console()
-    console.print("\n[bold cyan]Processing New Media[/bold cyan]\n")
-
-    dry_run = ctx.obj.get('DRY_RUN', False)
+    """Process new files from configured download folders."""
+    dry_run = ctx.obj.get("DRY_RUN", False)
     app = MediaOrganizerApp(dry_run=dry_run)
 
     try:
-        # Process all download folders with qBittorrent validation
         total_processed = 0
-
-        # Process all configured download paths
         download_paths = [
-            app.config.download_path_movies,
-            app.config.download_path_tv,
-            app.config.download_path_animes,
-            app.config.download_path_doramas,
-            app.config.download_path_music,
-            app.config.download_path_books,
-            app.config.download_path_comics,
+            ("Music", app.config.download_path_music, "tracks"),
+            ("Books", app.config.download_path_books, "books"),
+            ("Comics", app.config.download_path_comics, "comics"),
         ]
 
-        for path in download_paths:
+        for label, path, unit in download_paths:
             if path and path.exists():
-                processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
+                app.logger.info("Starting %s cycle from %s", label, path)
+                processed = asyncio.run(
+                    app.organize_directory(
+                        path,
+                        source_label=label,
+                        progress_unit=unit,
+                    )
+                )
                 total_processed += processed
+                app.logger.info(
+                    "%s cycle finished: %s %s processed",
+                    label,
+                    processed,
+                    unit,
+                )
 
         if total_processed > 0:
-            console.print(
-                f"\n[bold green]✓ Successfully organized {total_processed} file(s)[/bold green]")
+            Console().print(
+                f"Successfully organized {total_processed} file(s)", style="green")
         else:
-            console.print("\n[yellow]No new media files to organize[/yellow]")
-
+            Console().print("No new media files to organize", style="yellow")
     finally:
         app.cleanup()
 
 
-@cli.command()
-@click.pass_context
-def daemon(ctx):
-    """
-    Run media organizer in daemon mode (continuous execution with interval)
-
-    Executes process-new-media repeatedly with configured CHECK_INTERVAL.
-    Use run-daemon.sh to start in background with nohup.
-    """
-    import time
-    from datetime import datetime
-
-    app = MediaOrganizerApp()
-    check_interval = app.config.check_interval
-
-    console = Console()
-    console.print("\n[bold cyan]Media Organizer - Daemon Mode[/bold cyan]\n")
-    console.print(
-        f"Check interval: {check_interval} seconds ({check_interval // 60} minutes)")
-    console.print("Press Ctrl+C to stop\n")
-
-    cycle_count = 0
+@cli.command("preview-music-metadata")
+@click.option(
+    "--path",
+    "music_path",
+    type=click.Path(path_type=Path),
+    default=Path("/home/mateus/Music"),
+    show_default=True,
+    help="Music directory to simulate metadata enrichment and organization",
+)
+def preview_music_metadata(music_path: Path):
+    """Run music metadata enrichment in dry-run mode (no file/database changes)."""
+    app = MediaOrganizerApp(dry_run=True)
 
     try:
-        while True:
-            cycle_count += 1
-            start_time = datetime.now()
+        if not music_path.exists() or not music_path.is_dir():
+            Console().print(f"Invalid directory: {music_path}", style="red")
+            return
 
-            console.print(
-                f"\n[bold cyan]═══ Cycle {cycle_count} - {start_time.strftime('%d/%m/%Y %H:%M:%S')} ═══[/bold cyan]\n")
-
-            try:
-                # Process all download folders with qBittorrent validation
-                total_processed = 0
-
-                # Process all configured download paths
-                download_paths = [
-                    app.config.download_path_movies,
-                    app.config.download_path_tv,
-                    app.config.download_path_animes,
-                    app.config.download_path_doramas,
-                    app.config.download_path_music,
-                    app.config.download_path_books,
-                    app.config.download_path_comics,
-                ]
-
-                for path in download_paths:
-                    if path and path.exists():
-                        processed = asyncio.run(app.orchestrator.organizar_diretorio(path))
-                        total_processed += processed
-
-                if total_processed > 0:
-                    console.print(
-                        f"\n[green]✓ Organized {total_processed} file(s) this cycle[/green]")
-                else:
-                    console.print("\n[dim]No new media found[/dim]")
-
-                # Calculate cycle duration
-                end_time = datetime.now()
-                duration = (end_time - start_time).total_seconds()
-                console.print(
-                    f"\n[dim]Cycle completed in {duration:.1f}s[/dim]")
-
-                # Wait for next check
-                console.print(
-                    f"[dim]Waiting {check_interval // 60} minutes until next check...[/dim]")
-                time.sleep(check_interval)
-
-            except KeyboardInterrupt:
-                raise
-            except Exception as e:
-                app.logger.error(f"Error in daemon cycle: {e}")
-                console.print(f"\n[red]✗ Cycle error: {e}[/red]")
-                console.print(
-                    f"[dim]Waiting {check_interval // 60} minutes before retry...[/dim]")
-                time.sleep(check_interval)
-
-    except KeyboardInterrupt:
-        console.print("\n\n[yellow]⚠ Daemon stopped by user[/yellow]")
+        processed = asyncio.run(
+            app.organize_directory(
+                music_path,
+                validate_completion=False,
+                source_label="Music",
+                progress_unit="tracks",
+            )
+        )
+        Console().print(
+            f"Dry-run completed for {processed} file(s) in {music_path}",
+            style="cyan",
+        )
+        Console().print(
+            "No metadata tags, hardlinks, or database entries were written.",
+            style="green",
+        )
     finally:
         app.cleanup()
 
 
-# ============================================================================
-# SUBTITLE DOWNLOADER COMMANDS
-# ============================================================================
+@cli.command("backfill-book-covers")
+@click.option(
+    "--limit",
+    type=int,
+    default=0,
+    show_default=True,
+    help="Limit number of books to process (0 = all)",
+)
+@click.pass_context
+def backfill_book_covers(ctx, limit: int):
+    """Backfill book covers using existing DB metadata (title/author) with Google Books."""
+    dry_run = ctx.obj.get("DRY_RUN", False)
+    app = MediaOrganizerApp(dry_run=dry_run)
 
-@cli.command()
-@click.option('--manual', is_flag=True, help='Run manual download (one-time)')
-@click.option('--media-type', type=click.Choice(['movie', 'tv', 'dorama', 'anime']), 
-              help='Filter by media type')
-@click.option('--language', type=str, help='Specific language (e.g., pt, en)')
-def subtitle_download(manual, media_type, language):
-    """
-    Download subtitles from OpenSubtitles
-    
-    Run manual download or check download status.
-    """
-    from src.subtitle_cli import run_manual_download, show_subtitle_status
-    
-    if manual:
-        # Run manual download
-        stats = run_manual_download(
-            media_type=media_type,
-            language=language
+    report = {
+        "dry_run": dry_run,
+        "limit": limit,
+        "processed": 0,
+        "updated": 0,
+        "skipped": 0,
+        "errors": 0,
+        "reasons": {},
+        "details": [],
+    }
+
+    def _count_reason(reason: str) -> None:
+        report["reasons"][reason] = report["reasons"].get(reason, 0) + 1
+
+    async def _run() -> None:
+        book_organizer = app.organizadores[MediaType.BOOK]
+        records = app.database.media_table.all()
+
+        book_records = []
+        for record in records:
+            metadata = record.get("metadata") or {}
+            media_type = str(metadata.get("media_type") or "").lower()
+            media_subtype = str(metadata.get("media_subtype") or "").lower()
+            if media_type == "book" or media_subtype == "book":
+                book_records.append(record)
+
+        if limit > 0:
+            book_records = book_records[:limit]
+
+        for record in book_records:
+            report["processed"] += 1
+
+            organized_path = Path(record.get("organized_path") or "")
+            metadata = dict(record.get("metadata") or {})
+            ext = organized_path.suffix.lower()
+
+            detail = {
+                "path": str(organized_path),
+                "updated": False,
+                "reason": "",
+            }
+
+            if ext not in {".epub", ".pdf"}:
+                detail["reason"] = "unsupported_extension"
+                report["skipped"] += 1
+                _count_reason("unsupported_extension")
+                report["details"].append(detail)
+                continue
+
+            if not organized_path.exists():
+                detail["reason"] = "file_not_found"
+                report["skipped"] += 1
+                _count_reason("file_not_found")
+                report["details"].append(detail)
+                continue
+
+            title = str(metadata.get("title") or "").strip()
+            author = str(metadata.get("author") or "").strip()
+            if not title or not author or author.lower() == "unknown author":
+                detail["reason"] = "missing_title_or_author"
+                report["skipped"] += 1
+                _count_reason("missing_title_or_author")
+                report["details"].append(detail)
+                continue
+
+            has_cover = book_organizer._book_has_embedded_cover(organized_path)
+            if has_cover is True:
+                detail["reason"] = "already_has_cover"
+                report["skipped"] += 1
+                _count_reason("already_has_cover")
+                report["details"].append(detail)
+                continue
+
+            if has_cover is None:
+                detail["reason"] = "unknown_cover_state"
+                report["skipped"] += 1
+                _count_reason("unknown_cover_state")
+                report["details"].append(detail)
+                continue
+
+            try:
+                enriched = await enrich_book_metadata_with_online_sources(
+                    file_path=organized_path,
+                    existing_metadata={"title": title, "author": author},
+                    logger=app.logger,
+                    use_google_books=app.config.enrich_book_metadata_google_books,
+                    google_books_min_match_score=app.config.book_cover_min_match_score,
+                    google_books_api_key=app.config.google_books_api_key,
+                    include_cover_url=True,
+                )
+            except Exception as exc:
+                detail["reason"] = "enrichment_error"
+                detail["error"] = str(exc)
+                report["errors"] += 1
+                _count_reason("enrichment_error")
+                report["details"].append(detail)
+                continue
+
+            cover_url = str(enriched.get("cover_image_url") or "").strip()
+            if not cover_url:
+                detail["reason"] = "no_cover_url_found"
+                report["skipped"] += 1
+                _count_reason("no_cover_url_found")
+                report["details"].append(detail)
+                continue
+
+            writable_metadata = dict(metadata)
+            writable_metadata["cover_image_url"] = cover_url
+
+            if ext == ".epub":
+                write_ok = book_organizer._write_epub_metadata(
+                    organized_path, writable_metadata)
+            else:
+                write_ok = book_organizer._write_pdf_metadata(
+                    organized_path, writable_metadata)
+
+            if not write_ok:
+                detail["reason"] = "write_failed"
+                report["errors"] += 1
+                _count_reason("write_failed")
+                report["details"].append(detail)
+                continue
+
+            detail["updated"] = True
+            detail["reason"] = "updated"
+            detail["cover_url"] = cover_url
+            report["updated"] += 1
+            _count_reason("updated")
+            report["details"].append(detail)
+
+            if not dry_run:
+                file_hash = record.get("file_hash")
+                original_path = record.get("original_path")
+                org_path = record.get("organized_path")
+                if file_hash and original_path and org_path:
+                    app.database.adicionar_midia(
+                        file_hash=file_hash,
+                        original_path=original_path,
+                        organized_path=org_path,
+                        metadata=writable_metadata,
+                    )
+                else:
+                    # Fallback for unexpected incomplete rows
+                    app.database.media_table.update(
+                        {
+                            "metadata": writable_metadata,
+                            "last_checked": format_datetime_br(),
+                        },
+                        doc_ids=[record.doc_id],
+                    )
+
+    try:
+        asyncio.run(_run())
+    finally:
+        out_path = Path("data/book_cover_backfill_report.json")
+        out_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
         )
-        
-        if 'error' in stats:
-            console.print(f"\n[red]✗ {stats['error']}[/red]\n")
-    else:
-        # Show status
-        show_subtitle_status()
+
+        Console().print(
+            f"Backfill concluido | processados={report['processed']} | atualizados={report['updated']} | pulados={report['skipped']} | erros={report['errors']}",
+            style="cyan",
+        )
+        Console().print(f"Relatorio: {out_path}", style="green")
+        app.cleanup()
 
 
-@cli.command()
-@click.option('--missing', is_flag=True, help='Show only files without subtitles')
-@click.option('--all', 'show_all', is_flag=True, help='Show all files with details')
-@click.option('--languages', is_flag=True, help='Show language breakdown')
-def subtitle_status(missing, show_all, languages):
-    """
-    Show subtitle statistics and status
-    
-    Display coverage statistics and files missing subtitles.
-    """
-    from src.subtitle_cli import show_subtitle_status
-    
-    show_subtitle_status(
-        show_missing=missing,
-        show_all=show_all,
-        show_languages=languages
+@cli.command("backfill-book-years")
+@click.option(
+    "--limit",
+    type=int,
+    default=0,
+    show_default=True,
+    help="Limit number of books to process (0 = all)",
+)
+@click.pass_context
+def backfill_book_years(ctx, limit: int):
+    """Backfill missing `(YYYY)` suffix in original source book filenames."""
+    dry_run = ctx.obj.get("DRY_RUN", False)
+    app = MediaOrganizerApp(dry_run=dry_run)
+
+    report = {
+        "dry_run": dry_run,
+        "limit": limit,
+        "processed": 0,
+        "renamed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "reasons": {},
+        "details": [],
+    }
+
+    def _count_reason(reason: str) -> None:
+        report["reasons"][reason] = report["reasons"].get(reason, 0) + 1
+
+    def _normalize_year(value) -> int | None:
+        if isinstance(value, int):
+            return value if 1000 <= value <= 2100 else None
+        if isinstance(value, str):
+            import re
+
+            match = re.search(r"(\d{4})", value)
+            if match:
+                year = int(match.group(1))
+                return year if 1000 <= year <= 2100 else None
+        return None
+
+    records = app.database.media_table.all()
+    book_records = []
+    for record in records:
+        metadata = record.get("metadata") or {}
+        media_type = str(metadata.get("media_type") or "").lower()
+        media_subtype = str(metadata.get("media_subtype") or "").lower()
+        if media_type == "book" or media_subtype == "book":
+            book_records.append(record)
+
+    if limit > 0:
+        book_records = book_records[:limit]
+
+    for record in book_records:
+        report["processed"] += 1
+
+        original_path = Path(record.get("original_path") or "")
+        metadata = dict(record.get("metadata") or {})
+        detail = {
+            "path": str(original_path),
+            "renamed": False,
+            "reason": "",
+        }
+
+        if not original_path.exists() or not original_path.is_file():
+            detail["reason"] = "file_not_found"
+            report["skipped"] += 1
+            _count_reason("file_not_found")
+            report["details"].append(detail)
+            continue
+
+        if original_path.suffix.lower() not in {".epub", ".pdf", ".mobi", ".azw", ".azw3"}:
+            detail["reason"] = "unsupported_extension"
+            report["skipped"] += 1
+            _count_reason("unsupported_extension")
+            report["details"].append(detail)
+            continue
+
+        stem = original_path.stem
+        import re
+
+        if re.search(r"\(\d{4}\)\s*$", stem):
+            detail["reason"] = "already_has_year"
+            report["skipped"] += 1
+            _count_reason("already_has_year")
+            report["details"].append(detail)
+            continue
+
+        year = _normalize_year(metadata.get("year"))
+        if not year:
+            detail["reason"] = "missing_valid_year_metadata"
+            report["skipped"] += 1
+            _count_reason("missing_valid_year_metadata")
+            report["details"].append(detail)
+            continue
+
+        new_name = f"{stem} ({year}){original_path.suffix}"
+        target_path = original_path.with_name(new_name)
+
+        if target_path.exists():
+            detail["reason"] = "target_already_exists"
+            detail["target"] = str(target_path)
+            report["skipped"] += 1
+            _count_reason("target_already_exists")
+            report["details"].append(detail)
+            continue
+
+        if dry_run:
+            detail["renamed"] = True
+            detail["reason"] = "would_rename"
+            detail["target"] = str(target_path)
+            report["renamed"] += 1
+            _count_reason("would_rename")
+            report["details"].append(detail)
+            continue
+
+        try:
+            original_path.rename(target_path)
+            app.database.media_table.update(
+                {
+                    "original_path": str(target_path),
+                    "last_checked": format_datetime_br(),
+                    "metadata": metadata,
+                },
+                doc_ids=[record.doc_id],
+            )
+
+            detail["renamed"] = True
+            detail["reason"] = "renamed"
+            detail["target"] = str(target_path)
+            report["renamed"] += 1
+            _count_reason("renamed")
+            report["details"].append(detail)
+        except Exception as exc:
+            detail["reason"] = "rename_error"
+            detail["error"] = str(exc)
+            report["errors"] += 1
+            _count_reason("rename_error")
+            report["details"].append(detail)
+
+    out_path = Path("data/book_year_backfill_report.json")
+    out_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
 
-
-@cli.command()
-@click.option('--setup', is_flag=True, help='Run setup wizard')
-@click.option('--test', is_flag=True, help='Test API configuration')
-def subtitle_config(setup, test):
-    """
-    Configure OpenSubtitles integration
-    
-    Setup API credentials and test connectivity.
-    """
-    from src.subtitle_cli import setup_subtitle_config, test_subtitle_config
-    
-    if setup:
-        success = setup_subtitle_config()
-        if not success:
-            sys.exit(1)
-    elif test:
-        success = test_subtitle_config()
-        if not success:
-            sys.exit(1)
-    else:
-        # Default: show current config
-        console.print("\n[bold cyan]OpenSubtitles Configuration[/bold cyan]\n")
-        
-        from src.subtitle_config import get_config
-        config = get_config()
-        
-        console.print(f"API Key: {'[green]Set[/green]' if config.api_key and config.api_key != 'your_api_key_here' else '[red]Not set[/red]'}")
-        console.print(f"Username: {'[green]' + config.api_username + '[/green]' if config.api_username else '[red]Not set[/red]'}")
-        console.print(f"Languages: [cyan]{', '.join(config.preferred_languages)}[/cyan]")
-        console.print(f"Download limit: [yellow]{config.download_limit}/day[/yellow]")
-        console.print(f"Valid: {'[green]Yes[/green]' if config.is_valid else '[red]No[/red]'}")
-        
-        if not config.is_valid:
-            console.print("\n[red]Validation errors:[/red]")
-            for error in config.validation_errors:
-                console.print(f"  • {error}")
-
-
-@cli.command()
-def subtitle_daemon_start():
-    """Start subtitle daemon"""
-    from src.subtitle_cli import start_subtitle_daemon
-    
-    success = start_subtitle_daemon()
-    if not success:
-        sys.exit(1)
-
-
-@cli.command()
-def subtitle_daemon_stop():
-    """Stop subtitle daemon"""
-    from src.subtitle_cli import stop_subtitle_daemon
-    
-    success = stop_subtitle_daemon()
-    if not success:
-        sys.exit(1)
-
-
-@cli.command()
-def subtitle_daemon_restart():
-    """Restart subtitle daemon"""
-    from src.subtitle_cli import restart_subtitle_daemon
-    
-    success = restart_subtitle_daemon()
-    if not success:
-        sys.exit(1)
-
-
-@cli.command()
-def subtitle_daemon_status():
-    """Show subtitle daemon status"""
-    from src.subtitle_cli import show_daemon_status
-
-    show_daemon_status()
-
-
-# ============================================================================
-# TRASH & DELETION COMMANDS
-# ============================================================================
-
-@cli.group()
-def trash():
-    """
-    Trash & Deletion Manager
-
-    Manage file deletion with hardlink awareness.
-    Provides trash-based and permanent deletion modes.
-    """
-    pass
-
-
-@cli.command()
-def interactive():
-    """
-    Interactive media management menu
-
-    Opens the main interactive menu for all media operations.
-    """
-    cli = CLIManager()
-    cli.show_interactive_menu()
-
-
-@trash.command()
-def interactive():
-    """
-    Interactive trash management menu
-
-    Opens an interactive menu for trash and deletion operations.
-    """
-    cli = CLIManager()
-    cli.show_trash_menu()
-
-
-@trash.command()
-@click.argument('path', type=click.Path())
-@click.option('--dry-run', is_flag=True, help='Preview deletion without executing')
-def delete(path, dry_run):
-    """
-    Delete file to trash (safe, reversible)
-
-    PATH: File path to delete
-    """
-    from src.cli_manager import trash_delete
-
-    trash_delete(path, dry_run=dry_run)
-
-
-@trash.command()
-@click.argument('path', type=click.Path())
-@click.option('--dry-run', is_flag=True, help='Preview deletion without executing')
-@click.option('--force', is_flag=True, help='Skip confirmation prompt')
-def delete_permanent(path, dry_run, force):
-    """
-    Delete file permanently (irreversible)
-    
-    PATH: File path to permanently delete
-    """
-    from src.cli_manager import trash_delete_permanent
-    
-    trash_delete_permanent(path, dry_run=dry_run, force=force)
-
-
-@trash.command()
-@click.option('--all', 'show_all', is_flag=True, help='Show all items (including restored)')
-def list(show_all):
-    """
-    List trash items
-    
-    Shows files currently in trash with their IDs, sizes, and expiration dates.
-    """
-    from src.cli_manager import trash_list
-    
-    trash_list(active_only=not show_all)
-
-
-@trash.command()
-@click.argument('trash_id', type=str)
-def restore(trash_id):
-    """
-    Restore item from trash
-    
-    TRASH_ID: ID of the item to restore (use 'trash list' to see IDs)
-    """
-    from src.cli_manager import trash_restore
-    
-    trash_restore(trash_id)
-
-
-@trash.command()
-@click.option('--older-than', type=int, help='Only remove items older than N days')
-def empty(older_than):
-    """
-    Empty trash
-    
-    Permanently removes all items from trash.
-    """
-    from src.cli_manager import trash_empty
-    
-    trash_empty(older_than_days=older_than if older_than else None)
-
-
-@trash.command()
-def status():
-    """
-    Show trash and deletion statistics
-    
-    Displays trash contents, link registry stats, and disk usage.
-    """
-    from src.cli_manager import trash_status
-    
-    trash_status()
-
-
-@trash.command()
-@click.argument('path', type=click.Path())
-def lookup(path):
-    """
-    Lookup all hardlinks for a file
-    
-    PATH: File path to lookup
-    
-    Shows all hardlinks associated with a file and their status.
-    """
-    from src.cli_manager import trash_lookup
-    
-    trash_lookup(path)
-
-
-@trash.command()
-def scan():
-    """
-    Scan filesystem to rebuild link registry
-
-    Scans all configured download and library directories to find
-    and register hardlinks. Useful for recovery or initial setup.
-    """
-    from src.cli_manager import trash_scan
-
-    trash_scan()
+    Console().print(
+        f"Backfill de ano concluido | processados={report['processed']} | renomeados={report['renamed']} | pulados={report['skipped']} | erros={report['errors']}",
+        style="cyan",
+    )
+    Console().print(f"Relatorio: {out_path}", style="green")
+    app.cleanup()
 
 
 if __name__ == "__main__":

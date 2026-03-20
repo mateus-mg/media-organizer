@@ -3,7 +3,7 @@
 Log Formatter - Standardized hierarchical structure for logs
 Media Organization System
 
-Follows the same principles as Music Automation System:
+Follows the same logging principles used by this project:
 - Clean logs with simple symbols (no emojis)
 - Hierarchical structure (3 levels)
 - Consistent formatting
@@ -144,7 +144,7 @@ class LogSection:
             Formatted string
 
         Example:
-            "Movies: 45 | Series: 32 | Anime: 18"
+            "Music: 45 | Books: 32 | Comics: 18"
         """
         items_list = list(items.items())
         if max_items:
@@ -194,11 +194,12 @@ class LogSection:
         Returns:
             List of formatted lines
 
-        Example:
-            → Movie Title (2020)
-              TMDB ID: 12345 | movies/Movie Title (2020) [tmdbid-12345]/
+                Example:
+                        → Artist Name - Track Title
+                            Album: Album Name | music/Artist Name/Album Name/
         """
-        lines = [f"{LogSection.ARROW} {artist} - {title}" if title else f"{LogSection.ARROW} {artist}"]
+        lines = [
+            f"{LogSection.ARROW} {artist} - {title}" if title else f"{LogSection.ARROW} {artist}"]
         if details:
             lines.append(f"{indent}{details}")
         return lines
@@ -216,11 +217,11 @@ class LogSection:
         Returns:
             List of formatted lines
 
-        Example:
-            ✗ Organization Failed
-              File: movie.mkv
-              Reason: TMDB lookup failed
-              Action: Added to unorganized list
+                Example:
+                        ✗ Organization Failed
+                            File: track.mp3
+                            Reason: missing metadata
+                            Action: Added to unorganized list
         """
         lines = [f"{LogSection.CROSS} {title}"]
         for key, value in details.items():
