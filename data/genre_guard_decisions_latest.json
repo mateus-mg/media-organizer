@@ -1,0 +1,2619 @@
+{
+  "updated_at": "2026-04-03T23:14:28",
+  "started_at": "2026-04-03T22:21:23",
+  "entries": [
+    {
+      "ts": "2026-04-03T22:30:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Boy With Luv (Feat. Halsey) - BTS.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:08",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Boy With Luv (Feat. Halsey) - BTS.flac",
+      "genre": "Aktuelle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:30:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Boy With Luv (Feat. Halsey) - BTS.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Boy With Luv (Feat. Halsey) - BTS.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Boy With Luv (Feat. Halsey) - BTS.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:30:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Proof/Singularity - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Trap Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Trap Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/they don’t know ’bout us - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Experimental Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Jersey Club Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:18",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Experimental Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:31:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Jersey Club Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/FYA - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:26",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:26",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Uk Street Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:26",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:31:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:27",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:27",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:27",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Uk Street Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:27",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/SWIM - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:31:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/2.0 - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:43",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Into the Sun - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "Trap Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "Trap Soul"
+    },
+    {
+      "ts": "2026-04-03T22:31:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Please - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Atlanta Bass"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Atlanta Bass"
+    },
+    {
+      "ts": "2026-04-03T22:31:59",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/One More Night - BTS.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Drone"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Reductionism"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Drone"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Drone"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Reductionism"
+    },
+    {
+      "ts": "2026-04-03T22:32:07",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/No. 29 - BTS.flac",
+      "genre": "Drone"
+    },
+    {
+      "ts": "2026-04-03T22:32:12",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Pop Rock"
+    },
+    {
+      "ts": "2026-04-03T22:32:12",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:12",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Pop Rock"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Pop Rock"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:13",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Like Animals - BTS.flac",
+      "genre": "Pop Rock"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Boom Bap"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:32:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Alternative Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:21",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:21",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Boom Bap"
+    },
+    {
+      "ts": "2026-04-03T22:32:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Body to Body - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:36",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:32:36",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:32:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:37",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:37",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:37",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:32:37",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Aliens - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Neo-Soul"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Neo-Soul"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Neo-Soul"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:32:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Merry Go Round - BTS.flac",
+      "genre": "Neo-Soul"
+    },
+    {
+      "ts": "2026-04-03T22:32:54",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:54",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:54",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:32:54",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:32:54",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:55",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:32:55",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:32:55",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:32:55",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/ARIRANG/Hooligan - BTS.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Dance"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "House"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:33:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Dance"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "House"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:33:09",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/One Kiss (with Dua Lipa) - Calvin Harris.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Billboard Hot 100"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Billboard No 1"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Billboard No 1 2024"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Billboard Hot 100 2025"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:18",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I Had Some Help (Feat. Morgan Wallen) - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "quarantine",
+      "reason": "unknown_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Sexy"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Disco"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "quarantine",
+      "reason": "unknown_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Sexy"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Disco"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:26",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Funk"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Soul"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:35",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Funk"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Soul"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:36",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/luther (with sza) - Kendrick Lamar.flac",
+      "genre": "Rap"
+    },
+    {
+      "ts": "2026-04-03T22:33:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Calm Down (with Selena Gomez) - Rema.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Calm Down (with Selena Gomez) - Rema.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:48",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Calm Down (with Selena Gomez) - Rema.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:33:48",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Calm Down (with Selena Gomez) - Rema.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "English"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Offizielle Charts"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "5+ Wochen"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Ph_Temp_Checken"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/I'm Good (Blue) - David Guetta.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Funk"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Soul"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "R&B"
+    },
+    {
+      "ts": "2026-04-03T22:34:16",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Funk"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Soul"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "R&B"
+    },
+    {
+      "ts": "2026-04-03T22:34:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave The Door Open - Bruno Mars.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Melodic Rap"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Melodic Rap"
+    },
+    {
+      "ts": "2026-04-03T22:34:39",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Sunflower - Spider-Man Into the Spider-Verse - Post Malone.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:52",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Señorita - Shawn Mendes.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:52",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Señorita - Shawn Mendes.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:52",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Señorita - Shawn Mendes.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:34:52",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Señorita - Shawn Mendes.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Korean"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "English"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Pop Music"
+    },
+    {
+      "ts": "2026-04-03T22:35:07",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Korean"
+    },
+    {
+      "ts": "2026-04-03T22:35:08",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Korean"
+    },
+    {
+      "ts": "2026-04-03T22:35:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:35:08",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:08",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Pop Music"
+    },
+    {
+      "ts": "2026-04-03T22:35:08",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Golden - HUNTR X.flac",
+      "genre": "Korean"
+    },
+    {
+      "ts": "2026-04-03T22:35:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Seven (feat. Latto) (Explicit Ver.) - Jung Kook.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Seven (feat. Latto) (Explicit Ver.) - Jung Kook.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Seven (feat. Latto) (Explicit Ver.) - Jung Kook.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:35:21",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Seven (feat. Latto) (Explicit Ver.) - Jung Kook.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Dancehall"
+    },
+    {
+      "ts": "2026-04-03T22:36:10",
+      "action": "remove",
+      "reason": "concatenated_genre_string",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Dance-Pop;Electro House"
+    },
+    {
+      "ts": "2026-04-03T22:36:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:11",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:11",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Dancehall"
+    },
+    {
+      "ts": "2026-04-03T22:36:11",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Leave Before You Love Me (with Jonas Brothers) - Marshmello.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:36:20",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/death bed (coffee for your head) - Powfu.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Peaches (feat. Daniel Caesar & Giveon) - Justin Bieber.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Peaches (feat. Daniel Caesar & Giveon) - Justin Bieber.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Peaches (feat. Daniel Caesar & Giveon) - Justin Bieber.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Peaches (feat. Daniel Caesar & Giveon) - Justin Bieber.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:36:47",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Cold Heart - PNAU Remix - Elton John.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Industrial"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Electro"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Industrial"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Electro"
+    },
+    {
+      "ts": "2026-04-03T22:37:10",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Die With A Smile - Lady Gaga.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:37:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:37:35",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Isrc"
+    },
+    {
+      "ts": "2026-04-03T22:37:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:37:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:37:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/STAY (with Justin Bieber) - The Kid LAROI.flac",
+      "genre": "Electronic"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "Trap"
+    },
+    {
+      "ts": "2026-04-03T22:38:17",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/Tear - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:03",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Adult Contemporary"
+    },
+    {
+      "ts": "2026-04-03T22:39:03",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:03",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Pop Soul"
+    },
+    {
+      "ts": "2026-04-03T22:39:03",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Adult Contemporary"
+    },
+    {
+      "ts": "2026-04-03T22:39:04",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Adult Contemporary"
+    },
+    {
+      "ts": "2026-04-03T22:39:04",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "K-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:04",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Pop Soul"
+    },
+    {
+      "ts": "2026-04-03T22:39:04",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Love Yourself 結 'Answer'/The Truth Untold - BTS.flac",
+      "genre": "Adult Contemporary"
+    },
+    {
+      "ts": "2026-04-03T22:39:28",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/You Give Love A Bad Name - Bon Jovi.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:28",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/You Give Love A Bad Name - Bon Jovi.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:28",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/You Give Love A Bad Name - Bon Jovi.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:28",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/You Give Love A Bad Name - Bon Jovi.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Around the World (La La La La La) - A Touch Of Class, Pete Konemann.flac",
+      "genre": "Alternative Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Around the World (La La La La La) - A Touch Of Class, Pete Konemann.flac",
+      "genre": "Alternative Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Around the World (La La La La La) - A Touch Of Class, Pete Konemann.flac",
+      "genre": "Alternative Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Around the World (La La La La La) - A Touch Of Class, Pete Konemann.flac",
+      "genre": "Alternative Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Sweet Dreams - Radio Version - La Bouche.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Sweet Dreams - Radio Version - La Bouche.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Sweet Dreams - Radio Version - La Bouche.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:32",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Sweet Dreams - Radio Version - La Bouche.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Hip House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Euro House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Hip House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Hip House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Euro House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "genre": "Hip House"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Let's Get Loud - Jennifer Lopez.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Let's Get Loud - Jennifer Lopez.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Let's Get Loud - Jennifer Lopez.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Let's Get Loud - Jennifer Lopez.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Dreams (Will Come Alive) - 2 Brothers On The 4th Floor.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:33",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Dreams (Will Come Alive) - 2 Brothers On The 4th Floor.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Dreams (Will Come Alive) - 2 Brothers On The 4th Floor.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Dreams (Will Come Alive) - 2 Brothers On The 4th Floor.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Now Or Never - Pitbull, Bon Jovi.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Now Or Never - Pitbull, Bon Jovi.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Now Or Never - Pitbull, Bon Jovi.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Now Or Never - Pitbull, Bon Jovi.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Run to Me - Double You.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Run to Me - Double You.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Run to Me - Double You.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Run to Me - Double You.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Good Feeling - Flo Rida.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Good Feeling - Flo Rida.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Good Feeling - Flo Rida.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:34",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Good Feeling - Flo Rida.flac",
+      "genre": "Pop Rap"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Heavy Metal"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Metal"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "remove",
+      "reason": "exact_invalid_match",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Relaxed"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Blues Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Glam Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Classic Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Arena Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock and Roll"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Classic Pop & Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "valid_geographic_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Australian Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:35",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Heavy Metal"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Metal"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Hard Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Blues Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Glam Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Classic Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Arena Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock and Roll"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Classic Pop & Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "valid_geographic_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Australian Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:36",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Back In Black - AC DC.flac",
+      "genre": "Rock"
+    },
+    {
+      "ts": "2026-04-03T22:39:41",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Rehab - Amy Winehouse.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:39:41",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Rehab - Amy Winehouse.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:39:41",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Rehab - Amy Winehouse.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:39:41",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Rehab - Amy Winehouse.flac",
+      "genre": "Contemporary R&B"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/U Can't Touch This - MC Hammer.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/U Can't Touch This - MC Hammer.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/U Can't Touch This - MC Hammer.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/U Can't Touch This - MC Hammer.flac",
+      "genre": "Hip Hop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Billie Jean - Michael Jackson.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Billie Jean - Michael Jackson.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Billie Jean - Michael Jackson.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:45",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Billie Jean - Michael Jackson.flac",
+      "genre": "Dance-Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Europop"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Schlager"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Edm"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "German Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Bubblegum Dance"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Electro"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:49",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Europop"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Schlager"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Edm"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "valid_compound_genre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "German Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Bubblegum Dance"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Pop"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "clean",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Electro"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:50",
+      "action": "keep",
+      "reason": "token_musical_confident",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "genre": "Synthpop"
+    },
+    {
+      "ts": "2026-04-03T22:39:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Get a Way - Club Mix - Maxx.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Get a Way - Club Mix - Maxx.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Get a Way - Club Mix - Maxx.flac",
+      "genre": "Eurodance"
+    },
+    {
+      "ts": "2026-04-03T22:39:51",
+      "action": "keep",
+      "reason": "whitelisted_subgenre",
+      "file_path": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Get a Way - Club Mix - Maxx.flac",
+      "genre": "Eurodance"
+    }
+  ],
+  "dropped_entries": 0,
+  "max_entries": 250000
+}

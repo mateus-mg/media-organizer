@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.core import MediaType
-from src.main import MediaOrganizerApp
+from app.core import MediaType
+from app.main import MediaOrganizerApp
 
 
 class TestMediaOrganizerApp(unittest.IsolatedAsyncioTestCase):

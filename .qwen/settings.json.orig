@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find *)",
+      "Bash(stat *)",
+      "Bash(python3 *)",
+      "Bash(ls *)",
+      "Bash(python3)",
+      "Bash(import *)",
+      "Bash(data *)",
+      "Bash(open)",
+      "Bash(files *)",
+      "Bash('files', *)",
+      "Bash(broken_links *)",
+      "Bash(missing_files *)",
+      "Bash(valid_links *)",
+      "Bash(links *)",
+      "Bash('links', *)",
+      "Bash(path *)",
+      "Bash('path', *)",
+      "Bash(missing_files.append)",
+      "Bash(else:)",
+      "Bash(path)",
+      "Bash(broken_links.append)",
+      "Bash(print)",
+      "Bash(eof)",
+      "Bash(grep *)",
+      "Bash(./run.sh *)"
+    ]
+  }
+}

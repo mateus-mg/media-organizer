@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.config import Config
+from app.config import Config
 
 
 class TestConfig(unittest.TestCase):

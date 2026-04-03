@@ -8,9 +8,9 @@ Tests the complete workflow:
 4. Validate Navidrome-critical fields (Album Artist, Track/Disc numbers, etc.)
 """
 
-from src.metadata import extract_audio_metadata, enrich_music_metadata_with_online_sources
-from src.organizers import MusicOrganizer
-from src.config import Config
+from app.metadata import extract_audio_metadata, enrich_music_metadata_with_online_sources
+from app.services.organizers import MusicOrganizer
+from app.config import Config
 import asyncio
 import json
 import logging
@@ -29,6 +29,21 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
+class _FakeTXXX:
+    def __init__(self, value: str):
+        self.text = [value]
+
+
+class _FakeAudio:
+    def __init__(self, tags):
+        self.tags = tags
+
+
+class _FakeVorbis(dict):
+    def save(self):
+        return None
+
+
 class TestNavidromAudioMetadata(unittest.TestCase):
     """Test audio metadata extraction compatible with Navidrome standards."""
 
@@ -44,93 +59,15 @@ class TestNavidromAudioMetadata(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def _create_mp3_file(self, filename: str, tags: dict) -> Path:
-        """Create a synthetic MP3 file with ID3v2.4 tags."""
-        try:
-            from mutagen.id3 import (
-                ID3, TIT2, TPE1, TPE2, TALB, TRCK, TPOS,
-                TDRC, TCON, TSRC, TCMP, TXXX
-            )
-            from mutagen.mp3 import MP3
-        except ImportError:
-            self.skipTest("mutagen not available")
-
+        """Create a placeholder MP3 file path for mocked Mutagen reads."""
         file_path = self.music_dir / filename
-
-        audio = MP3(str(file_path))
-        if audio.tags is None:
-            audio.add_tags()
-
-        # Write test tags
-        audio.tags["TIT2"] = TIT2(
-            encoding=3, text=tags.get("title", "Unknown Title"))
-        audio.tags["TPE1"] = TPE1(
-            encoding=3, text=tags.get("artist", "Unknown Artist"))
-        audio.tags["TPE2"] = TPE2(encoding=3, text=tags.get(
-            "album_artist", tags.get("artist", "Unknown Artist")))
-        audio.tags["TALB"] = TALB(
-            encoding=3, text=tags.get("album", "Unknown Album"))
-        audio.tags["TRCK"] = TRCK(
-            encoding=3, text=tags.get("track_number", "0"))
-        audio.tags["TDRC"] = TDRC(encoding=3, text=tags.get("year", "2024"))
-        audio.tags["TCON"] = TCON(
-            encoding=3, text=tags.get("genre", "Unknown"))
-
-        if tags.get("disc_number"):
-            audio.tags["TPOS"] = TPOS(encoding=3, text=tags["disc_number"])
-
-        if tags.get("isrc"):
-            audio.tags["TSRC"] = TSRC(encoding=3, text=tags["isrc"])
-
-        if tags.get("compilation"):
-            audio.tags["TCMP"] = TCMP(encoding=3, text="1")
-
-        if tags.get("musicbrainz_trackid"):
-            audio.tags["TXXX:MusicBrainz Track Id"] = TXXX(
-                encoding=3,
-                desc="MusicBrainz Track Id",
-                text=tags["musicbrainz_trackid"]
-            )
-
-        audio.save(v2_version=4)
+        file_path.touch()
         return file_path
 
     def _create_flac_file(self, filename: str, tags: dict) -> Path:
-        """Create a synthetic FLAC file with Vorbis comments."""
-        try:
-            from mutagen.flac import FLAC
-        except ImportError:
-            self.skipTest("mutagen not available")
-
+        """Create a placeholder FLAC file path for mocked Mutagen reads."""
         file_path = self.music_dir / filename
-
-        audio = FLAC(str(file_path))
-
-        # Write test-tags
-        audio["title"] = [tags.get("title", "Unknown Title")]
-        audio["artist"] = [tags.get("artist", "Unknown Artist")]
-        audio["albumartist"] = [
-            tags.get("album_artist", tags.get("artist", "Unknown Artist"))]
-        audio["album"] = [tags.get("album", "Unknown Album")]
-        audio["tracknumber"] = [tags.get("track_number", "0")]
-        audio["date"] = [tags.get("year", "2024")]
-        audio["genre"] = [tags.get("genre", "Unknown")]
-
-        if tags.get("disc_number"):
-            audio["discnumber"] = [tags["disc_number"]]
-
-        if tags.get("isrc"):
-            audio["isrc"] = [tags["isrc"]]
-
-        if tags.get("compilation"):
-            audio["compilation"] = ["1"]
-
-        if tags.get("musicbrainz_trackid"):
-            audio["musicbrainz_trackid"] = [tags["musicbrainz_trackid"]]
-
-        if tags.get("originaldate"):
-            audio["originaldate"] = [tags["originaldate"]]
-
-        audio.save()
+        file_path.touch()
         return file_path
 
     def test_extract_mp3_metadata_complete(self):
@@ -150,8 +87,22 @@ class TestNavidromAudioMetadata(unittest.TestCase):
         }
 
         file_path = self._create_mp3_file("test_imagine.mp3", tag_data)
+        fake_tags = {
+            "TIT2": "Imagine",
+            "TPE1": "John Lennon",
+            "TPE2": "John Lennon",
+            "TALB": "Imagine",
+            "TRCK": "1/10",
+            "TPOS": "1/1",
+            "TDRC": "1971",
+            "TCON": "Rock",
+            "TSRC": "USIR20400001",
+            "TCMP": "1",
+            "TXXX:MusicBrainz Track Id": _FakeTXXX("test-mb-id-123"),
+        }
 
-        extracted = extract_audio_metadata(file_path)
+        with patch("mutagen.mp3.MP3", return_value=_FakeAudio(fake_tags)):
+            extracted = extract_audio_metadata(file_path)
 
         # Verify critical fields (Navidrome compatibility)
         self.assertEqual(extracted.get("title"), "Imagine")
@@ -185,8 +136,24 @@ class TestNavidromAudioMetadata(unittest.TestCase):
         }
 
         file_path = self._create_flac_file("test_beatles.flac", tag_data)
+        fake_flac = _FakeVorbis(
+            {
+                "title": ["Come Together"],
+                "artist": ["The Beatles"],
+                "albumartist": ["The Beatles"],
+                "album": ["Abbey Road"],
+                "tracknumber": ["1"],
+                "discnumber": ["1"],
+                "date": ["1969"],
+                "genre": ["Rock"],
+                "isrc": ["GBUM71505331"],
+                "musicbrainz_trackid": ["flac-mb-test-456"],
+                "originaldate": ["1969-09"],
+            }
+        )
 
-        extracted = extract_audio_metadata(file_path)
+        with patch("mutagen.flac.FLAC", return_value=fake_flac):
+            extracted = extract_audio_metadata(file_path)
 
         self.assertEqual(extracted.get("title"), "Come Together")
         self.assertEqual(extracted.get("artist"), "The Beatles")
@@ -201,24 +168,19 @@ class TestNavidromAudioMetadata(unittest.TestCase):
 
     def test_multiple_artists_extraction(self):
         """Test extraction of multiple artists from tags."""
-        try:
-            from mutagen.flac import FLAC
-        except ImportError:
-            self.skipTest("mutagen not available")
+        file_path = self._create_flac_file("collab.flac", {})
+        fake_flac = _FakeVorbis(
+            {
+                "artist": ["David Bowie", "Bing Crosby"],
+                "title": ["Peace on Earth / Little Drummer Boy"],
+                "album": ["Together Again"],
+                "albumartist": ["Bing Crosby & David Bowie"],
+                "tracknumber": ["1"],
+            }
+        )
 
-        file_path = self.music_dir / "collab.flac"
-        audio = FLAC(str(file_path))
-
-        # Add multiple artist entries (Vorbis comment style)
-        audio["artist"] = ["David Bowie", "Bing Crosby"]
-        audio["title"] = ["Peace on Earth / Little Drummer Boy"]
-        audio["album"] = ["Together Again"]
-        audio["albumartist"] = ["Bing Crosby & David Bowie"]
-        audio["tracknumber"] = ["1"]
-
-        audio.save()
-
-        extracted = extract_audio_metadata(file_path)
+        with patch("mutagen.flac.FLAC", return_value=fake_flac):
+            extracted = extract_audio_metadata(file_path)
 
         # Should extract both artists as list
         artists = extracted.get("artists", [])
@@ -236,7 +198,17 @@ class TestNavidromAudioMetadata(unittest.TestCase):
         }
 
         file_path = self._create_flac_file("track_format.flac", tag_data)
-        extracted = extract_audio_metadata(file_path)
+        fake_flac = _FakeVorbis(
+            {
+                "title": ["Track 1"],
+                "artist": ["Test Artist"],
+                "album": ["Test Album"],
+                "tracknumber": ["1"],
+                "discnumber": ["1"],
+            }
+        )
+        with patch("mutagen.flac.FLAC", return_value=fake_flac):
+            extracted = extract_audio_metadata(file_path)
 
         # Track number should be preserved as-is
         self.assertIsNotNone(extracted.get("track_number"))
@@ -267,9 +239,28 @@ class TestNavidromAudioMetadata(unittest.TestCase):
 
         file1 = self._create_flac_file("compilation_01.flac", tags_track1)
         file2 = self._create_flac_file("compilation_02.flac", tags_track2)
+        fake_flac_1 = _FakeVorbis(
+            {
+                "title": ["Track 1"],
+                "artist": ["Various Artists"],
+                "albumartist": ["Test Album Compilation"],
+                "album": ["Compilation Album 2024"],
+                "tracknumber": ["1"],
+            }
+        )
+        fake_flac_2 = _FakeVorbis(
+            {
+                "title": ["Track 2"],
+                "artist": ["Another Artist"],
+                "albumartist": ["Test Album Compilation"],
+                "album": ["Compilation Album 2024"],
+                "tracknumber": ["2"],
+            }
+        )
 
-        extracted1 = extract_audio_metadata(file1)
-        extracted2 = extract_audio_metadata(file2)
+        with patch("mutagen.flac.FLAC", side_effect=[fake_flac_1, fake_flac_2]):
+            extracted1 = extract_audio_metadata(file1)
+            extracted2 = extract_audio_metadata(file2)
 
         # Both tracks should have IDENTICAL album_artist (CRITICAL FOR NAVIDROME)
         self.assertEqual(extracted1["album_artist"], "Test Album Compilation")
@@ -303,21 +294,19 @@ class TestMusicOrganizerNavidrome(unittest.TestCase):
 
     def test_music_organizer_reads_album_artist(self):
         """Test that MusicOrganizer properly reads Album Artist tag."""
-        try:
-            from mutagen.flac import FLAC
-        except ImportError:
-            self.skipTest("mutagen not available")
-
         # Create test FLAC file
         test_file = self.music_src / "test_track.flac"
-        audio = FLAC(str(test_file))
-        audio["title"] = ["Test Song"]
-        audio["artist"] = ["Test Artist"]
-        audio["albumartist"] = ["Test Album Artist"]
-        audio["album"] = ["Test Album"]
-        audio["tracknumber"] = ["1"]
-        audio["date"] = ["2024"]
-        audio.save()
+        test_file.touch()
+        fake_file = _FakeAudio(
+            {
+                "title": ["Test Song"],
+                "artist": ["Test Artist"],
+                "albumartist": ["Test Album Artist"],
+                "album": ["Test Album"],
+                "tracknumber": ["1"],
+                "date": ["2024"],
+            }
+        )
 
         # Create organizer with mock components
         config = self._create_mock_config()
@@ -328,7 +317,8 @@ class TestMusicOrganizerNavidrome(unittest.TestCase):
         organizer = MusicOrganizer(config, db_mock, conflict_mock, logger)
 
         # Read tags
-        tags = organizer._read_audio_tags(test_file)
+        with patch("mutagen.File", return_value=fake_file):
+            tags = organizer._read_audio_tags(test_file)
 
         # Verify Album Artist was extracted (CRITICAL)
         self.assertEqual(tags["album_artist"], "Test Album Artist")
@@ -350,49 +340,93 @@ class TestNavidromeMusicTagWriting(unittest.TestCase):
         """Cleanup."""
         self.temp_dir.cleanup()
 
+    def _create_mock_config(self):
+        config = MagicMock(spec=Config)
+        config.library_path_music = self.music_dir
+        config.enrich_music_metadata_online = False
+        config.lastfm_api_key = ""
+        config.music_metadata_api_delay_seconds = 1.0
+        config.music_metadata_api_max_retries = 2
+        return config
+
     def test_update_flac_tags_preserves_disc_number(self):
         """Test that disc_number is preserved during tag updates."""
-        try:
-            from mutagen.flac import FLAC
-        except ImportError:
-            self.skipTest("mutagen not available")
-
-        # Create FLAC with disc number
         test_file = self.music_dir / "disc_test.flac"
-        audio = FLAC(str(test_file))
-        audio["title"] = ["Test"]
-        audio["artist"] = ["Artist"]
-        audio["album"] = ["Album"]
-        audio["tracknumber"] = ["1"]
-        audio["discnumber"] = ["1/2"]
-        audio["date"] = ["2024"]
-        audio.save()
+        fake_flac = _FakeVorbis(
+            {
+                "title": ["Test"],
+                "artist": ["Artist"],
+                "album": ["Album"],
+                "tracknumber": ["1"],
+                "discnumber": ["1/2"],
+                "date": ["2024"],
+            }
+        )
 
-        # Verify disc number was written
-        audio_check = FLAC(str(test_file))
-        self.assertEqual(audio_check["discnumber"][0], "1/2")
+        config = self._create_mock_config()
+        organizer = MusicOrganizer(config, MagicMock(), MagicMock(), logger)
+
+        with patch("mutagen.flac.FLAC", return_value=fake_flac):
+            updated = organizer._update_audio_tags(
+                test_file,
+                original_metadata={
+                    "title": "Test",
+                    "artist": "Artist",
+                    "album": "Album",
+                    "disc_number": "1/2",
+                },
+                final_metadata={
+                    "title": "Test",
+                    "artist": "Artist",
+                    "album": "Album",
+                    "genre": "Rock",
+                },
+                online_metadata={"genre": "Rock"},
+            )
+
+        self.assertIsInstance(updated, bool)
+        self.assertEqual(fake_flac.get("discnumber", [None])[0], "1/2")
 
     def test_update_flac_tags_preserves_compilation_flag(self):
         """Test that compilation flag is preserved during tag updates."""
-        try:
-            from mutagen.flac import FLAC
-        except ImportError:
-            self.skipTest("mutagen not available")
-
         test_file = self.music_dir / "compilation_test.flac"
-        audio = FLAC(str(test_file))
-        audio["title"] = ["Test"]
-        audio["artist"] = ["Various"]
-        audio["albumartist"] = ["Various Artists"]
-        audio["album"] = ["Compilation"]
-        audio["tracknumber"] = ["1"]
-        audio["date"] = ["2024"]
-        audio["compilation"] = ["1"]
-        audio.save()
+        fake_flac = _FakeVorbis(
+            {
+                "title": ["Test"],
+                "artist": ["Various"],
+                "albumartist": ["Various Artists"],
+                "album": ["Compilation"],
+                "tracknumber": ["1"],
+                "date": ["2024"],
+                "compilation": ["1"],
+            }
+        )
 
-        # Verify compilation flag
-        audio_check = FLAC(str(test_file))
-        self.assertEqual(audio_check["compilation"][0], "1")
+        config = self._create_mock_config()
+        organizer = MusicOrganizer(config, MagicMock(), MagicMock(), logger)
+
+        with patch("mutagen.flac.FLAC", return_value=fake_flac):
+            updated = organizer._update_audio_tags(
+                test_file,
+                original_metadata={
+                    "title": "Test",
+                    "artist": "Various",
+                    "album_artist": "Various Artists",
+                    "album": "Compilation",
+                    "compilation": "1",
+                },
+                final_metadata={
+                    "title": "Test",
+                    "artist": "Various",
+                    "album_artist": "Various Artists",
+                    "album": "Compilation",
+                    "genre": "Rock",
+                },
+                online_metadata={"genre": "Rock"},
+            )
+
+        self.assertIsInstance(updated, bool)
+        self.assertEqual(fake_flac.get("compilation", [None])[0], "1")
 
 
 class TestNavidromMetadataIntegration(unittest.TestCase):

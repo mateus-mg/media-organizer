@@ -1,0 +1,29 @@
+{
+  "updated_at": "2026-04-03T23:14:28",
+  "metrics": {
+    "processed_values": 373,
+    "kept": 352,
+    "removed": 19,
+    "quarantined": 2,
+    "suspicious_detected": 0,
+    "auto_promoted": 0,
+    "protected_musical": 0
+  },
+  "removed_reasons": {
+    "exact_invalid_match": 18,
+    "concatenated_genre_string": 1
+  },
+  "quarantined_reasons": {
+    "unknown_genre": 2
+  },
+  "decision_audit": {
+    "stored_entries": 373,
+    "dropped_entries": 0,
+    "max_entries": 250000,
+    "file": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_decisions_latest.json"
+  },
+  "rule_suggestions": {
+    "file": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_rule_suggestions.json",
+    "source_reason": "unknown_genre"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "updated_at": "2026-03-30T21:44:57",
+  "metrics": {
+    "processed_values": 84906,
+    "kept": 75592,
+    "removed": 9185,
+    "quarantined": 129,
+    "suspicious_detected": 286,
+    "auto_promoted": 3,
+    "protected_musical": 123
+  },
+  "removed_reasons": {
+    "exact_invalid_match": 8945,
+    "regex_invalid_match": 154,
+    "folder_name_match": 82,
+    "auto_promoted_suspicious": 3,
+    "concatenated_genre_string": 1
+  },
+  "quarantined_reasons": {
+    "language_or_nationality": 127,
+    "decade_or_era_tag": 2
+  }
+}

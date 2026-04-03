@@ -1,0 +1,1557 @@
+{
+  "lady gaga": {
+    "genres": [
+      "Electronic",
+      "Pop",
+      "Synth-Pop",
+      "Electropop",
+      "Dance-Pop",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T16:25:58.894733",
+    "source": "musicbrainz"
+  },
+  "avicii": {
+    "genres": [
+      "Progressive House",
+      "Electro House",
+      "Edm"
+    ],
+    "cached_at": "2026-04-03T16:26:04.031720",
+    "source": "musicbrainz"
+  },
+  "wyclef jean": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T16:26:23.809798",
+    "source": "musicbrainz"
+  },
+  "david guetta": {
+    "genres": [
+      "Dance",
+      "House",
+      "Dance-Pop",
+      "Electro House"
+    ],
+    "cached_at": "2026-04-03T16:26:40.896108",
+    "source": "musicbrainz"
+  },
+  "tiësto": {
+    "genres": [
+      "Trance",
+      "Electronic"
+    ],
+    "cached_at": "2026-04-03T16:26:46.247008",
+    "source": "musicbrainz"
+  },
+  "alan walker": {
+    "genres": [
+      "Electronic",
+      "Electro House",
+      "Edm"
+    ],
+    "cached_at": "2026-04-03T16:26:53.155161",
+    "source": "musicbrainz"
+  },
+  "swedish house mafia": {
+    "genres": [
+      "House"
+    ],
+    "cached_at": "2026-04-03T16:26:54.231712",
+    "source": "musicbrainz"
+  },
+  "calvin harris": {
+    "genres": [
+      "Electronic",
+      "Electropop",
+      "Dance-Pop",
+      "Edm"
+    ],
+    "cached_at": "2026-04-03T16:26:56.310719",
+    "source": "musicbrainz"
+  },
+  "lana del rey": {
+    "genres": [
+      "Electronic",
+      "Pop",
+      "Alternative",
+      "Indie Pop",
+      "Dream Pop"
+    ],
+    "cached_at": "2026-04-03T16:27:46.766031",
+    "source": "musicbrainz"
+  },
+  "flo rida": {
+    "genres": [
+      "Pop Rap"
+    ],
+    "cached_at": "2026-04-03T16:28:28.352257",
+    "source": "musicbrainz"
+  },
+  "sam smith": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T16:29:14.216333",
+    "source": "musicbrainz"
+  },
+  "rihanna": {
+    "genres": [
+      "Pop",
+      "Hip Hop",
+      "Dance-Pop",
+      "R&B",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T16:29:17.904596",
+    "source": "musicbrainz"
+  },
+  "maroon 5": {
+    "genres": [
+      "Pop",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T16:29:26.988348",
+    "source": "musicbrainz"
+  },
+  "adele": {
+    "genres": [
+      "Pop",
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T16:29:28.586553",
+    "source": "musicbrainz"
+  },
+  "the lumineers": {
+    "genres": [
+      "Americana"
+    ],
+    "cached_at": "2026-04-03T16:29:33.948949",
+    "source": "musicbrainz"
+  },
+  "alicia keys": {
+    "genres": [
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T16:29:35.363850",
+    "source": "musicbrainz"
+  },
+  "sia": {
+    "genres": [
+      "Pop",
+      "Electropop"
+    ],
+    "cached_at": "2026-04-03T16:30:33.166896",
+    "source": "musicbrainz"
+  },
+  "imagine dragons": {
+    "genres": [
+      "Pop",
+      "Alternative Rock",
+      "Indie Pop",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T16:30:43.682986",
+    "source": "musicbrainz"
+  },
+  "shawn mendes": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T16:31:05.535109",
+    "source": "musicbrainz"
+  },
+  "5 seconds of summer": {
+    "genres": [
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T16:31:16.419281",
+    "source": "musicbrainz"
+  },
+  "hans zimmer": {
+    "genres": [
+      "Soundtrack",
+      "Orchestral",
+      "Film Composer",
+      "Modern Classical",
+      "Cinematic Classical"
+    ],
+    "cached_at": "2026-04-03T16:34:00.381571",
+    "source": "musicbrainz"
+  },
+  "skillet": {
+    "genres": [
+      "Christian Rock"
+    ],
+    "cached_at": "2026-04-03T16:34:45.109503",
+    "source": "musicbrainz"
+  },
+  "scooter": {
+    "genres": [
+      "Rave"
+    ],
+    "cached_at": "2026-04-03T16:37:29.246038",
+    "source": "musicbrainz"
+  },
+  "yeah yeah yeahs": {
+    "genres": [
+      "Indie Rock"
+    ],
+    "cached_at": "2026-04-03T16:37:38.167739",
+    "source": "musicbrainz"
+  },
+  "deadmau5": {
+    "genres": [
+      "Electronic",
+      "House",
+      "Progressive House",
+      "Electro House"
+    ],
+    "cached_at": "2026-04-03T16:37:49.810363",
+    "source": "musicbrainz"
+  },
+  "dizzee rascal": {
+    "genres": [
+      "Grime"
+    ],
+    "cached_at": "2026-04-03T16:37:58.310028",
+    "source": "musicbrainz"
+  },
+  "groove armada": {
+    "genres": [
+      "Electronic"
+    ],
+    "cached_at": "2026-04-03T16:38:21.511468",
+    "source": "musicbrainz"
+  },
+  "armin van buuren": {
+    "genres": [
+      "Trance",
+      "Dance",
+      "Progressive Trance",
+      "Uplifting Trance"
+    ],
+    "cached_at": "2026-04-03T16:38:48.645480",
+    "source": "musicbrainz"
+  },
+  "chase & status": {
+    "genres": [
+      "Electronic",
+      "Drum And Bass"
+    ],
+    "cached_at": "2026-04-03T16:39:21.002501",
+    "source": "musicbrainz"
+  },
+  "infected mushroom": {
+    "genres": [
+      "Electronic",
+      "Psytrance",
+      "Goa Trance"
+    ],
+    "cached_at": "2026-04-03T16:39:50.447923",
+    "source": "musicbrainz"
+  },
+  "pendulum": {
+    "genres": [
+      "Electronic",
+      "Drum And Bass",
+      "Australian",
+      "Electronic Rock"
+    ],
+    "cached_at": "2026-04-03T16:39:53.115828",
+    "source": "musicbrainz"
+  },
+  "armand van helden": {
+    "genres": [
+      "House"
+    ],
+    "cached_at": "2026-04-03T16:39:59.567131",
+    "source": "musicbrainz"
+  },
+  "jamiroquai": {
+    "genres": [
+      "Funk",
+      "Acid Jazz"
+    ],
+    "cached_at": "2026-04-03T16:40:09.335375",
+    "source": "musicbrainz"
+  },
+  "pitbull": {
+    "genres": [
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T16:40:13.498759",
+    "source": "musicbrainz"
+  },
+  "usher": {
+    "genres": [
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T16:40:39.101318",
+    "source": "musicbrainz"
+  },
+  "kesha": {
+    "genres": [
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T16:40:43.635666",
+    "source": "musicbrainz"
+  },
+  "kendrick lamar": {
+    "genres": [
+      "Rap",
+      "Hip Hop",
+      "West Coast Hip Hop",
+      "Jazz Rap",
+      "Conscious Hip Hop",
+      "Hardcore Hip Hop"
+    ],
+    "cached_at": "2026-04-03T16:40:59.181790",
+    "source": "musicbrainz"
+  },
+  "ciara": {
+    "genres": [
+      "Pop",
+      "R&B",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T16:41:03.715296",
+    "source": "musicbrainz"
+  },
+  "dave": {
+    "genres": [
+      "Rock",
+      "Alternative Rock"
+    ],
+    "cached_at": "2026-04-03T16:42:09.178006",
+    "source": "musicbrainz"
+  },
+  "harry styles": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T16:43:15.317616",
+    "source": "musicbrainz"
+  },
+  "kate bush": {
+    "genres": [
+      "Pop",
+      "Art Rock",
+      "Progressive Pop",
+      "Art Pop"
+    ],
+    "cached_at": "2026-04-03T16:43:29.305364",
+    "source": "musicbrainz"
+  },
+  "b.o.b": {
+    "genres": [
+      "Rock",
+      "Folk",
+      "Folk Rock",
+      "Blues Rock"
+    ],
+    "cached_at": "2026-04-03T16:44:05.034275",
+    "source": "musicbrainz"
+  },
+  "sean paul": {
+    "genres": [
+      "Dancehall"
+    ],
+    "cached_at": "2026-04-03T16:44:15.237574",
+    "source": "musicbrainz"
+  },
+  "bruno mars": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T16:44:19.850510",
+    "source": "musicbrainz"
+  },
+  "linkin park": {
+    "genres": [
+      "Rock",
+      "Metal",
+      "Nu Metal",
+      "Rap Metal",
+      "Rap Rock"
+    ],
+    "cached_at": "2026-04-03T16:44:28.876129",
+    "source": "musicbrainz"
+  },
+  "one direction": {
+    "genres": [
+      "Pop",
+      "Boy Band"
+    ],
+    "cached_at": "2026-04-03T16:44:38.068028",
+    "source": "musicbrainz"
+  },
+  "zach bryan": {
+    "genres": [
+      "Country"
+    ],
+    "cached_at": "2026-04-03T16:46:42.967958",
+    "source": "musicbrainz"
+  },
+  "justin bieber": {
+    "genres": [
+      "Pop",
+      "Teen Pop"
+    ],
+    "cached_at": "2026-04-03T16:57:15.917811",
+    "source": "musicbrainz"
+  },
+  "skrillex": {
+    "genres": [
+      "Electronic",
+      "Dubstep",
+      "Brostep"
+    ],
+    "cached_at": "2026-04-03T17:00:54.171312",
+    "source": "musicbrainz"
+  },
+  "ariana grande": {
+    "genres": [
+      "Pop",
+      "R&B"
+    ],
+    "cached_at": "2026-04-03T17:04:40.135857",
+    "source": "musicbrainz"
+  },
+  "travis scott": {
+    "genres": [
+      "Hip Hop",
+      "Trap"
+    ],
+    "cached_at": "2026-04-03T17:04:52.321035",
+    "source": "musicbrainz"
+  },
+  "billie eilish": {
+    "genres": [
+      "Pop",
+      "Electropop",
+      "Alternative Pop",
+      "Dark Pop"
+    ],
+    "cached_at": "2026-04-03T17:05:17.110534",
+    "source": "musicbrainz"
+  },
+  "sabrina carpenter": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:05:24.869121",
+    "source": "musicbrainz"
+  },
+  "portugal. the man": {
+    "genres": [
+      "Indie Rock"
+    ],
+    "cached_at": "2026-04-03T17:05:28.113780",
+    "source": "musicbrainz"
+  },
+  "demi lovato": {
+    "genres": [
+      "Pop",
+      "Dance-Pop",
+      "Pop Rock",
+      "Teen Pop"
+    ],
+    "cached_at": "2026-04-03T17:05:38.856645",
+    "source": "musicbrainz"
+  },
+  "carly rae jepsen": {
+    "genres": [
+      "Pop",
+      "Electropop"
+    ],
+    "cached_at": "2026-04-03T17:05:52.757842",
+    "source": "musicbrainz"
+  },
+  "21 savage": {
+    "genres": [
+      "Trap"
+    ],
+    "cached_at": "2026-04-03T17:06:30.711388",
+    "source": "musicbrainz"
+  },
+  "dua lipa": {
+    "genres": [
+      "Pop",
+      "Synth-Pop",
+      "Electropop",
+      "Dance-Pop",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:06:34.480956",
+    "source": "musicbrainz"
+  },
+  "drake": {
+    "genres": [
+      "Hip Hop",
+      "Pop Rap",
+      "R&B",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:06:47.592397",
+    "source": "musicbrainz"
+  },
+  "wiz khalifa": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:07:21.906235",
+    "source": "musicbrainz"
+  },
+  "taylor swift": {
+    "genres": [
+      "Pop",
+      "Singer-Songwriter",
+      "Country",
+      "Synth-Pop",
+      "Female Vocals",
+      "Icon",
+      "Pop Rock",
+      "Country Pop",
+      "Contemporary Country",
+      "Singer/Songwriter",
+      "2010S",
+      "2020S"
+    ],
+    "cached_at": "2026-04-03T17:07:28.529493",
+    "source": "musicbrainz"
+  },
+  "katy perry": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:07:33.534991",
+    "source": "musicbrainz"
+  },
+  "jennifer lopez": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:08:20.664198",
+    "source": "musicbrainz"
+  },
+  "daddy yankee": {
+    "genres": [
+      "Reggaeton",
+      "Latin Urban"
+    ],
+    "cached_at": "2026-04-03T17:08:28.291497",
+    "source": "musicbrainz"
+  },
+  "chris brown": {
+    "genres": [
+      "Pop",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:08:38.159018",
+    "source": "musicbrainz"
+  },
+  "a$ap rocky": {
+    "genres": [
+      "Hip Hop",
+      "East Coast Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:09:04.758745",
+    "source": "musicbrainz"
+  },
+  "nicki minaj": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:09:38.072934",
+    "source": "musicbrainz"
+  },
+  "p!nk": {
+    "genres": [
+      "Pop",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:09:47.849043",
+    "source": "musicbrainz"
+  },
+  "stromae": {
+    "genres": [
+      "Electropop",
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T17:09:51.504772",
+    "source": "musicbrainz"
+  },
+  "ava max": {
+    "genres": [
+      "Pop",
+      "Dance",
+      "Electropop",
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T17:10:02.324827",
+    "source": "musicbrainz"
+  },
+  "bon jovi": {
+    "genres": [
+      "Rock",
+      "Hard Rock",
+      "Pop Rock",
+      "Arena Rock",
+      "Glam Metal"
+    ],
+    "cached_at": "2026-04-03T17:10:30.925856",
+    "source": "musicbrainz"
+  },
+  "ac/dc": {
+    "genres": [
+      "Rock",
+      "Hard Rock",
+      "Blues Rock"
+    ],
+    "cached_at": "2026-04-03T17:11:09.324718",
+    "source": "musicbrainz"
+  },
+  "amy winehouse": {
+    "genres": [
+      "Jazz",
+      "Soul",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:11:18.219115",
+    "source": "musicbrainz"
+  },
+  "mc hammer": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:11:22.913899",
+    "source": "musicbrainz"
+  },
+  "michael jackson": {
+    "genres": [
+      "Pop",
+      "Disco",
+      "Dance-Pop",
+      "Pop Soul",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:11:28.019778",
+    "source": "musicbrainz"
+  },
+  "post malone": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:11:43.797980",
+    "source": "musicbrainz"
+  },
+  "miley cyrus": {
+    "genres": [
+      "Rock",
+      "Pop",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:12:25.633623",
+    "source": "musicbrainz"
+  },
+  "elton john": {
+    "genres": [
+      "Rock",
+      "Pop",
+      "Pop Rock",
+      "Piano Rock"
+    ],
+    "cached_at": "2026-04-03T17:12:40.972051",
+    "source": "musicbrainz"
+  },
+  "bad bunny": {
+    "genres": [
+      "Reggaeton"
+    ],
+    "cached_at": "2026-04-03T17:12:56.452792",
+    "source": "musicbrainz"
+  },
+  "olivia rodrigo": {
+    "genres": [
+      "Pop",
+      "Pop Rock",
+      "Pop Punk"
+    ],
+    "cached_at": "2026-04-03T17:13:31.142622",
+    "source": "musicbrainz"
+  },
+  "hozier": {
+    "genres": [
+      "Blues Rock"
+    ],
+    "cached_at": "2026-04-03T17:14:28.021594",
+    "source": "musicbrainz"
+  },
+  "lil wayne": {
+    "genres": [
+      "Hip Hop",
+      "Southern Hip Hop",
+      "Gangsta Rap"
+    ],
+    "cached_at": "2026-04-03T17:16:43.094307",
+    "source": "musicbrainz"
+  },
+  "coldplay": {
+    "genres": [
+      "Pop",
+      "Alternative Rock",
+      "British",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:17:43.850411",
+    "source": "musicbrainz"
+  },
+  "bts": {
+    "genres": [
+      "K-Pop"
+    ],
+    "cached_at": "2026-04-03T17:22:25.945802",
+    "source": "musicbrainz"
+  },
+  "v": {
+    "genres": [
+      "Heavy Metal"
+    ],
+    "cached_at": "2026-04-03T17:25:03.366481",
+    "source": "musicbrainz"
+  },
+  "diana ross": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:32:31.593610",
+    "source": "musicbrainz"
+  },
+  "depeche mode": {
+    "genres": [
+      "Electronic",
+      "Synthpop",
+      "Alternative Rock",
+      "British",
+      "New Wave",
+      "Dark Wave",
+      "Synth-Pop"
+    ],
+    "cached_at": "2026-04-03T17:32:58.350665",
+    "source": "musicbrainz"
+  },
+  "fleetwood mac": {
+    "genres": [
+      "Rock",
+      "Blues",
+      "Blues Rock",
+      "Soft Rock",
+      "Pop Rock",
+      "British Blues"
+    ],
+    "cached_at": "2026-04-03T17:33:06.949023",
+    "source": "musicbrainz"
+  },
+  "marvin gaye": {
+    "genres": [
+      "Funk",
+      "Soul",
+      "Smooth Soul"
+    ],
+    "cached_at": "2026-04-03T17:33:15.502275",
+    "source": "musicbrainz"
+  },
+  "new order": {
+    "genres": [
+      "Electronic",
+      "Synthpop",
+      "Alternative Rock",
+      "Post-Punk",
+      "New Wave",
+      "Synth-Pop",
+      "Alternative Dance"
+    ],
+    "cached_at": "2026-04-03T17:33:22.338428",
+    "source": "musicbrainz"
+  },
+  "bruce springsteen": {
+    "genres": [
+      "Rock",
+      "Singer-Songwriter",
+      "Americana",
+      "Heartland Rock"
+    ],
+    "cached_at": "2026-04-03T17:33:41.271257",
+    "source": "musicbrainz"
+  },
+  "billy idol": {
+    "genres": [
+      "Rock",
+      "Hard Rock"
+    ],
+    "cached_at": "2026-04-03T17:33:52.691952",
+    "source": "musicbrainz"
+  },
+  "bee gees": {
+    "genres": [
+      "Pop",
+      "Disco"
+    ],
+    "cached_at": "2026-04-03T17:34:05.657914",
+    "source": "musicbrainz"
+  },
+  "james brown": {
+    "genres": [
+      "Funk",
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T17:34:30.052190",
+    "source": "musicbrainz"
+  },
+  "billy ocean": {
+    "genres": [
+      "Pop Soul"
+    ],
+    "cached_at": "2026-04-03T17:34:36.350120",
+    "source": "musicbrainz"
+  },
+  "whitney houston": {
+    "genres": [
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:34:44.044631",
+    "source": "musicbrainz"
+  },
+  "tina turner": {
+    "genres": [
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T17:35:06.336878",
+    "source": "musicbrainz"
+  },
+  "abba": {
+    "genres": [
+      "Pop",
+      "Disco",
+      "Europop"
+    ],
+    "cached_at": "2026-04-03T17:35:13.374870",
+    "source": "musicbrainz"
+  },
+  "blondie": {
+    "genres": [
+      "Rock",
+      "Pop",
+      "New Wave",
+      "Disco"
+    ],
+    "cached_at": "2026-04-03T17:35:21.936826",
+    "source": "musicbrainz"
+  },
+  "toto": {
+    "genres": [
+      "Rock",
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:35:28.386478",
+    "source": "musicbrainz"
+  },
+  "commodores": {
+    "genres": [
+      "Funk"
+    ],
+    "cached_at": "2026-04-03T17:35:36.158149",
+    "source": "musicbrainz"
+  },
+  "earth": {
+    "genres": [
+      "Funk",
+      "Soul",
+      "Disco",
+      "R&B"
+    ],
+    "cached_at": "2026-04-03T17:36:08.972896",
+    "source": "musicbrainz"
+  },
+  "daryl hall & john oates": {
+    "genres": [
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:36:32.858305",
+    "source": "musicbrainz"
+  },
+  "hot chocolate": {
+    "genres": [
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T17:36:40.814111",
+    "source": "musicbrainz"
+  },
+  "a flock of seagulls": {
+    "genres": [
+      "New Wave"
+    ],
+    "cached_at": "2026-04-03T17:36:46.980624",
+    "source": "musicbrainz"
+  },
+  "lionel richie": {
+    "genres": [
+      "Soul",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:36:57.102862",
+    "source": "musicbrainz"
+  },
+  "queen": {
+    "genres": [
+      "Rock",
+      "Progressive Rock",
+      "British",
+      "Uk",
+      "Hard Rock",
+      "Glam Rock",
+      "Art Rock",
+      "Classic Rock",
+      "Pop Rock",
+      "Symphonic Rock"
+    ],
+    "cached_at": "2026-04-03T17:37:04.091032",
+    "source": "musicbrainz"
+  },
+  "madonna": {
+    "genres": [
+      "Pop",
+      "Electropop",
+      "Dance-Pop",
+      "Art Pop"
+    ],
+    "cached_at": "2026-04-03T17:37:11.760501",
+    "source": "musicbrainz"
+  },
+  "cyndi lauper": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:37:19.631532",
+    "source": "musicbrainz"
+  },
+  "modern talking": {
+    "genres": [
+      "German"
+    ],
+    "cached_at": "2026-04-03T17:37:27.420778",
+    "source": "musicbrainz"
+  },
+  "boney m.": {
+    "genres": [
+      "Disco"
+    ],
+    "cached_at": "2026-04-03T17:37:44.933368",
+    "source": "musicbrainz"
+  },
+  "kool & the gang": {
+    "genres": [
+      "Funk"
+    ],
+    "cached_at": "2026-04-03T17:38:33.215545",
+    "source": "musicbrainz"
+  },
+  "alphaville": {
+    "genres": [
+      "Synth-Pop"
+    ],
+    "cached_at": "2026-04-03T17:38:41.080339",
+    "source": "musicbrainz"
+  },
+  "stevie wonder": {
+    "genres": [
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T17:39:10.032341",
+    "source": "musicbrainz"
+  },
+  "donna summer": {
+    "genres": [
+      "Disco"
+    ],
+    "cached_at": "2026-04-03T17:39:22.888904",
+    "source": "musicbrainz"
+  },
+  "david bowie": {
+    "genres": [
+      "Rock",
+      "Pop",
+      "Alternative Rock",
+      "British",
+      "New Wave",
+      "Uk",
+      "Glam Rock",
+      "Art Rock",
+      "Pop Rock",
+      "Art Pop"
+    ],
+    "cached_at": "2026-04-03T17:39:36.919502",
+    "source": "musicbrainz"
+  },
+  "kylie minogue": {
+    "genres": [
+      "Pop",
+      "Dance-Pop",
+      "Europop"
+    ],
+    "cached_at": "2026-04-03T17:40:35.431404",
+    "source": "musicbrainz"
+  },
+  "tears for fears": {
+    "genres": [
+      "New Wave",
+      "Pop Rock",
+      "Art Pop"
+    ],
+    "cached_at": "2026-04-03T17:40:47.250246",
+    "source": "musicbrainz"
+  },
+  "snoop dogg": {
+    "genres": [
+      "Hip Hop",
+      "Gangsta Rap",
+      "G-Funk"
+    ],
+    "cached_at": "2026-04-03T17:44:09.849573",
+    "source": "musicbrainz"
+  },
+  "electric light orchestra": {
+    "genres": [
+      "Progressive Rock",
+      "Art Rock"
+    ],
+    "cached_at": "2026-04-03T17:45:11.992407",
+    "source": "musicbrainz"
+  },
+  "the flaming lips": {
+    "genres": [
+      "Alternative Rock",
+      "Neo-Psychedelia"
+    ],
+    "cached_at": "2026-04-03T17:45:39.443532",
+    "source": "musicbrainz"
+  },
+  "faith no more": {
+    "genres": [
+      "Alternative Rock",
+      "Experimental",
+      "Alternative Metal",
+      "Funk Metal"
+    ],
+    "cached_at": "2026-04-03T17:46:07.128559",
+    "source": "musicbrainz"
+  },
+  "cheap trick": {
+    "genres": [
+      "Hard Rock"
+    ],
+    "cached_at": "2026-04-03T17:46:11.969298",
+    "source": "musicbrainz"
+  },
+  "heart": {
+    "genres": [
+      "Rock",
+      "Hard Rock"
+    ],
+    "cached_at": "2026-04-03T17:47:03.906776",
+    "source": "musicbrainz"
+  },
+  "thin lizzy": {
+    "genres": [
+      "Hard Rock"
+    ],
+    "cached_at": "2026-04-03T17:47:21.936823",
+    "source": "musicbrainz"
+  },
+  "alice cooper": {
+    "genres": [
+      "Hard Rock",
+      "Glam Rock"
+    ],
+    "cached_at": "2026-04-03T17:47:39.193422",
+    "source": "musicbrainz"
+  },
+  "sweet": {
+    "genres": [
+      "Hard Rock",
+      "Glam Rock"
+    ],
+    "cached_at": "2026-04-03T17:47:44.124806",
+    "source": "musicbrainz"
+  },
+  "beastie boys": {
+    "genres": [
+      "Hip Hop",
+      "Rap Rock",
+      "East Coast Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:47:53.807755",
+    "source": "musicbrainz"
+  },
+  "rainbow": {
+    "genres": [
+      "Heavy Metal",
+      "Hard Rock"
+    ],
+    "cached_at": "2026-04-03T17:48:19.254541",
+    "source": "musicbrainz"
+  },
+  "sam cooke": {
+    "genres": [
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T17:48:47.340677",
+    "source": "musicbrainz"
+  },
+  "glen campbell": {
+    "genres": [
+      "Country"
+    ],
+    "cached_at": "2026-04-03T17:48:55.116857",
+    "source": "musicbrainz"
+  },
+  "florence + the machine": {
+    "genres": [
+      "Indie Rock",
+      "Indie Pop"
+    ],
+    "cached_at": "2026-04-03T17:49:02.954374",
+    "source": "musicbrainz"
+  },
+  "the replacements": {
+    "genres": [
+      "Alternative Rock",
+      "Punk Rock",
+      "Power Pop"
+    ],
+    "cached_at": "2026-04-03T17:49:13.078150",
+    "source": "musicbrainz"
+  },
+  "silver": {
+    "genres": [
+      "Jazz"
+    ],
+    "cached_at": "2026-04-03T17:49:23.365922",
+    "source": "musicbrainz"
+  },
+  "yusuf": {
+    "genres": [
+      "Folk Rock"
+    ],
+    "cached_at": "2026-04-03T17:49:47.145437",
+    "source": "musicbrainz"
+  },
+  "radiohead": {
+    "genres": [
+      "Rock",
+      "Electronic",
+      "Alternative Rock",
+      "British",
+      "Art Rock",
+      "Experimental Rock"
+    ],
+    "cached_at": "2026-04-03T17:50:00.918965",
+    "source": "musicbrainz"
+  },
+  "loverboy": {
+    "genres": [
+      "Rock"
+    ],
+    "cached_at": "2026-04-03T17:50:22.860758",
+    "source": "musicbrainz"
+  },
+  "eminem": {
+    "genres": [
+      "Rap",
+      "Hip Hop",
+      "Detroit",
+      "Pop Rap",
+      "Midwest Hip Hop",
+      "Hardcore Hip Hop",
+      "Detroit Hip Hop"
+    ],
+    "cached_at": "2026-04-03T17:52:02.954188",
+    "source": "musicbrainz"
+  },
+  "zedd": {
+    "genres": [
+      "Electro House",
+      "Edm"
+    ],
+    "cached_at": "2026-04-03T17:52:19.855422",
+    "source": "musicbrainz"
+  },
+  "paramore": {
+    "genres": [
+      "Pop Rock",
+      "Alternative Rock"
+    ],
+    "cached_at": "2026-04-03T17:54:01.608622",
+    "source": "musicbrainz"
+  },
+  "ed sheeran": {
+    "genres": [
+      "Pop",
+      "Folk Pop"
+    ],
+    "cached_at": "2026-04-03T17:54:42.994039",
+    "source": "musicbrainz"
+  },
+  "justin timberlake": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T17:57:06.608651",
+    "source": "musicbrainz"
+  },
+  "glass animals": {
+    "genres": [
+      "Electronic"
+    ],
+    "cached_at": "2026-04-03T17:57:32.467041",
+    "source": "musicbrainz"
+  },
+  "beyoncé": {
+    "genres": [
+      "Pop",
+      "Soul",
+      "Pop Rap",
+      "R&B",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:57:54.530411",
+    "source": "musicbrainz"
+  },
+  "mariah carey": {
+    "genres": [
+      "Pop",
+      "Dance-Pop",
+      "Contemporary R&B"
+    ],
+    "cached_at": "2026-04-03T17:58:47.029976",
+    "source": "musicbrainz"
+  },
+  "nickelback": {
+    "genres": [
+      "Hard Rock",
+      "Post-Grunge"
+    ],
+    "cached_at": "2026-04-03T17:59:12.227294",
+    "source": "musicbrainz"
+  },
+  "jason mraz": {
+    "genres": [
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T17:59:53.456436",
+    "source": "musicbrainz"
+  },
+  "fall out boy": {
+    "genres": [
+      "Alternative Rock",
+      "Pop Rock",
+      "Pop Punk"
+    ],
+    "cached_at": "2026-04-03T18:00:04.343694",
+    "source": "musicbrainz"
+  },
+  "lady a": {
+    "genres": [
+      "Country"
+    ],
+    "cached_at": "2026-04-03T18:00:59.881397",
+    "source": "musicbrainz"
+  },
+  "red hot chili peppers": {
+    "genres": [
+      "Rock",
+      "Alternative Rock",
+      "Funk Rock",
+      "Pop Rock",
+      "Funk Metal",
+      "Rap Rock"
+    ],
+    "cached_at": "2026-04-03T18:01:05.660407",
+    "source": "musicbrainz"
+  },
+  "a day to remember": {
+    "genres": [
+      "Metalcore",
+      "Pop Punk",
+      "Easycore"
+    ],
+    "cached_at": "2026-04-03T18:02:09.683461",
+    "source": "musicbrainz"
+  },
+  "above & beyond": {
+    "genres": [
+      "Trance",
+      "Progressive Trance",
+      "Progressive House"
+    ],
+    "cached_at": "2026-04-03T18:02:24.928600",
+    "source": "musicbrainz"
+  },
+  "selena gomez": {
+    "genres": [
+      "Pop",
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T18:04:58.191453",
+    "source": "musicbrainz"
+  },
+  "jaÿ-z": {
+    "genres": [
+      "Hip Hop",
+      "Pop Rap",
+      "East Coast Hip Hop"
+    ],
+    "cached_at": "2026-04-03T18:06:53.377779",
+    "source": "musicbrainz"
+  },
+  "the weeknd": {
+    "genres": [
+      "Synth-Pop",
+      "Dance-Pop",
+      "R&B",
+      "Contemporary R&B",
+      "Alternative R&B"
+    ],
+    "cached_at": "2026-04-03T18:11:39.121620",
+    "source": "musicbrainz"
+  },
+  "evanescence": {
+    "genres": [
+      "Alternative Rock",
+      "Metal",
+      "Alternative Metal",
+      "Symphonic Rock"
+    ],
+    "cached_at": "2026-04-03T18:11:44.844123",
+    "source": "musicbrainz"
+  },
+  "daft punk": {
+    "genres": [
+      "Electronic",
+      "French",
+      "House",
+      "French House"
+    ],
+    "cached_at": "2026-04-03T18:12:40.096912",
+    "source": "musicbrainz"
+  },
+  "foo fighters": {
+    "genres": [
+      "Rock",
+      "Alternative Rock",
+      "Post-Grunge"
+    ],
+    "cached_at": "2026-04-03T18:13:10.528137",
+    "source": "musicbrainz"
+  },
+  "michael bublé": {
+    "genres": [
+      "Jazz"
+    ],
+    "cached_at": "2026-04-03T18:17:16.254376",
+    "source": "musicbrainz"
+  },
+  "charlie puth": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:17:28.153754",
+    "source": "musicbrainz"
+  },
+  "ray charles": {
+    "genres": [
+      "Jazz",
+      "Soul"
+    ],
+    "cached_at": "2026-04-03T18:17:56.530976",
+    "source": "musicbrainz"
+  },
+  "culture beat": {
+    "genres": [
+      "Eurodance"
+    ],
+    "cached_at": "2026-04-03T18:18:07.450906",
+    "source": "musicbrainz"
+  },
+  "50 cent": {
+    "genres": [
+      "Hip Hop",
+      "East Coast Hip Hop"
+    ],
+    "cached_at": "2026-04-03T18:18:13.409743",
+    "source": "musicbrainz"
+  },
+  "mark ronson": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:18:35.654589",
+    "source": "musicbrainz"
+  },
+  "macklemore & ryan lewis": {
+    "genres": [
+      "Hip Hop"
+    ],
+    "cached_at": "2026-04-03T18:18:49.816483",
+    "source": "musicbrainz"
+  },
+  "guns n' roses": {
+    "genres": [
+      "Heavy Metal",
+      "Hard Rock",
+      "Glam Metal"
+    ],
+    "cached_at": "2026-04-03T18:19:07.409477",
+    "source": "musicbrainz"
+  },
+  "george michael": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:21:03.954426",
+    "source": "musicbrainz"
+  },
+  "roxette": {
+    "genres": [
+      "Rock",
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:21:16.315484",
+    "source": "musicbrainz"
+  },
+  "spice girls": {
+    "genres": [
+      "Pop",
+      "Dance-Pop"
+    ],
+    "cached_at": "2026-04-03T18:21:33.336134",
+    "source": "musicbrainz"
+  },
+  "kiss": {
+    "genres": [
+      "Rock",
+      "Hard Rock",
+      "Glam Rock",
+      "Glam Metal"
+    ],
+    "cached_at": "2026-04-03T18:21:47.483024",
+    "source": "musicbrainz"
+  },
+  "eurythmics": {
+    "genres": [
+      "Synthpop",
+      "Pop",
+      "New Wave",
+      "Synth-Pop"
+    ],
+    "cached_at": "2026-04-03T18:21:55.557097",
+    "source": "musicbrainz"
+  },
+  "foreigner": {
+    "genres": [
+      "Rock"
+    ],
+    "cached_at": "2026-04-03T18:22:24.713155",
+    "source": "musicbrainz"
+  },
+  "backstreet boys": {
+    "genres": [
+      "Pop",
+      "Boy Band"
+    ],
+    "cached_at": "2026-04-03T18:22:41.855246",
+    "source": "musicbrainz"
+  },
+  "a-ha": {
+    "genres": [
+      "Pop",
+      "Norwegian",
+      "New Wave",
+      "Synth-Pop"
+    ],
+    "cached_at": "2026-04-03T18:22:47.932320",
+    "source": "musicbrainz"
+  },
+  "black eyed peas": {
+    "genres": [
+      "Hip Hop",
+      "Pop Rap"
+    ],
+    "cached_at": "2026-04-03T18:23:04.634759",
+    "source": "musicbrainz"
+  },
+  "roy orbison": {
+    "genres": [
+      "Rockabilly"
+    ],
+    "cached_at": "2026-04-03T18:23:14.919042",
+    "source": "musicbrainz"
+  },
+  "chappell roan": {
+    "genres": [
+      "Synth-Pop",
+      "Dance-Pop",
+      "Alternative Pop",
+      "Queer"
+    ],
+    "cached_at": "2026-04-03T18:25:00.794732",
+    "source": "musicbrainz"
+  },
+  "of monsters and men": {
+    "genres": [
+      "Indie Rock"
+    ],
+    "cached_at": "2026-04-03T18:28:36.518387",
+    "source": "musicbrainz"
+  },
+  "tony bennett": {
+    "genres": [
+      "Jazz",
+      "Vocal Jazz"
+    ],
+    "cached_at": "2026-04-03T18:31:13.703787",
+    "source": "musicbrainz"
+  },
+  "diana krall": {
+    "genres": [
+      "Jazz",
+      "Canadian",
+      "Vocal Jazz"
+    ],
+    "cached_at": "2026-04-03T18:32:27.360177",
+    "source": "musicbrainz"
+  },
+  "tate mcrae": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:40:55.171271",
+    "source": "musicbrainz"
+  },
+  "lorde": {
+    "genres": [
+      "Pop"
+    ],
+    "cached_at": "2026-04-03T18:42:12.521112",
+    "source": "musicbrainz"
+  },
+  "bastille": {
+    "genres": [
+      "Pop Rock"
+    ],
+    "cached_at": "2026-04-03T18:42:23.305408",
+    "source": "musicbrainz"
+  }
+}

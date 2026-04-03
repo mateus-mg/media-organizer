@@ -1,0 +1,60 @@
+{
+  "total_conflict_skips": 11,
+  "items": [
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Around the World (La La La La La) - A Touch Of Class, Pete Konemann.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/A Touch Of Class/Planet Pop/02 - Around the World (La La La La La).flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Sweet Dreams - Radio Version - La Bouche.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/La Bouche/Sweet Dreams/02 - Sweet Dreams - Radio Version.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/It's a Rainy Day - Ice Mc.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Ice Mc/Ice 'n' Green/01 - It's a Rainy Day.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Let's Get Loud - Jennifer Lopez.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Jennifer Lopez/On The 6/05 - Let's Get Loud.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Dreams (Will Come Alive) - 2 Brothers On The 4th Floor.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/2 Brothers On The 4th Floor/Dreams/01 - Dreams (Will Come Alive).flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Now Or Never - Pitbull, Bon Jovi.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Pitbull/Now Or Never/01 - Now Or Never.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Run to Me - Double You.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Double You/The Blue Album/01 - Run to Me.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Good Feeling - Flo Rida.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Flo Rida/Wild Ones/04 - Good Feeling.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/U Can't Touch This - MC Hammer.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/MC Hammer/Please Hammer Don't Hurt 'Em/02 - U Can't Touch This.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Another Night - Real McCoy.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Real McCoy/Another Night/01 - Another Night.flac"
+    },
+    {
+      "time": "",
+      "source": "/media/mateus/Servidor/containers/media/downloads/musics/Flashback/Get a Way - Club Mix - Maxx.flac",
+      "destination": "/media/mateus/Servidor/containers/media/library/musics/Maxx/Get a Way (All Mixes)/02 - Get a Way - Club Mix.flac"
+    }
+  ]
+}
