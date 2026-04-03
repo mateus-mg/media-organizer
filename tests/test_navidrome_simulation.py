@@ -12,8 +12,8 @@ Tests:
 This test is more pragmatic than unit tests - it tests actual workflows.
 """
 
-from src.organizers import MusicOrganizer
-from src.metadata import extract_audio_metadata
+from app.services.organizers import MusicOrganizer
+from app.metadata import extract_audio_metadata
 import logging
 import sys
 from pathlib import Path

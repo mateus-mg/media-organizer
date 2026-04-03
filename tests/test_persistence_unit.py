@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.persistence import OrganizationDatabase
+from app.infrastructure.database import OrganizationDatabase
 
 
 class TestOrganizationDatabase(unittest.TestCase):
@@ -61,6 +61,50 @@ class TestOrganizationDatabase(unittest.TestCase):
         self.assertEqual(after, before + 1)
         failures = self.db.get_failures(limit=5)
         self.assertGreaterEqual(len(failures), 1)
+
+    def test_create_backup_includes_invalid_genres_catalog(self):
+        self.db.close()
+        self.db = OrganizationDatabase(self.db_path, backup_enabled=True)
+
+        invalid_path = self.base / "invalid_music_genres.json"
+        invalid_path.write_text(
+            '{"version":1,"updated_at":"x","exact":["foo"],"regex":[],"auto_added":{}}',
+            encoding="utf-8",
+        )
+
+        backup_path = self.db.create_backup()
+        self.assertIsNotNone(backup_path)
+
+        invalid_backups = list(
+            (self.base / "backups").glob("invalid_music_genres_*.json"))
+        self.assertTrue(invalid_backups)
+
+    def test_create_backup_includes_suspect_and_link_registry(self):
+        self.db.close()
+        self.db = OrganizationDatabase(self.db_path, backup_enabled=True)
+
+        suspect_path = self.base / "suspect_music_genres.json"
+        suspect_path.write_text(
+            '{"version":1,"updated_at":"x","threshold_for_auto_add":3,"items":{}}',
+            encoding="utf-8",
+        )
+
+        link_registry_path = self.base / "link_registry.json"
+        link_registry_path.write_text(
+            '{"files": {"1": []}}',
+            encoding="utf-8",
+        )
+
+        backup_path = self.db.create_backup()
+        self.assertIsNotNone(backup_path)
+
+        suspect_backups = list(
+            (self.base / "backups").glob("suspect_music_genres_*.json"))
+        link_backups = list(
+            (self.base / "backups").glob("link_registry_*.json"))
+
+        self.assertTrue(suspect_backups)
+        self.assertTrue(link_backups)
 
 
 if __name__ == "__main__":

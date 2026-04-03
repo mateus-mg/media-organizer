@@ -1,0 +1,266 @@
+"""Helper utilities for Media Organization System."""
+
+from pathlib import Path
+from typing import Tuple, Optional, List, Dict, Any, Callable
+import hashlib
+import re
+
+
+# Constants for file validation
+INCOMPLETE_EXTENSIONS = {'.part', '.tmp',
+                         '.!qB', '.crdownload', '.download', '.aria2'}
+JUNK_NAMES = {
+    'BLUDV.MP4', 'BLUDV.TV.MP4', 'BLUDV.COM.MP4',
+    '1XBET.MP4', '1XBET.COM.MP4',
+    'SAMPLE.MP4', 'SAMPLE.MKV', 'SAMPLE.AVI',
+    'TRAILER.MP4', 'TRAILER.MKV'
+}
+JUNK_PATTERNS = ['BLUDV', '1XBET', 'SAMPLE',
+                 'WWW.', '_PROMO_', 'DINHEIRO_LIVRE', 'ACESSE']
+
+
+def is_incomplete_file(file_path: Path) -> bool:
+    """Return True when file looks incomplete or invalid for processing."""
+    if file_path.suffix.lower() in INCOMPLETE_EXTENSIONS:
+        return True
+
+    try:
+        if file_path.stat().st_size == 0:
+            return True
+    except OSError:
+        return True
+
+    return False
+
+
+def is_junk_file(file_path: Path) -> bool:
+    """Return True when filename matches known junk/promotional patterns."""
+    filename = file_path.name.upper()
+
+    if filename in JUNK_NAMES:
+        return True
+
+    for pattern in JUNK_PATTERNS:
+        if pattern in filename:
+            try:
+                if file_path.stat().st_size < 100 * 1024 * 1024:
+                    return True
+            except OSError:
+                return False
+
+    return False
+
+
+def calculate_file_hash(file_path: Path, algorithm: str = "md5", chunk_size: int = 1024 * 1024) -> str:
+    """
+    Calculate file hash
+
+    Args:
+        file_path: Path to file
+        algorithm: Hash algorithm (md5, sha1, sha256)
+        chunk_size: Size of chunks to read
+
+    Returns:
+        Hex digest of hash
+    """
+    if algorithm == "md5":
+        digest = hashlib.md5()
+    elif algorithm == "sha1":
+        digest = hashlib.sha1()
+    elif algorithm == "sha256":
+        digest = hashlib.sha256()
+    else:
+        raise ValueError(f"Unsupported algorithm: {algorithm}")
+
+    with open(file_path, "rb") as handle:
+        while True:
+            chunk = handle.read(chunk_size)
+            if not chunk:
+                break
+            digest.update(chunk)
+
+    return digest.hexdigest()
+
+
+def calculate_partial_hash(file_path: Path, chunk_size: int = 1024 * 1024) -> str:
+    """
+    Calculate partial hash for quick file comparison
+
+    Args:
+        file_path: Path to file
+        chunk_size: Size of chunk to hash
+
+    Returns:
+        Hex digest of partial hash
+    """
+    digest = hashlib.md5()
+
+    try:
+        file_size = file_path.stat().st_size
+        chunks_to_read = min(3, (file_size // chunk_size) + 1)
+
+        with open(file_path, "rb") as handle:
+            for _ in range(chunks_to_read):
+                chunk = handle.read(chunk_size)
+                if not chunk:
+                    break
+                digest.update(chunk)
+    except OSError:
+        return ""
+
+    return digest.hexdigest()
+
+
+def normalize_title(title: str) -> str:
+    """
+    Normalize title for consistent comparison
+
+    Args:
+        title: Original title
+
+    Returns:
+        Normalized title
+    """
+    if not title:
+        return ""
+
+    # Remove special characters
+    for char in '<>:"/\\|?*':
+        title = title.replace(char, "")
+
+    # Normalize spaces
+    title = re.sub(r'\s+', ' ', title).strip()
+
+    return title
+
+
+def normalize_comic_filename(filename: str) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[int]]:
+    """
+    Extract series, issue, publisher, year from comic filename
+
+    Args:
+        filename: Comic filename
+
+    Returns:
+        Tuple of (series, issue, publisher, year)
+    """
+    # Pattern: Series #001 (Publisher) (Year)
+    match = re.match(r'^(.+?)\s*#(\d+)\s*\(([^)]+)\)\s*\((\d{4})\)', filename)
+    if match:
+        return match.group(1).strip(), match.group(2), match.group(3).strip(), int(match.group(4))
+
+    # Pattern: Series #001
+    match = re.match(r'^(.+?)\s*#(\d+)', filename)
+    if match:
+        return match.group(1).strip(), match.group(2), None, None
+
+    return None, None, None, None
+
+
+# ============================================================================
+# CONFLICT HANDLER
+# ============================================================================
+
+class ConflictResolution:
+    """Conflict resolution result constants"""
+    SKIPPED = "skipped"
+    RENAMED = "renamed"
+    OVERWRITTEN = "overwritten"
+    NO_CONFLICT = "no_conflict"
+
+
+class ConflictHandler:
+    """
+    Handle file conflicts during organization.
+
+    Strategies:
+    - skip: Keep existing file, skip new one
+    - rename: Rename new file with counter
+    - overwrite: Replace existing file
+    """
+
+    def __init__(
+        self,
+        strategy: str = "skip",
+        rename_pattern: str = "{name}_{counter}{ext}",
+        max_attempts: int = 100
+    ):
+        if strategy not in ["skip", "rename", "overwrite"]:
+            raise ValueError(f"Invalid strategy: {strategy}")
+
+        self.strategy = strategy
+        self.rename_pattern = rename_pattern
+        self.max_attempts = max_attempts
+
+    def resolve(
+        self,
+        source_path: Path,
+        dest_path: Path,
+        dry_run: bool = False
+    ) -> Tuple[Optional[Path], str]:
+        """
+        Resolve file conflict
+
+        Args:
+            source_path: Source file path
+            dest_path: Destination file path
+            dry_run: Dry-run mode
+
+        Returns:
+            Tuple of (resolved_path, action_taken)
+        """
+        if not dest_path.exists():
+            return dest_path, ConflictResolution.NO_CONFLICT
+
+        if self._are_identical(source_path, dest_path):
+            return dest_path, ConflictResolution.SKIPPED
+
+        if self.strategy == "skip":
+            return dest_path, ConflictResolution.SKIPPED
+
+        elif self.strategy == "overwrite":
+            if not dry_run:
+                dest_path.unlink()
+            return dest_path, ConflictResolution.OVERWRITTEN
+
+        elif self.strategy == "rename":
+            new_path = self._generate_unique_name(dest_path)
+            if new_path:
+                return new_path, ConflictResolution.RENAMED
+            return dest_path, ConflictResolution.SKIPPED
+
+        return dest_path, ConflictResolution.SKIPPED
+
+    def _generate_unique_name(self, base_path: Path) -> Optional[Path]:
+        """Generate unique filename"""
+        parent = base_path.parent
+        stem = base_path.stem
+        ext = base_path.suffix
+
+        for counter in range(2, self.max_attempts + 2):
+            new_name = self.rename_pattern.format(
+                name=stem, counter=counter, ext=ext
+            )
+            new_path = parent / new_name
+
+            if not new_path.exists():
+                return new_path
+
+        return None
+
+    def _are_identical(self, file1: Path, file2: Path) -> bool:
+        """Check if files are identical"""
+        try:
+            if file1.stat().st_ino == file2.stat().st_ino:
+                return True
+        except OSError:
+            pass
+
+        try:
+            if file1.stat().st_size != file2.stat().st_size:
+                return False
+        except OSError:
+            return False
+
+        # Compare partial hash
+        return calculate_partial_hash(file1) == calculate_partial_hash(file2)

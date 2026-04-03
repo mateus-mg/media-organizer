@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.core import MediaType
-from src.detection import FileScanner, MediaClassifier
+from app.core import MediaType
+from app.core.detection import FileScanner, MediaClassifier
 
 
 class TestMediaClassifier(unittest.TestCase):
@@ -24,6 +24,10 @@ class TestMediaClassifier(unittest.TestCase):
             Path("lyrics.lrc")), MediaType.LYRICS)
         self.assertEqual(self.classifier.classificar_tipo_midia(
             Path("book.epub")), MediaType.BOOK)
+        self.assertEqual(self.classifier.classificar_tipo_midia(
+            Path("downloads/comics/Batman #001.pdf")), MediaType.COMIC)
+        self.assertEqual(self.classifier.classificar_tipo_midia(
+            Path("downloads/books/Batman #001.pdf")), MediaType.BOOK)
         self.assertEqual(self.classifier.classificar_tipo_midia(
             Path("comic.cbz")), MediaType.COMIC)
         self.assertEqual(self.classifier.classificar_tipo_midia(

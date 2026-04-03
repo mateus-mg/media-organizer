@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-29T20:32:29",
+  "threshold_for_auto_add": 3,
+  "items": {
+    "cultural icon": {
+      "count": 3,
+      "reason": "playlist_or_editorial_tag",
+      "first_seen": "2026-03-29T20:32:29",
+      "last_seen": "2026-03-29T20:32:29",
+      "examples": [
+        "/media/mateus/Servidor/containers/media/downloads/musics/#3 Teste Controlado/Billie Jean - Michael Jackson.flac"
+      ]
+    }
+  }
+}

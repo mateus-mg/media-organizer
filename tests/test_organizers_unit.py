@@ -9,8 +9,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
-from src.core import MediaType
-from src.organizers import BookOrganizer, LyricsOrganizer, MusicOrganizer
+from app.core import MediaType, OrganizationResult
+from app.services.organizers import BookOrganizer, LyricsOrganizer, MusicOrganizer
 
 
 class _FakeDatabase:
@@ -40,6 +40,9 @@ class _FakeConflictHandler:
 
 class _FakeConfig:
     def __init__(self, base):
+        self.download_path_music = base / "downloads" / "music"
+        self.download_path_books = base / "downloads" / "books"
+        self.download_path_comics = base / "downloads" / "comics"
         self.library_path_music = base / "library" / "music"
         self.library_path_books = base / "library" / "books"
         self.library_path_comics = base / "library" / "comics"
@@ -54,6 +57,9 @@ class _FakeConfig:
         self.book_cover_update_enabled = False
         self.infer_genre_from_source_path = True
         self.enrich_music_metadata_online = False
+        self.music_genre_complement_enabled = True
+        self.music_genre_complement_max_existing_genres = 1
+        self.music_genre_complement_max_total_genres = 4
         self.lastfm_api_key = ""
 
 
@@ -176,7 +182,77 @@ class TestMusicOrganizer(unittest.TestCase):
                 "Simon and Garfunkel",
             )
 
-    def test_update_audio_tags_normalizes_collaborative_artist_in_dry_run(self):
+    def test_get_primary_artist_strips_terminal_punctuation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            self.assertEqual(
+                organizer._get_primary_artist("Charlie Brown Jr."),
+                "Charlie Brown Jr",
+            )
+
+    def test_get_destination_path_uses_canonical_primary_artist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            source = base / "Song - Charlie Brown Jr.flac"
+            source.write_text("dummy", encoding="utf-8")
+
+            dest = organizer.get_destination_path(
+                source,
+                {
+                    "primary_artist": "Charlie Brown Jr.",
+                    "artist": "Charlie Brown Jr.",
+                    "album": "Camisa 10",
+                    "track_name": "Song",
+                },
+            )
+
+            self.assertIn("/Charlie Brown Jr/", str(dest))
+            self.assertNotIn("/Charlie Brown Jr./", str(dest))
+
+    def test_normalize_metadata_values_canonicalizes_jr_suffix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            normalized = organizer._normalize_metadata_values(
+                {
+                    "artist": "Charlie Brown Jr.",
+                    "album_artist": "Charlie Brown Jr.",
+                    "artists": ["Charlie Brown Jr.", "Rita Lee"],
+                }
+            )
+
+            self.assertEqual(normalized["artist"], "Charlie Brown Jr")
+            self.assertEqual(normalized["album_artist"], "Charlie Brown Jr")
+            self.assertIn("Charlie Brown Jr", normalized["artists"])
+            self.assertNotIn("Charlie Brown Jr.", normalized["artists"])
+
+    def test_update_audio_tags_preserves_collaborative_artist_in_dry_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             cfg = _FakeConfig(base)
@@ -184,7 +260,7 @@ class TestMusicOrganizer(unittest.TestCase):
             stream = io.StringIO()
             logger = logging.getLogger("test.music.normalize.collab")
             logger.handlers = []
-            logger.setLevel(logging.INFO)
+            logger.setLevel(logging.DEBUG)
             handler = logging.StreamHandler(stream)
             logger.addHandler(handler)
             logger.propagate = False
@@ -219,8 +295,11 @@ class TestMusicOrganizer(unittest.TestCase):
 
             self.assertTrue(result)
             log_output = stream.getvalue()
-            self.assertIn("Would update", log_output)
-            self.assertIn("album_artist, artist", log_output)
+            self.assertIn(
+                "File already has normalized metadata or no updates needed",
+                log_output,
+            )
+            self.assertNotIn("artist", log_output.lower())
 
     def test_update_audio_tags_skips_when_artist_already_normalized(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -269,7 +348,7 @@ class TestMusicOrganizer(unittest.TestCase):
                 stream.getvalue(),
             )
 
-    def test_update_audio_tags_normalizes_various_artists_in_dry_run(self):
+    def test_update_audio_tags_keeps_various_artists_in_dry_run(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             cfg = _FakeConfig(base)
@@ -308,7 +387,8 @@ class TestMusicOrganizer(unittest.TestCase):
             self.assertTrue(result)
             log_output = stream.getvalue()
             self.assertIn("Would update", log_output)
-            self.assertIn("album_artist, artist", log_output)
+            self.assertIn("album", log_output)
+            self.assertNotIn("artist", log_output.lower())
 
     def test_destination_path_uses_track_number_when_present(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -333,6 +413,723 @@ class TestMusicOrganizer(unittest.TestCase):
             self.assertEqual(dest.name, "01 - Song.mp3")
             self.assertIn("Artist", str(dest))
             self.assertIn("Album", str(dest))
+
+        def test_infer_genre_ignores_playlist_folder_name(self):
+            with tempfile.TemporaryDirectory() as tmp:
+                base = Path(tmp)
+                cfg = _FakeConfig(base)
+                organizer = MusicOrganizer(
+                    config=cfg,
+                    database=_FakeDatabase(),
+                    conflict_handler=_FakeConflictHandler(),
+                    logger=logging.getLogger("test"),
+                    dry_run=True,
+                )
+
+                source = base / "downloads" / "musics" / \
+                    "This Is Hillsong Worship" / "Song - Artist.flac"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_text("x", encoding="utf-8")
+
+                inferred = organizer._infer_genre_from_source_path(source)
+                self.assertIsNone(inferred)
+
+        def test_infer_genre_accepts_explicit_bucket_folder(self):
+            with tempfile.TemporaryDirectory() as tmp:
+                base = Path(tmp)
+                cfg = _FakeConfig(base)
+                organizer = MusicOrganizer(
+                    config=cfg,
+                    database=_FakeDatabase(),
+                    conflict_handler=_FakeConflictHandler(),
+                    logger=logging.getLogger("test"),
+                    dry_run=True,
+                )
+
+                source = base / "downloads" / "musics" / "#3 Eletronica" / "Song - Artist.flac"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_text("x", encoding="utf-8")
+
+                inferred = organizer._infer_genre_from_source_path(source)
+                self.assertEqual(inferred, "Eletronica")
+
+    def test_normalize_title_for_lookup_removes_track_prefix_and_trailing_artist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            normalized = organizer._normalize_title_for_lookup(
+                "01 - Love Generation - Bob Sinclar, Gary Pine",
+                "Bob Sinclar",
+            )
+
+            self.assertEqual(normalized, "Love Generation")
+
+    def test_normalize_artist_for_lookup_uses_primary_artist(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            normalized = organizer._normalize_artist_for_lookup(
+                "Martin Garrix, USHER"
+            )
+            self.assertEqual(normalized, "Martin Garrix")
+
+    def test_determine_final_metadata_keeps_genre_blank_when_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "#3 Eletronica" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            final = organizer._determine_final_metadata(
+                existing_tags_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "album": "Singles",
+                },
+                filename_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "track_name": "Song",
+                },
+                file_path=src,
+                online_metadata={},
+            )
+
+            self.assertEqual(final.get("genre"), "")
+
+    def test_determine_final_metadata_uses_online_genre_when_available(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "#3 Eletronica" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            final = organizer._determine_final_metadata(
+                existing_tags_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "album": "Singles",
+                },
+                filename_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "track_name": "Song",
+                },
+                file_path=src,
+                online_metadata={"genre": "Dance"},
+            )
+
+            self.assertEqual(final.get("genre"), "Dance")
+
+    def test_determine_final_metadata_complements_generic_genre_when_enabled(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "#3 Eletronica" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            final = organizer._determine_final_metadata(
+                existing_tags_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "album": "Singles",
+                    "genre": "Pop",
+                    "genres": ["Pop"],
+                },
+                filename_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "track_name": "Song",
+                },
+                file_path=src,
+                online_metadata={
+                    "genre": "Indie Pop",
+                    "genres": ["Indie Pop", "Electropop"],
+                },
+                complement_genres=True,
+            )
+
+            self.assertIn("Pop", final.get("genres", []))
+            self.assertIn("Indie Pop", final.get("genres", []))
+            self.assertIn("Electro-Pop", final.get("genres", []))
+
+    def test_sanitize_polluted_genre_from_bucket_folder(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / \
+                "#1 Um Pouco de Tudo !" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            cleaned = organizer._sanitize_polluted_genre_from_metadata(
+                {
+                    "artist": "Artist",
+                    "genre": "Um Pouco de Tudo !",
+                    "genres": ["Um Pouco de Tudo !"],
+                },
+                src,
+            )
+
+            self.assertEqual(cleaned.get("genre"), "")
+            self.assertEqual(cleaned.get("genres"), [])
+
+    def test_sanitize_does_not_remove_legitimate_genre(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / \
+                "#1 Um Pouco de Tudo !" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            cleaned = organizer._sanitize_polluted_genre_from_metadata(
+                {
+                    "artist": "Artist",
+                    "genre": "Rock",
+                    "genres": ["Rock"],
+                },
+                src,
+            )
+
+            self.assertEqual(cleaned.get("genre"), "Rock")
+            self.assertEqual(cleaned.get("genres"), ["Rock"])
+
+    def test_update_audio_tags_forces_cleanup_when_original_genre_is_polluted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+
+            stream = io.StringIO()
+            logger = logging.getLogger("test.music.cleanup.force")
+            logger.handlers = []
+            logger.setLevel(logging.INFO)
+            handler = logging.StreamHandler(stream)
+            logger.addHandler(handler)
+            logger.propagate = False
+
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=True,
+            )
+
+            file_path = base / "sample.flac"
+            file_path.write_text("dummy", encoding="utf-8")
+
+            result = organizer._update_audio_tags(
+                file_path=file_path,
+                original_metadata={
+                    "artist": "Pat Barrett",
+                    "album_artist": "Pat Barrett",
+                    "album": "No Weapon",
+                    "genre": "!Hyperfocus",
+                    "title": "No Weapon",
+                },
+                final_metadata={
+                    "primary_artist": "Pat Barrett",
+                    "album": "No Weapon",
+                    "genre": "",
+                    "genres": [],
+                },
+                online_metadata=None,
+            )
+
+            self.assertTrue(result)
+            self.assertIsInstance(result, bool)
+
+    def test_update_audio_tags_prefers_final_genres_over_online_candidates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+
+            stream = io.StringIO()
+            logger = logging.getLogger("test.music.genre.priority")
+            logger.handlers = []
+            logger.setLevel(logging.INFO)
+            handler = logging.StreamHandler(stream)
+            logger.addHandler(handler)
+            logger.propagate = False
+
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=True,
+            )
+
+            file_path = base / "sample.flac"
+            file_path.write_text("dummy", encoding="utf-8")
+
+            result = organizer._update_audio_tags(
+                file_path=file_path,
+                original_metadata={
+                    "artist": "Artist A",
+                    "album_artist": "Artist A",
+                    "album": "Album A",
+                    "title": "Track A",
+                    "genre": "EDM",
+                    "genres": ["EDM"],
+                },
+                final_metadata={
+                    "primary_artist": "Artist A",
+                    "genre": "Dance Pop",
+                    "genres": ["Dance Pop", "Electropop"],
+                },
+                online_metadata={
+                    "genre": "EDM",
+                    "genres": ["EDM"],
+                },
+            )
+
+            self.assertTrue(result)
+            log_output = stream.getvalue()
+            self.assertIn("Would update", log_output)
+            self.assertIn("genre", log_output)
+
+    def test_update_audio_tags_does_not_collapse_multigenre_when_only_primary_changes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+
+            logger = logging.getLogger("test.music.genre.no_collapse")
+            logger.handlers = []
+            logger.setLevel(logging.INFO)
+            logger.addHandler(logging.StreamHandler(io.StringIO()))
+            logger.propagate = False
+
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+            )
+
+            file_path = base / "sample.flac"
+            file_path.write_text("dummy", encoding="utf-8")
+
+            class _FakeFlac:
+                def __init__(self):
+                    self.tags = {
+                        "genre": ["Rock", "Alternative Rock"],
+                    }
+
+                def __setitem__(self, key, value):
+                    self.tags[key] = value
+
+                def save(self):
+                    return None
+
+            fake_audio = _FakeFlac()
+
+            with patch("mutagen.flac.FLAC", return_value=fake_audio):
+                result = organizer._update_audio_tags(
+                    file_path=file_path,
+                    original_metadata={
+                        "artist": "Artist A",
+                        "album": "Album A",
+                        "genre": "Rock",
+                        "genres": ["Rock", "Alternative Rock"],
+                    },
+                    final_metadata={
+                        "primary_artist": "Artist A",
+                        "artist": "Artist A",
+                        "album": "Album A",
+                        "genre": "Alternative Rock",
+                        "genres": ["Rock", "Alternative Rock"],
+                    },
+                    online_metadata=None,
+                )
+
+            self.assertTrue(result)
+            self.assertEqual(fake_audio.tags.get("genre"),
+                             ["Rock", "Alternative Rock"])
+
+    def test_update_audio_tags_normalizes_rock_and_roll_variant(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+
+            logger = logging.getLogger("test.music.genre.normalize_rock")
+            logger.handlers = []
+            logger.setLevel(logging.INFO)
+            logger.addHandler(logging.StreamHandler(io.StringIO()))
+            logger.propagate = False
+
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+            )
+
+            file_path = base / "sample.flac"
+            file_path.write_text("dummy", encoding="utf-8")
+
+            class _FakeFlac:
+                def __init__(self):
+                    self.tags = {
+                        "genre": ["Rock & Roll"],
+                    }
+
+                def __setitem__(self, key, value):
+                    self.tags[key] = value
+
+                def save(self):
+                    return None
+
+            fake_audio = _FakeFlac()
+
+            with patch("mutagen.flac.FLAC", return_value=fake_audio):
+                result = organizer._update_audio_tags(
+                    file_path=file_path,
+                    original_metadata={
+                        "artist": "Artist A",
+                        "album": "Album A",
+                        "genre": "Rock & Roll",
+                        "genres": ["Rock & Roll"],
+                    },
+                    final_metadata={
+                        "primary_artist": "Artist A",
+                        "artist": "Artist A",
+                        "album": "Album A",
+                        "genre": "Rock and Roll",
+                        "genres": ["Rock and Roll"],
+                    },
+                    online_metadata=None,
+                )
+
+            self.assertTrue(result)
+            self.assertEqual(fake_audio.tags.get("genre"), ["Rock and Roll"])
+
+    def test_organizar_aborts_when_tag_update_fails_before_db_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            db = _FakeDatabase()
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=db,
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test.music.organize.abort"),
+                dry_run=False,
+            )
+
+            src = base / "Song - Artist.flac"
+            src.write_text("dummy", encoding="utf-8")
+            dest = cfg.library_path_music / "Artist" / "Album" / "Song.flac"
+
+            final_meta = {
+                "artist": "Artist",
+                "primary_artist": "Artist",
+                "track_name": "Song",
+                "title": "Song",
+                "album": "Album",
+                "genre": "Pop",
+                "genres": ["Pop"],
+                "media_type": "music",
+            }
+
+            with patch.object(organizer, "clean_invalid_genres_in_file", return_value={}), patch.object(
+                organizer,
+                "_sanitize_polluted_genre_from_metadata",
+                return_value=final_meta,
+            ), patch.object(
+                organizer,
+                "_read_audio_tags",
+                return_value=final_meta,
+            ), patch.object(
+                organizer,
+                "_extract_metadata_from_filename",
+                return_value={},
+            ), patch.object(
+                organizer,
+                "_determine_final_metadata",
+                return_value=final_meta,
+            ), patch.object(
+                organizer,
+                "get_destination_path",
+                return_value=dest,
+            ), patch.object(
+                organizer,
+                "_early_skip_if_conflict",
+                return_value=None,
+            ), patch.object(
+                organizer,
+                "_update_audio_tags",
+                return_value=False,
+            ):
+                result = asyncio.run(organizer.organizar(src))
+
+            self.assertFalse(result.success)
+            self.assertIn("Tag update failed", str(result.error_message))
+            self.assertEqual(db.records, {})
+            self.assertFalse(dest.exists())
+
+    def test_organizar_retries_when_genre_persistence_mismatches(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            db = _FakeDatabase()
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=db,
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test.music.genre.retry"),
+                dry_run=False,
+            )
+
+            src = base / "Song - Artist.flac"
+            src.write_text("dummy", encoding="utf-8")
+            dest = cfg.library_path_music / "Artist" / "Album" / "Song.flac"
+
+            final_meta = {
+                "artist": "Artist",
+                "primary_artist": "Artist",
+                "track_name": "Song",
+                "title": "Song",
+                "album": "Album",
+                "genre": "Alternative Rock",
+                "genres": ["Rock", "Alternative Rock"],
+                "media_type": "music",
+            }
+
+            persisted_after_first_write = {
+                "artist": "Artist",
+                "album": "Album",
+                "genre": "Alternative Rock",
+                "genres": ["Alternative Rock"],
+            }
+            persisted_after_retry = {
+                "artist": "Artist",
+                "album": "Album",
+                "genre": "Alternative Rock",
+                "genres": ["Rock", "Alternative Rock"],
+            }
+
+            async def _fake_organizar_file(*args, **kwargs):
+                return OrganizationResult(
+                    success=True,
+                    organized_path=dest,
+                    metadata=final_meta,
+                )
+
+            with patch.object(organizer, "clean_invalid_genres_in_file", return_value={}), patch.object(
+                organizer,
+                "_sanitize_polluted_genre_from_metadata",
+                side_effect=lambda metadata, _path: metadata,
+            ), patch.object(
+                organizer,
+                "_read_audio_tags",
+                side_effect=[
+                    {
+                        "artist": "Artist",
+                        "album": "Album",
+                        "genre": "Rock",
+                        "genres": ["Rock"],
+                        "title": "Song",
+                        "track_name": "Song",
+                    },
+                    persisted_after_first_write,
+                    persisted_after_first_write,
+                    persisted_after_retry,
+                ],
+            ), patch.object(
+                organizer,
+                "_extract_metadata_from_filename",
+                return_value={},
+            ), patch.object(
+                organizer,
+                "_determine_final_metadata",
+                return_value=final_meta,
+            ), patch.object(
+                organizer,
+                "get_destination_path",
+                return_value=dest,
+            ), patch.object(
+                organizer,
+                "_early_skip_if_conflict",
+                return_value=None,
+            ), patch.object(
+                organizer,
+                "_update_audio_tags",
+                side_effect=[True, True],
+            ) as update_mock, patch.object(
+                organizer,
+                "organizar_file",
+                side_effect=_fake_organizar_file,
+            ):
+                result = asyncio.run(organizer.organizar(src))
+
+            self.assertTrue(result.success)
+            self.assertEqual(update_mock.call_count, 2)
+            self.assertEqual(
+                update_mock.call_args_list[1].kwargs.get(
+                    "force_overwrite_fields"),
+                {"genre", "genres"},
+            )
+
+    def test_sanitize_polluted_genre_from_plain_folder_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "BTS AS MELHORES" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            cleaned = organizer._sanitize_polluted_genre_from_metadata(
+                {
+                    "artist": "Artist",
+                    "genre": "BTS AS MELHORES",
+                    "genres": ["BTS AS MELHORES", "Pop"],
+                },
+                src,
+            )
+
+            self.assertEqual(cleaned.get("genre"), "Pop")
+            self.assertEqual(cleaned.get("genres"), ["Pop"])
+
+    def test_determine_final_metadata_drops_genre_equal_to_bucket(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "#3 Eletrônica" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            final = organizer._determine_final_metadata(
+                existing_tags_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "album": "Singles",
+                },
+                filename_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "track_name": "Song",
+                },
+                file_path=src,
+                online_metadata={"genre": "Eletrônica",
+                                 "genres": ["Eletrônica"]},
+            )
+
+            self.assertEqual(final.get("genre"), "")
+            self.assertEqual(final.get("genres"), [])
+
+    def test_determine_final_metadata_drops_genre_equal_to_plain_folder_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "downloads" / "musics" / "BTS AS MELHORES" / "Song - Artist.flac"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("dummy", encoding="utf-8")
+
+            final = organizer._determine_final_metadata(
+                existing_tags_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "album": "Singles",
+                },
+                filename_metadata={
+                    "artist": "Artist",
+                    "title": "Song",
+                    "track_name": "Song",
+                },
+                file_path=src,
+                online_metadata={"genre": "BTS AS MELHORES",
+                                 "genres": ["BTS AS MELHORES", "Pop"]},
+            )
+
+            self.assertEqual(final.get("genre"), "Pop")
+            self.assertEqual(final.get("genres"), ["Pop"])
 
     def test_destination_path_uses_singles_when_album_missing_and_artist_present(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -417,7 +1214,7 @@ class TestLyricsOrganizer(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(result.metadata.get("media_type"), "lyrics")
             self.assertTrue(str(result.organized_path).endswith("track.lrc"))
 
-    async def test_unmatched_lyrics_go_to_fallback_hash_folder(self):
+    async def test_unmatched_lyrics_keep_original_filename_in_unmatched_folder(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             cfg = _FakeConfig(base)
@@ -437,7 +1234,7 @@ class TestLyricsOrganizer(unittest.IsolatedAsyncioTestCase):
 
             self.assertTrue(result.success)
             self.assertIn("_lyrics_unmatched", str(result.organized_path))
-            self.assertTrue(str(result.organized_path).endswith(".lrc"))
+            self.assertEqual(result.organized_path.name, "lonely.lrc")
 
 
 class TestBookOrganizer(unittest.TestCase):
@@ -459,6 +1256,25 @@ class TestBookOrganizer(unittest.TestCase):
             self.assertEqual(comic_org.obter_tipo_midia(), MediaType.COMIC)
             self.assertTrue(book_org.pode_processar(Path("a.epub")))
             self.assertTrue(comic_org.pode_processar(Path("a.cbz")))
+
+    def test_detect_book_type_treats_pdf_as_comic_only_in_comics_downloads(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="book",
+            )
+
+            comics_pdf = base / "downloads" / "comics" / "Batman #001.pdf"
+            books_pdf = base / "downloads" / "books" / "Batman #001.pdf"
+
+            self.assertEqual(org._detect_book_type(comics_pdf), "comic")
+            self.assertEqual(org._detect_book_type(books_pdf), "book")
 
     def test_multi_author_book_uses_first_author_for_folder(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -626,7 +1442,7 @@ class TestBookOrganizer(unittest.TestCase):
             src.write_text("x", encoding="utf-8")
 
             with patch.object(org, "_extract_epub_embedded_metadata", return_value={}), patch(
-                "src.organizers.enrich_book_metadata_with_online_sources",
+                "app.services.organizers.enrich_book_metadata_with_online_sources",
                 new=AsyncMock(return_value={
                     "title": "Great Book",
                     "author": "Author Name",
@@ -660,7 +1476,7 @@ class TestBookOrganizer(unittest.TestCase):
                 "_extract_epub_embedded_metadata",
                 return_value={"genre": "Fantasy", "series": "Series A"},
             ), patch(
-                "src.organizers.enrich_book_metadata_with_online_sources",
+                "app.services.organizers.enrich_book_metadata_with_online_sources",
                 new=AsyncMock(),
             ) as enrich_mock:
                 enriched = asyncio.run(

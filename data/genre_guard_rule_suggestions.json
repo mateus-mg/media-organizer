@@ -1,0 +1,18 @@
+{
+  "updated_at": "2026-04-03T23:14:28",
+  "source": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_decisions_latest.json",
+  "unknown_genre_candidates": [
+    {
+      "genre": "sexy",
+      "count": 2,
+      "example_files": [
+        "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac"
+      ],
+      "suggested_action": "review_for_keywords_or_exceptions"
+    }
+  ],
+  "total_unknown_unique": 1,
+  "total_unknown_events": 2,
+  "canonical_alias_candidates": [],
+  "total_alias_candidates": 0
+}

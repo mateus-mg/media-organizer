@@ -7,8 +7,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.main import MediaOrganizerApp
-from src.organizers import BookOrganizer
+from app.main import MediaOrganizerApp
+from app.services.organizers import BookOrganizer
 
 
 class _FakeDatabase:
@@ -33,11 +33,20 @@ class _FakeDatabase:
 
 class _FakeConfig:
     def __init__(self, base: Path):
+        self.download_path_books = base / "downloads" / "books"
+        self.download_path_comics = base / "downloads" / "comics"
         self.library_path_music = base / "library" / "music"
         self.library_path_books = base / "library" / "books"
         self.library_path_comics = base / "library" / "comics"
         self.link_registry_path = base / "data" / "link_registry.json"
         self.calibre_enabled = False
+        self.enrich_book_metadata = True
+        self.enrich_book_metadata_online = False
+        self.enrich_book_metadata_google_books = True
+        self.book_cover_min_match_score = 80
+        self.google_books_api_key = ""
+        self.book_metadata_trust_mode = "missing_only"
+        self.book_cover_update_enabled = False
 
 
 class _FakeConflictHandler:

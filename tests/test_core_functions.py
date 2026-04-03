@@ -3,13 +3,13 @@ import sys
 import asyncio
 from pathlib import Path
 
-from src.core import (
+from app.core import (
     FileExistenceValidator,
     FileTypeValidator,
     IncompleteFileValidator,
     JunkFileValidator,
 )
-from src.utils import (
+from app.utils import (
     calculate_partial_hash,
     calculate_file_hash,
     normalize_title as sanitize_filename,

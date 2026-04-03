@@ -4,6 +4,20 @@
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Load environment overrides from .env (if present)
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$SCRIPT_DIR/.env"
+    set +a
+fi
+
+VENV_DIR="${MEDIA_ORG_VENV_DIR:-$SCRIPT_DIR/venv}"
+PYTHON_BIN="${MEDIA_ORG_PYTHON_BIN:-python3}"
+DATA_DIR="${MEDIA_ORG_DATA_DIR:-$SCRIPT_DIR/data}"
+LOGS_DIR="${MEDIA_ORG_LOGS_DIR:-$SCRIPT_DIR/logs}"
+BACKUPS_DIR="${MEDIA_ORG_BACKUPS_DIR:-$SCRIPT_DIR/data/backups}"
+
 # Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -14,22 +28,22 @@ echo -e "${GREEN}Media Organization System${NC}"
 echo "==============================="
 
 # Check if Python is available
-if ! command -v python3 &> /dev/null; then
+if ! command -v "$PYTHON_BIN" &> /dev/null; then
     echo -e "${RED}Error: Python 3 is not installed${NC}"
     exit 1
 fi
 
 # Check if virtual environment exists
-if [ ! -d "$SCRIPT_DIR/venv" ]; then
+if [ ! -d "$VENV_DIR" ]; then
     echo -e "${YELLOW}Creating virtual environment...${NC}"
-    python3 -m venv "$SCRIPT_DIR/venv"
+    "$PYTHON_BIN" -m venv "$VENV_DIR"
 fi
 
 # Activate virtual environment
-source "$SCRIPT_DIR/venv/bin/activate"
+source "$VENV_DIR/bin/activate"
 
 # Set PYTHONPATH to include project root
-export PYTHONPATH="$SCRIPT_DIR/src:$PYTHONPATH"
+export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
 # Check if dependencies are installed
 if ! python -c "import rich" &> /dev/null; then
@@ -52,12 +66,12 @@ if [ ! -f "$SCRIPT_DIR/.env" ]; then
 fi
 
 # Create necessary directories
-mkdir -p "$SCRIPT_DIR/data"
-mkdir -p "$SCRIPT_DIR/logs"
-mkdir -p "$SCRIPT_DIR/data/backups"
+mkdir -p "$DATA_DIR"
+mkdir -p "$LOGS_DIR"
+mkdir -p "$BACKUPS_DIR"
 
 echo -e "${GREEN}Environment ready!${NC}"
 echo ""
 
 # Run the application with all arguments
-python -m src.main "$@"
+python -m app.main "$@"

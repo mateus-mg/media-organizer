@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.utils import ConcurrencyManager, FileOperations
+from app.utils import ConcurrencyManager, FileOperations
 
 
 class TestConcurrencyManager(unittest.IsolatedAsyncioTestCase):
