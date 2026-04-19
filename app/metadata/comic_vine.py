@@ -15,6 +15,11 @@ logger = logging.getLogger(__name__)
 
 COMIC_VINE_BASE_URL = "https://comicvine.gamespot.com/api"
 
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+
 
 class ComicVineClient:
     """Async Comic Vine API client with translation support."""
@@ -117,17 +122,15 @@ class ComicVineClient:
         year: Optional[int] = None,
         limit: int = 10,
     ) -> str:
-        """Build Comic Vine issues search URL."""
-        query_parts = [series_name]
-        if issue_number:
-            query_parts.append(f" #{issue_number}")
+        """Build Comic Vine issues search URL.
 
-        query = "".join(query_parts)
-        query = re.sub(r"[()]", "", query).strip()
+        Note: Filtering by issue_number and year is done in Python after
+        receiving results, as API filter syntax for these fields is unreliable.
+        """
+        query = re.sub(r"[()]", "", series_name).strip()
 
         filters = [f"name:{query}"]
-        if year:
-            filters.append(f"cover_date:{year}")
+        # Note: cover_date filter with year range is unreliable, so we filter in Python
 
         filter_str = ",".join(filters)
         field_list = (
@@ -167,10 +170,7 @@ class ComicVineClient:
         logger.debug("Comic Vine search URL: %s", search_url)
 
         headers = {
-            "User-Agent": os.getenv(
-                "MUSIC_METADATA_USER_AGENT",
-                "media-organizer/1.0 (https://github.com/local/media-organizer)",
-            ),
+            "User-Agent": DEFAULT_USER_AGENT,
         }
 
         timeout = aiohttp.ClientTimeout(total=self.timeout_seconds)
@@ -244,7 +244,10 @@ class ComicVineClient:
         target_year: Optional[int],
         target_issue: Optional[str],
     ) -> List[Dict[str, Any]]:
-        """Score and rank results to find best match."""
+        """Score and rank results to find best match.
+
+        When target_year is None, all results pass with score 0.
+        """
         scored = []
         for result in results:
             score = 0
@@ -259,7 +262,7 @@ class ComicVineClient:
                 except ValueError:
                     pass
 
-            if score >= self.min_match_score:
+            if target_year is None or score >= self.min_match_score:
                 scored.append((score, result))
 
         scored.sort(key=lambda x: x[0], reverse=True)

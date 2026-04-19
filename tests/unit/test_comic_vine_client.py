@@ -64,14 +64,18 @@ class TestBuildSearchUrl(unittest.TestCase):
         self.assertIn("format=json", url)
 
     def test_url_with_series_name_and_issue_number(self):
+        """Issue number is NOT included in URL - filtering happens in Python."""
         client = ComicVineClient(api_key="test_key")
         url = unquote(client._build_search_url(series_name="Batman", issue_number="100"))
-        self.assertIn("filter=name:Batman+#100", url)
+        self.assertIn("filter=name:Batman", url)
+        self.assertNotIn("Batman+#100", url)
 
     def test_url_with_year_filter(self):
+        """Year is NOT included in URL filter - filtering happens in Python."""
         client = ComicVineClient(api_key="test_key")
         url = unquote(client._build_search_url(series_name="Batman", year=2020))
-        self.assertIn("cover_date:2020", url)
+        self.assertIn("filter=name:Batman", url)
+        self.assertNotIn("cover_date:2020", url)
 
     def test_url_removes_parentheses(self):
         client = ComicVineClient(api_key="test_key")
