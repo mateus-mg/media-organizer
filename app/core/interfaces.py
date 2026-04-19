@@ -76,12 +76,12 @@ class MediaClassifierInterface(ABC):
     """Interface for media classification"""
 
     @abstractmethod
-    def classify_media_type(self, file_path: Path) -> MediaType:
+    def classificar_tipo_midia(self, file_path: Path) -> MediaType:
         """Classify media type"""
         pass
 
     @abstractmethod
-    def extract_metadata(self, file_path: Path) -> FileMetadata:
+    def extrair_metadados(self, file_path: Path) -> FileMetadata:
         """Extract metadata"""
         pass
 

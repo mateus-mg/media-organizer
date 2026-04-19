@@ -221,7 +221,7 @@ class Orquestrador:
         group_order: List[str] = []
 
         for file_path in files:
-            media_type = self.classifier.classify_media_type(file_path)
+            media_type = self.classifier.classificar_tipo_midia(file_path)
             type_cache[file_path] = media_type
 
             group_key = file_path.stem.casefold()
@@ -377,10 +377,10 @@ class Orquestrador:
         duplicate_set = set(duplicates_to_remove)
         return [f for f in files if f not in duplicate_set]
 
-    async def organize_files(
+    async def organizar_arquivos(
         self,
-        source_directory: Path,
-        validate_file_completion: bool = True,
+        diretorio_origem: Path,
+        validar_completude_arquivo: bool = True,
         source_label: Optional[str] = None,
         progress_unit: str = "files",
     ) -> List[ProcessedFile]:
@@ -388,12 +388,14 @@ class Orquestrador:
         Orchestrate complete file organization process
 
         Args:
-            source_directory: Directory to organize
-            validate_file_completion: Validate file completion
+            diretorio_origem: Directory to organize
+            validar_completude_arquivo: Validate file completion
 
         Returns:
             List of processed files
         """
+        source_directory = diretorio_origem
+        validate_file_completion = validar_completude_arquivo
         cycle_label = source_label or source_directory.name
         self._log_stage(cycle_label, "ORCHESTRATION START")
         self.logger.info(
@@ -578,7 +580,7 @@ class Orquestrador:
         )
 
         try:
-            media_type = self.classifier.classify_media_type(file_path)
+            media_type = self.classifier.classificar_tipo_midia(file_path)
             processed_file.media_type = media_type
 
             validation = await self._validate_file_global(file_path)
