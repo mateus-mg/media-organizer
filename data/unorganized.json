@@ -89,6 +89,66 @@
       "media_type": "comic",
       "reason": "comic_schema_missing_title_or_year",
       "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmppkhhqkoc/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmppkhhqkoc/downloads/music",
+      "last_attempt": "2026-04-19T23:00:05.311656+00:00",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmppkhhqkoc/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmppkhhqkoc/downloads/music",
+      "last_attempt": "2026-04-19T23:00:05.316668+00:00",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmp76f02ych/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmp76f02ych/downloads/music",
+      "last_attempt": "2026-04-19T23:00:30.348572+00:00",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmp76f02ych/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmp76f02ych/downloads/music",
+      "last_attempt": "2026-04-19T23:00:30.354008+00:00",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmpdn7n856c/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmpdn7n856c/downloads/music",
+      "last_attempt": "2026-04-19T23:00:50.922244+00:00",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmpdn7n856c/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmpdn7n856c/downloads/music",
+      "last_attempt": "2026-04-19T23:00:50.928979+00:00",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
     }
   ]
 }

@@ -38,7 +38,7 @@ class FilenameSuggestionEngine:
         self.learning_path = learning_path or Path(
             "data/filename_suggestion_learning.json")
         self.learning_data = self._load_learning_data()
-        # Cache para normalization (melhoria de performance)
+        # Cache for normalization (performance improvement)
         self._normalize_cache: Dict[str, str] = {}
 
     def suggest_for_root(
@@ -768,7 +768,7 @@ class FilenameSuggestionEngine:
                 alias_key = self._normalize_lookup_name(old_series)
                 existing_alias = aliases.get(alias_key)
 
-                # Detectar conflito de alias (CRÍTICO - integridade de dados)
+                # Detect alias conflict (CRITICAL - data integrity)
                 if existing_alias and existing_alias != new_series:
                     import logging
                     logger = logging.getLogger(__name__)
@@ -805,7 +805,7 @@ class FilenameSuggestionEngine:
                 alias_key = self._normalize_lookup_name(old_author)
                 existing_alias = aliases.get(alias_key)
 
-                # Detectar conflito de alias em livros
+                # Detect alias conflict in books
                 if existing_alias and existing_alias != new_author:
                     import logging
                     logger = logging.getLogger(__name__)

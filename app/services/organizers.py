@@ -1625,7 +1625,7 @@ class MusicOrganizer(BaseOrganizer):
         if track_name:
             cleaned = self._clean_track_name(track_name, artist)
             final["track_name"] = cleaned
-            # Manter title sincronizado com track_name
+            # Keep title synchronized with track_name
             final["title"] = cleaned
 
     def _is_folder_name_genre_match(self, file_path: Path, genre_value: Any) -> bool:

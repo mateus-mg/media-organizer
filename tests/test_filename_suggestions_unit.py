@@ -165,7 +165,7 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that _sanitize_name truncates to 255 bytes max."""
         long_name = 'x' * 300
         sanitized = self.engine._sanitize_name(long_name)
-        # 255 é o limite NTFS/ext4
+        # 255 is the NTFS/ext4 limit
         self.assertLessEqual(len(sanitized.encode('utf-8')), 255)
 
     def test_extract_year_variants(self):
@@ -183,7 +183,7 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that update_report_suggestion rejects path traversal."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Usar arquivo com extensão válida
+            # Use file with valid extension
             file_path = root / "Author - Book.pdf"
             file_path.write_text("x")
 
@@ -205,7 +205,7 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that update_report_suggestion rejects empty or dots-only names."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Usar arquivo com extensão válida
+            # Use file with valid extension
             file_path = root / "Author - Book.pdf"
             file_path.write_text("x")
 
@@ -270,12 +270,12 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
                 }]
             }
 
-            # Deletar arquivo depois que foi adicionado no report (simula race condition)
+            # Delete file after it was added to report (simulates race condition)
             file_path.unlink()
 
             result = engine.apply_report(report, dry_run=False)
 
-            # Deve reportar source_not_found ou source_disappeared, não crash
+            # Should report source_not_found or source_disappeared, not crash
             self.assertEqual(result["errors"], 1)
             self.assertIn(result["details"][0]["status"], [
                           "source_not_found", "source_disappeared"])

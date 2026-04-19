@@ -90,12 +90,12 @@ class FileScannerInterface(ABC):
     """Interface for file scanning"""
 
     @abstractmethod
-    def escanear_diretorio(self, diretorio: Path) -> List[Path]:
+    def scan_directory(self, directory: Path) -> List[Path]:
         """Scan directory"""
         pass
 
     @abstractmethod
-    def filtrar_arquivos_para_organizacao(self, arquivos: List[Path]) -> List[Path]:
+    def filter_files_for_organization(self, files: List[Path]) -> List[Path]:
         """Filter files for organization"""
         pass
 

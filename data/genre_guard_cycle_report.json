@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-19T22:42:44",
+  "updated_at": "2026-04-20T00:01:04",
   "metrics": {
     "processed_values": 36,
     "kept": 17,
@@ -22,10 +22,10 @@
     "stored_entries": 36,
     "dropped_entries": 0,
     "max_entries": 250000,
-    "file": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_decisions_latest.json"
+    "file": "/media/mateus/Servidor/scripts/media-organizer/.worktrees/filename-suggestions/data/genre_guard_decisions_latest.json"
   },
   "rule_suggestions": {
-    "file": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_rule_suggestions.json",
+    "file": "/media/mateus/Servidor/scripts/media-organizer/.worktrees/filename-suggestions/data/genre_guard_rule_suggestions.json",
     "source_reason": "unknown_genre"
   }
 }
