@@ -501,14 +501,18 @@ class FilenameSuggestionEngine:
                 return None, title
             parts = core.split(" - ", 1)
             left, right = parts[0].strip(), parts[1].strip()
-            if len(right.split()) <= 3 and len(left.split()) > len(right.split()):
+            if (2 <= len(right.split()) <= 3 and
+                len(left.split()) >= 2 and
+                len(left.split()) > len(right.split())):
                 return self._sanitize_name(right), self._sanitize_name(left)
             return self._sanitize_name(left), self._sanitize_name(right)
 
         if " - " in stem:
             parts = stem.split(" - ", 1)
             left, right = parts[0].strip(), parts[1].strip()
-            if len(right.split()) <= 3 and len(left.split()) > len(right.split()):
+            if (2 <= len(right.split()) <= 3 and
+                len(left.split()) >= 2 and
+                len(left.split()) > len(right.split())):
                 return self._sanitize_name(right), self._sanitize_name(left)
             return self._sanitize_name(left), self._sanitize_name(right)
 

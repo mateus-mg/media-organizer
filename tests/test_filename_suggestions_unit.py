@@ -299,6 +299,16 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         self.assertIsNone(author)
         self.assertEqual(title, "Some Book Title")
 
+        # Edge case: short title, should NOT invert
+        author, title = engine._extract_book_author_title("X - John Smith")
+        self.assertEqual(author, "X")
+        self.assertEqual(title, "John Smith")
+
+        # Edge case: long author name, should NOT invert when right is single word
+        author, title = engine._extract_book_author_title("Long Author Name - Short")
+        self.assertEqual(author, "Long Author Name")
+        self.assertEqual(title, "Short")
+
 
 if __name__ == "__main__":
     unittest.main()
