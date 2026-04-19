@@ -58,16 +58,16 @@ class ConcurrencyManagerInterface(ABC):
     """Interface for concurrency management"""
 
     @abstractmethod
-    async def executar_em_paralelo(
+    async def execute_parallel(
         self,
         tarefas: List[Callable],
-        limite_simultaneos: int
+        max_concurrent: int
     ) -> List[Any]:
         """Execute tasks in parallel"""
         pass
 
     @abstractmethod
-    def obter_lock_arquivo(self, caminho_arquivo: Path):
+    def get_file_lock(self, file_path: Path):
         """Get file lock"""
         pass
 
@@ -76,12 +76,12 @@ class MediaClassifierInterface(ABC):
     """Interface for media classification"""
 
     @abstractmethod
-    def classificar_tipo_midia(self, file_path: Path) -> MediaType:
+    def classify_media_type(self, file_path: Path) -> MediaType:
         """Classify media type"""
         pass
 
     @abstractmethod
-    def extrair_metadados(self, file_path: Path) -> FileMetadata:
+    def extract_metadata(self, file_path: Path) -> FileMetadata:
         """Extract metadata"""
         pass
 

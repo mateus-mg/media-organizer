@@ -221,7 +221,7 @@ class Orquestrador:
         group_order: List[str] = []
 
         for file_path in files:
-            media_type = self.classifier.classificar_tipo_midia(file_path)
+            media_type = self.classifier.classify_media_type(file_path)
             type_cache[file_path] = media_type
 
             group_key = file_path.stem.casefold()
@@ -377,10 +377,10 @@ class Orquestrador:
         duplicate_set = set(duplicates_to_remove)
         return [f for f in files if f not in duplicate_set]
 
-    async def organizar_arquivos(
+    async def organize_files(
         self,
-        diretorio_origem: Path,
-        validar_completude_arquivo: bool = True,
+        source_directory: Path,
+        validate_file_completion: bool = True,
         source_label: Optional[str] = None,
         progress_unit: str = "files",
     ) -> List[ProcessedFile]:
@@ -388,22 +388,22 @@ class Orquestrador:
         Orchestrate complete file organization process
 
         Args:
-            diretorio_origem: Directory to organize
-            validar_completude_arquivo: Validate file completion
+            source_directory: Directory to organize
+            validate_file_completion: Validate file completion
 
         Returns:
             List of processed files
         """
-        cycle_label = source_label or diretorio_origem.name
+        cycle_label = source_label or source_directory.name
         self._log_stage(cycle_label, "ORCHESTRATION START")
         self.logger.info(
             "Starting %s organization cycle: %s",
             cycle_label,
-            diretorio_origem,
+            source_directory,
         )
 
         self._log_stage(cycle_label, "SCAN START")
-        all_files = self.scanner.scan_directory(diretorio_origem)
+        all_files = self.scanner.scan_directory(source_directory)
         self.logger.info("%s scan: found %s %s", cycle_label,
                          len(all_files), progress_unit)
         self._log_stage(cycle_label, "SCAN END")
@@ -422,7 +422,7 @@ class Orquestrador:
         self._log_stage(cycle_label, "PENDING FILTER END")
 
         self._log_stage(cycle_label, "VALIDATION START")
-        if validar_completude_arquivo and self.file_completion_validator:
+        if validate_file_completion and self.file_completion_validator:
             valid_files = self.file_completion_validator.validate_files(
                 files_to_process)
         else:
@@ -578,7 +578,7 @@ class Orquestrador:
         )
 
         try:
-            media_type = self.classifier.classificar_tipo_midia(file_path)
+            media_type = self.classifier.classify_media_type(file_path)
             processed_file.media_type = media_type
 
             validation = await self._validate_file_global(file_path)

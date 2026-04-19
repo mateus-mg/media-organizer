@@ -69,7 +69,7 @@ class FilenameSuggestionEngine:
         suggestions: List[FilenameSuggestion] = []
 
         for file_path in files:
-            media_type = self.classifier.classificar_tipo_midia(file_path)
+            media_type = self.classifier.classify_media_type(file_path)
 
             if media_filter == "books" and media_type != MediaType.BOOK:
                 continue

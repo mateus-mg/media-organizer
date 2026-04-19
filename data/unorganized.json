@@ -149,6 +149,26 @@
       "media_type": "comic",
       "reason": "comic_schema_missing_title_or_year",
       "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmptrt0_ctq/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmptrt0_ctq/downloads/music",
+      "last_attempt": "2026-04-19T23:01:24.350270+00:00",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmptrt0_ctq/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmptrt0_ctq/downloads/music",
+      "last_attempt": "2026-04-19T23:01:24.355128+00:00",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
     }
   ]
 }

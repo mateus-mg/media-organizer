@@ -80,7 +80,7 @@ class MediaClassifier(MediaClassifierInterface):
                 return True
         return False
 
-    def classificar_tipo_midia(self, file_path: Path) -> MediaType:
+    def classify_media_type(self, file_path: Path) -> MediaType:
         """
         Classify media type
 
@@ -110,7 +110,7 @@ class MediaClassifier(MediaClassifierInterface):
 
         return MediaType.UNKNOWN
 
-    def extrair_metadados(self, file_path: Path) -> FileMetadata:
+    def extract_metadata(self, file_path: Path) -> FileMetadata:
         """
         Extract basic metadata from filename
 
@@ -120,7 +120,7 @@ class MediaClassifier(MediaClassifierInterface):
         Returns:
             FileMetadata with extracted info
         """
-        media_type = self.classificar_tipo_midia(file_path)
+        media_type = self.classify_media_type(file_path)
 
         metadata = FileMetadata(
             media_type=media_type,
