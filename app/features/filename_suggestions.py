@@ -374,8 +374,20 @@ class FilenameSuggestionEngine:
 
         normalized = re.sub(r"\s+", " ", stem.replace("_", " ")).strip()
         year = self._extract_year(normalized)
-        clean_stem = re.sub(
-            r"\s*\((?:19|20)\d{2}\)\s*$", "", normalized).strip()
+        clean_stem = normalized
+        if year is not None:
+            year_str = str(year)
+            for sep in [".", "-", "_"]:
+                for pattern in [f"{sep}{year_str}", f" {year_str}"]:
+                    if normalized.endswith(pattern):
+                        clean_stem = normalized[:-len(pattern)].strip()
+                        break
+                else:
+                    continue
+                break
+        clean_stem = re.sub(r"[._]+", " ", clean_stem)
+        clean_stem = re.sub(r"\s*-\s+", " - ", clean_stem)
+        clean_stem = re.sub(r"\s+", " ", clean_stem).strip()
 
         author, title = self._extract_book_author_title(clean_stem)
 
