@@ -1365,25 +1365,66 @@ async def enrich_music_metadata_with_online_sources(
 async def enrich_comic_metadata_with_online_sources(
     file_path: Path,
     existing_metadata: Dict,
-    logger=None
+    logger=None,
+    comic_vine_api_key: str = "",
+    comic_vine_enabled: bool = True,
+    comic_vine_translate: bool = True,
 ) -> Dict:
     """
-    Enrich comic metadata from ComicVine
+    Enrich comic metadata from Comic Vine API.
 
     Args:
         file_path: Path to comic file
         existing_metadata: Existing metadata dict
         logger: Logger instance
+        comic_vine_api_key: Comic Vine API key
+        comic_vine_enabled: Whether enrichment is enabled
+        comic_vine_translate: Whether to translate PT series names to EN
 
     Returns:
-        Updated metadata dict
+        Enriched metadata dictionary
     """
-    logger = logger or logging.getLogger(__name__)
+    if logger is None:
+        logger = logging.getLogger(__name__)
 
-    # ComicVine requires API key, so this is a placeholder
-    # Implementation would depend on having a valid API key
+    if not comic_vine_enabled or not comic_vine_api_key:
+        return existing_metadata
 
-    return existing_metadata
+    series_name = existing_metadata.get("series") or existing_metadata.get("title")
+    if not series_name:
+        return existing_metadata
+
+    try:
+        from app.metadata.comic_vine import ComicVineClient
+
+        client = ComicVineClient(
+            api_key=comic_vine_api_key,
+            translate=comic_vine_translate,
+        )
+
+        results = await client.search_issue(
+            series_name=str(series_name),
+            year=int(existing_metadata.get("year")) if existing_metadata.get("year") else None,
+            issue_number=str(existing_metadata.get("issue_number")) if existing_metadata.get("issue_number") else None,
+        )
+
+        if not results:
+            return existing_metadata
+
+        enriched = client.map_to_comic_metadata(results[0])
+
+        for key, value in enriched.items():
+            if key not in existing_metadata or not existing_metadata.get(key):
+                existing_metadata[key] = value
+
+        return existing_metadata
+
+    except ImportError:
+        logger.warning("Comic Vine enrichment unavailable (dependencies missing)")
+        return existing_metadata
+    except Exception as exc:
+        logger.warning("Comic Vine enrichment failed: %s", exc)
+        return existing_metadata
 
 
 # ============================================================================
