@@ -36,13 +36,13 @@ class TestComicVineClientInit(unittest.TestCase):
 class TestTranslateSeriesName(unittest.TestCase):
     def test_translate_when_disabled(self):
         client = ComicVineClient(api_key="test", translate=False)
-        result = client._translate_series_name("Batman")
+        result = asyncio.run(client._translate_series_name("Batman"))
         self.assertEqual(result, "Batman")
 
     def test_translate_when_enabled_but_no_translator_available(self):
         client = ComicVineClient(api_key="test", translate=True)
         with patch.dict("sys.modules", {"deep_translator": None}):
-            result = client._translate_series_name("Batman")
+            result = asyncio.run(client._translate_series_name("Batman"))
             self.assertEqual(result, "Batman")
 
     def test_translate_calls_google_translator(self):
@@ -50,7 +50,7 @@ class TestTranslateSeriesName(unittest.TestCase):
         mock_translator = MagicMock()
         mock_translator.translate.return_value = "Batman"
         with patch.dict("sys.modules", {"deep_translator": MagicMock(GoogleTranslator=lambda **kw: mock_translator)}):
-            result = client._translate_series_name("Homem Morcego")
+            result = asyncio.run(client._translate_series_name("Homem Morcego"))
             self.assertEqual(result, "Batman")
             mock_translator.translate.assert_called_once_with("Homem Morcego")
 
@@ -312,6 +312,208 @@ class TestRateLimiting(unittest.TestCase):
     def test_rate_limit_uses_configured_delay(self):
         client = ComicVineClient(api_key="test", api_delay_seconds=2.5)
         self.assertEqual(client.api_delay_seconds, 2.5)
+
+
+class TestRateLimitingAsync(unittest.IsolatedAsyncioTestCase):
+    async def test_rate_limit_actually_delays(self):
+        client = ComicVineClient(api_key="test", api_delay_seconds=0.2)
+        client._last_request_time = time.time()
+        start = time.time()
+        await client._rate_limit()
+        elapsed = time.time() - start
+        self.assertGreaterEqual(elapsed, 0.15)
+
+    async def test_rate_limit_no_delay_if_enough_time_passed(self):
+        client = ComicVineClient(api_key="test", api_delay_seconds=0.01)
+        client._last_request_time = time.time() - 10
+        start = time.time()
+        await client._rate_limit()
+        elapsed = time.time() - start
+        self.assertLess(elapsed, 0.05)
+
+
+class TestGetJsonWithRetryAsync(unittest.IsolatedAsyncioTestCase):
+    async def test_successful_request_returns_data(self):
+        client = ComicVineClient(api_key="test", api_delay_seconds=0)
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.json = AsyncMock(return_value={"results": [{"name": "Test"}]})
+        mock_response.headers = {}
+
+        mock_cm = AsyncMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_cm)
+
+        status, data = await client._get_json_with_retry(mock_session, "http://test.com")
+        self.assertEqual(status, 200)
+        self.assertEqual(data["results"][0]["name"], "Test")
+
+    async def test_retries_on_500_error(self):
+        client = ComicVineClient(api_key="test", api_delay_seconds=0)
+        mock_response_fail = AsyncMock()
+        mock_response_fail.status = 500
+        mock_response_fail.headers = {}
+
+        mock_response_success = AsyncMock()
+        mock_response_success.status = 200
+        mock_response_success.json = AsyncMock(return_value={"results": [{"name": "Test"}]})
+        mock_response_success.headers = {}
+
+        mock_cm_fail = AsyncMock()
+        mock_cm_fail.__aenter__ = AsyncMock(return_value=mock_response_fail)
+        mock_cm_fail.__aexit__ = AsyncMock(return_value=None)
+
+        mock_cm_success = AsyncMock()
+        mock_cm_success.__aenter__ = AsyncMock(return_value=mock_response_success)
+        mock_cm_success.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(side_effect=[mock_cm_fail, mock_cm_success])
+
+        status, data = await client._get_json_with_retry(mock_session, "http://test.com", max_retries=1)
+        self.assertEqual(status, 200)
+
+    async def test_returns_429_on_rate_limit_without_retry_after(self):
+        client = ComicVineClient(api_key="test", api_delay_seconds=0)
+        mock_response = AsyncMock()
+        mock_response.status = 429
+        mock_response.headers = {"Retry-After": "30"}
+
+        mock_cm = AsyncMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_cm)
+
+        status, data = await client._get_json_with_retry(mock_session, "http://test.com", max_retries=0)
+        self.assertEqual(status, 429)
+
+
+class TestSearchIssueAsync(unittest.IsolatedAsyncioTestCase):
+    async def test_search_issue_returns_results(self):
+        client = ComicVineClient(api_key="test", translate=False, api_delay_seconds=0)
+        mock_data = {
+            "results": [
+                {
+                    "name": "Batman #100",
+                    "issue_number": "100",
+                    "cover_date": "2020-05-01",
+                    "volume": {"name": "Batman"},
+                    "image": {"super_url": "http://example.com/cover.jpg"},
+                    "id": 12345,
+                }
+            ]
+        }
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.json = AsyncMock(return_value=mock_data)
+        mock_response.headers = {}
+
+        mock_cm = AsyncMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_cm)
+
+        results = await client.search_issue(
+            series_name="Batman",
+            year=2020,
+            issue_number="100",
+            session=mock_session,
+        )
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["name"], "Batman #100")
+
+    async def test_search_issue_returns_empty_on_error(self):
+        client = ComicVineClient(api_key="test", translate=False, api_delay_seconds=0)
+
+        mock_response = AsyncMock()
+        mock_response.status = 500
+        mock_response.json = AsyncMock(return_value={"error": "Server Error"})
+        mock_response.headers = {}
+
+        mock_cm = AsyncMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_cm)
+
+        results = await client.search_issue(
+            series_name="Batman",
+            year=None,
+            issue_number=None,
+            session=mock_session,
+        )
+
+        self.assertEqual(len(results), 0)
+
+    async def test_search_issue_filters_by_issue_number(self):
+        client = ComicVineClient(api_key="test", translate=False, api_delay_seconds=0)
+        mock_data = {
+            "results": [
+                {"issue_number": "100", "name": "Batman #100"},
+                {"issue_number": "101", "name": "Batman #101"},
+            ]
+        }
+
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.json = AsyncMock(return_value=mock_data)
+        mock_response.headers = {}
+
+        mock_cm = AsyncMock()
+        mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+        mock_session = MagicMock()
+        mock_session.get = MagicMock(return_value=mock_cm)
+
+        results = await client.search_issue(
+            series_name="Batman",
+            year=None,
+            issue_number="100",
+            session=mock_session,
+        )
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["issue_number"], "100")
+
+    async def test_search_issue_uses_translation_when_enabled(self):
+        client = ComicVineClient(api_key="test", translate=True, api_delay_seconds=0)
+
+        mock_translator = MagicMock()
+        mock_translator.translate.return_value = "Homem Aranha"
+
+        with patch.dict("sys.modules", {"deep_translator": MagicMock(GoogleTranslator=lambda **kw: mock_translator)}):
+            mock_data = {"results": [{"name": "Spider-Man"}]}
+            mock_response = AsyncMock()
+            mock_response.status = 200
+            mock_response.json = AsyncMock(return_value=mock_data)
+            mock_response.headers = {}
+
+            mock_cm = AsyncMock()
+            mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+            mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+            mock_session = MagicMock()
+            mock_session.get = MagicMock(return_value=mock_cm)
+
+            await client.search_issue(
+                series_name="Homem Aranha",
+                year=None,
+                issue_number=None,
+                session=mock_session,
+            )
+
+            mock_translator.translate.assert_called_once()
 
 
 if __name__ == "__main__":
