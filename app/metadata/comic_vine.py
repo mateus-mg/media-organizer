@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import time
+import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple
 
 import aiohttp
@@ -34,15 +35,19 @@ class ComicVineClient:
         self.base_url = COMIC_VINE_BASE_URL
         self._last_request_time = 0.0
 
-    def _translate_series_name(self, series_name: str) -> str:
+    def _do_translate_sync(self, series_name: str) -> str:
+        """Synchronous translation helper (runs in thread pool)."""
+        from deep_translator import GoogleTranslator
+        translator = GoogleTranslator(source='pt', target='en')
+        return translator.translate(series_name)
+
+    async def _translate_series_name(self, series_name: str) -> str:
         """Translate series name from Portuguese to English using Google Translate."""
         if not self.translate:
             return series_name
 
         try:
-            from deep_translator import GoogleTranslator
-            translator = GoogleTranslator(source='pt', target='en')
-            translated = translator.translate(series_name)
+            translated = await asyncio.to_thread(self._do_translate_sync, series_name)
             if translated and translated != series_name:
                 logger.debug("Translated '%s' -> '%s'", series_name, translated)
                 return translated
@@ -77,10 +82,12 @@ class ComicVineClient:
                         return (status, data)
 
                     if status == 429:
-                        retry_after = float(response.headers.get("Retry-After", 60))
-                        logger.warning("Rate limited, waiting %ss", retry_after)
-                        await asyncio.sleep(retry_after)
-                        continue
+                        if attempt < max_retries:
+                            retry_after = float(response.headers.get("Retry-After", 60))
+                            logger.warning("Rate limited, waiting %ss", retry_after)
+                            await asyncio.sleep(retry_after)
+                            continue
+                        return (status, data)
 
                     if status in (500, 502, 503, 504):
                         if attempt < max_retries:
@@ -136,7 +143,6 @@ class ComicVineClient:
             "limit": limit,
         }
 
-        import urllib.parse
         query_string = urllib.parse.urlencode(params)
         return f"{self.base_url}/issues/?{query_string}"
 
@@ -145,9 +151,10 @@ class ComicVineClient:
         series_name: str,
         year: Optional[int],
         issue_number: Optional[str],
+        session: Optional[aiohttp.ClientSession] = None,
     ) -> List[Dict[str, Any]]:
         """Search for a comic issue on Comic Vine."""
-        translated_name = self._translate_series_name(series_name)
+        translated_name = await self._translate_series_name(series_name)
         if translated_name != series_name:
             logger.info("Translated '%s' -> '%s'", series_name, translated_name)
 
@@ -167,25 +174,38 @@ class ComicVineClient:
         }
 
         timeout = aiohttp.ClientTimeout(total=self.timeout_seconds)
-        async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
-            status, data = await self._get_json_with_retry(session, search_url)
+        if session is None:
+            async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
+                return await self._do_search(session, search_url, issue_number, year)
+        else:
+            return await self._do_search(session, search_url, issue_number, year)
 
-            if status != 200:
-                logger.warning("Comic Vine search failed (status=%d): %s", status, data)
-                return []
+    async def _do_search(
+        self,
+        session: aiohttp.ClientSession,
+        search_url: str,
+        issue_number: Optional[str],
+        year: Optional[int],
+    ) -> List[Dict[str, Any]]:
+        """Execute the actual search with the given session."""
+        status, data = await self._get_json_with_retry(session, search_url)
 
-            results = data.get("results") or []
+        if status != 200:
+            logger.warning("Comic Vine search failed (status=%d): %s", status, data)
+            return []
 
-            if issue_number:
-                results = self._filter_by_issue_number(results, issue_number)
+        results = data.get("results") or []
 
-            if year:
-                results = self._filter_by_year(results, year)
+        if issue_number:
+            results = self._filter_by_issue_number(results, issue_number)
 
-            if len(results) > 1:
-                results = self._score_and_rank_results(results, year, issue_number)
+        if year:
+            results = self._filter_by_year(results, year)
 
-            return results[:1] if results else []
+        if len(results) > 1:
+            results = self._score_and_rank_results(results, year, issue_number)
+
+        return results[:1] if results else []
 
     def _filter_by_issue_number(
         self,
