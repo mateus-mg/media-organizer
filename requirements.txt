@@ -26,3 +26,6 @@ asyncio-throttle>=1.0.2
 
 # For HTTP requests (metadata integrations)
 requests>=2.31.0
+
+# For comic metadata translation (PT→EN)
+deep-translator>=1.11.0
