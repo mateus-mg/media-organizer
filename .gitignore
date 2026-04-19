@@ -48,6 +48,9 @@ htmlcov/
 site/
 .mkdocs-cache/
 
+# IDE settings
+.qwen/
+
 # Runtime data files
 data/unorganized.json
 data/filename_suggestions*.json
