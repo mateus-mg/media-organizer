@@ -43,3 +43,15 @@ htmlcov/
 
 # Worktrees
 .worktrees/
+
+# mkdocs
+site/
+.mkdocs-cache/
+
+# Runtime data files
+data/unorganized.json
+data/filename_suggestions*.json
+data/genre_enrichment_retry_queue.json
+data/invencivel_rename_report.json
+data/suspect_music_genres.json
+data/navidrome/playlists_state.json
