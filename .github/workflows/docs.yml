@@ -10,12 +10,14 @@ on:
       - 'mkdocs.yml'
       - '**.py'
       - 'README.md'
+      - '.github/**'
   pull_request:
     paths:
       - 'docs/**'
       - 'mkdocs.yml'
       - '**.py'
       - 'README.md'
+      - '.github/**'
   workflow_dispatch:
 
 permissions:
