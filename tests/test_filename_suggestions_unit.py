@@ -333,6 +333,52 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         self.assertEqual(series, "Saga")
         self.assertEqual(issue, 9)
 
+    def test_full_book_suggestion_flow(self):
+        """Test messy book filename → canonical suggestion."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "John.Smith.-.Great.Book.2020.pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            self.assertEqual(len(report["suggestions"]), 1)
+            item = report["suggestions"][0]
+
+            self.assertIn("2020", item["suggested_name"])
+            self.assertTrue(item["suggested_name"].endswith(".pdf"))
+            self.assertNotEqual(item["suggested_name"], "John.Smith.-.Great.Book.2020.pdf")
+
+    def test_full_comic_suggestion_flow(self):
+        """Test messy comic filename → canonical suggestion."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "Saga.009.2012.cbz"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="comics")
+            if report["suggestions"]:
+                item = report["suggestions"][0]
+                self.assertNotEqual(item["suggested_name"], "Saga.009.2012.cbz")
+
+    def test_book_title_only_suggestion(self):
+        """Test title-only book filename is handled gracefully."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "Great Book (2020).pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            if report["suggestions"]:
+                item = report["suggestions"][0]
+                self.assertIn("Great Book", item["suggested_name"])
+                self.assertIn("2020", item["suggested_name"])
+
     def test_book_smart_fallback(self):
         """Test that fallback constructs usable names instead of returning original."""
         engine = FilenameSuggestionEngine()
