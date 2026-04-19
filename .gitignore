@@ -58,3 +58,4 @@ data/genre_enrichment_retry_queue.json
 data/invencivel_rename_report.json
 data/suspect_music_genres.json
 data/navidrome/playlists_state.json
+.env.example
