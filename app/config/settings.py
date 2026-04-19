@@ -279,6 +279,46 @@ class Config:
         return os.getenv("COMIC_DOWNLOAD_COVERS", "true").lower() == "true"
 
     @property
+    def comic_vine_api_key(self) -> str:
+        return os.getenv("COMIC_VINE_API_KEY", "").strip()
+
+    @property
+    def comic_vine_enabled(self) -> bool:
+        return bool(self.comic_vine_api_key)
+
+    @property
+    def comic_vine_api_delay_seconds(self) -> float:
+        try:
+            value = float(os.getenv("COMIC_VINE_API_DELAY_SECONDS", "1.0"))
+        except ValueError:
+            value = 1.0
+        return max(value, 0.5)
+
+    @property
+    def comic_vine_translate_series_names(self) -> bool:
+        return os.getenv("COMIC_VINE_TRANSLATE_SERIES_NAMES", "true").lower() == "true"
+
+    @property
+    def comic_vine_timeout_seconds(self) -> float:
+        try:
+            value = float(os.getenv("COMIC_VINE_TIMEOUT_SECONDS", "15.0"))
+        except ValueError:
+            value = 15.0
+        return max(value, 5.0)
+
+    @property
+    def comic_vine_min_match_score(self) -> int:
+        try:
+            value = int(os.getenv("COMIC_VINE_MIN_MATCH_SCORE", "75"))
+        except ValueError:
+            value = 75
+        return max(value, 0)
+
+    @property
+    def comic_vine_download_covers(self) -> bool:
+        return os.getenv("COMIC_VINE_DOWNLOAD_COVERS", "true").lower() == "true"
+
+    @property
     def trash_enabled(self) -> bool:
         return os.getenv("TRASH_ENABLED", "true").lower() == "true"
 
