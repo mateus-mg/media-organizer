@@ -309,6 +309,30 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         self.assertEqual(author, "Long Author Name")
         self.assertEqual(title, "Short")
 
+    def test_extract_series_issue_variants(self):
+        """Test flexible comic series-issue extraction."""
+        engine = FilenameSuggestionEngine()
+
+        # Standard: "Series #12"
+        series, issue = engine._extract_series_issue("Saga #12")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 12)
+
+        # Zero-padded without hash: "Saga 009"
+        series, issue = engine._extract_series_issue("Saga 009")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
+        # Dot separator: "Saga.9"
+        series, issue = engine._extract_series_issue("Saga.9")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
+        # Underscore separator: "Saga_v9"
+        series, issue = engine._extract_series_issue("Saga_v9")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
 
 if __name__ == "__main__":
     unittest.main()

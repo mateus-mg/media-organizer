@@ -519,18 +519,34 @@ class FilenameSuggestionEngine:
         return None, self._sanitize_name(stem)
 
     def _extract_series_issue(self, stem: str) -> tuple[Optional[str], Optional[int]]:
-        # Fallback with trailing year: "Series 12 (2015)"
-        match = re.match(r"^(.+?)\s+(\d{1,4})\s*\((?:19|20)\d{2}\)\s*$", stem)
+        """Extract series and issue number from comic filename.
+
+        Handles formats:
+        - "Series #12" or "Series #009" (hash format)
+        - "Series.9" or "Series_9" (dot/underscore without space)
+        - "Series 12" or "Series 009" (space-separated)
+        - "Series 12 (2015)" (trailing year)
+        """
+        # Remove leading number prefix like "01. " or "01 - "
+        stem = re.sub(r"^\d+[.\-\s]+\s*", "", stem).strip()
+
+        # Try: "Series #12" or "Series #009"
+        match = re.match(r"^(.+?)\s*#\s*(\d+)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
-        # Preferred comic pattern: "Series #12"
-        match = re.match(r"^(.+?)\s*#\s*(\d{1,4})\s*$", stem)
+        # Try: "Series.12", "Series_12" or "Series_v12" (dot/underscore with optional v prefix)
+        match = re.match(r"^(.+?)[._]v?(\d+)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
-        # Common fallback: "Series 12"
+        # Try: "Series 12" or "Series 009" (space-separated)
         match = re.match(r"^(.+?)\s+(\d{1,4})\s*$", stem)
+        if match:
+            return self._sanitize_name(match.group(1)), int(match.group(2))
+
+        # Try: "Series 12 (2015)" (trailing year)
+        match = re.match(r"^(.+?)\s+(\d{1,4})\s*\((?:19|20)\d{2}\)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
