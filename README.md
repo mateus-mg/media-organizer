@@ -2,6 +2,8 @@
 
 A comprehensive media organization system for music, books, and comics with conflict resolution, genre validation, and schema-based organization.
 
+**Documentation:** Full documentation is available at https://mateus-mg.github.io/media-organizer
+
 ## Features
 
 - **Hardlink-based organization** — conserves disk space by creating hardlinks to original files
