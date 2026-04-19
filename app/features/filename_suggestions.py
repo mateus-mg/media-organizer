@@ -46,7 +46,7 @@ class FilenameSuggestionEngine:
         root_path: Path,
         media_filter: str = "all",
     ) -> Dict[str, Any]:
-        # Limite de scan configurável para evitar travamento em grandes diretórios
+        # Configurable scan limit to prevent freezing on large directories
         MAX_FILES_DEFAULT = 50000
         max_files = min(int(os.getenv(
             "FILENAME_SUGGESTIONS_MAX_SCAN", MAX_FILES_DEFAULT)), MAX_FILES_DEFAULT)
@@ -151,14 +151,14 @@ class FilenameSuggestionEngine:
         if not suggested_name:
             raise ValueError("new suggested name cannot be empty")
 
-        # Validação de path traversal (CRÍTICO - segurança)
+        # Path traversal validation (CRITICAL - security)
         invalid_path_chars = {'..', '/', '\\', '\x00'}
         if any(char in suggested_name for char in invalid_path_chars):
             raise ValueError(
                 "suggested name must be a simple filename (no path separators or path traversal)"
             )
 
-        # Não permitir nome vazio ou só pontos
+        # Do not allow empty name or only dots
         if suggested_name == "." or not suggested_name.strip("."):
             raise ValueError("suggested name cannot be empty or only dots")
 
@@ -274,9 +274,9 @@ class FilenameSuggestionEngine:
                 result["details"].append(detail)
                 continue
 
-            # Aplicar rename com tratamento robusto de erro (CRÍTICO - race conditions)
+            # Apply rename with robust error handling (CRITICAL - race conditions)
             try:
-                # Double-check antes de rename (importante em multi-processo)
+                # Double-check before rename (important in multi-process)
                 if not original_path.exists():
                     detail["status"] = "source_disappeared"
                     result["errors"] += 1
@@ -528,21 +528,21 @@ class FilenameSuggestionEngine:
         """Sanitize filename: remove invalid chars, normalize spaces, enforce length limits."""
         sanitized = str(text or "").strip()
 
-        # Remover/substituir caracteres inválidos em filesystems (CRÍTICO)
+        # Remove/substitute invalid filesystem characters (CRITICAL)
         # Windows invalid: < > : " | ? *
         # Unix/Linux invalid: \x00 (null)
         sanitized = re.sub(r'[<>:"|?*\x00-\x1f]', '', sanitized)
 
-        # Remover barras (não substituir por espaço)
+        # Remove slashes (do not substitute with space)
         sanitized = re.sub(r'[&/\\]', '', sanitized)
 
-        # Normalizar espaços múltiplos
+        # Normalize multiple spaces
         sanitized = re.sub(r"\s+", " ", sanitized)
 
-        # Remover pontos/espaços no início/fim
+        # Remove dots/spaces at the start/end
         sanitized = sanitized.strip(" .")
 
-        # Verificar tamanho máximo (255 é limite NTFS, ext4, etc)
+        # Check maximum length (255 is NTFS, ext4, etc limit)
         if len(sanitized.encode('utf-8')) > 255:
             try:
                 truncated = sanitized.encode(
@@ -597,10 +597,10 @@ class FilenameSuggestionEngine:
         value = str(text or "").strip().lower()
         value = re.sub(r"\s+", " ", value)
 
-        # Armazenar em cache
+        # Store in cache
         self._normalize_cache[text] = value
 
-        # Limpar cache se crescer muito (prevent memory leaks)
+        # Clear cache if it grows too much (prevent memory leaks)
         if len(self._normalize_cache) > 10000:
             self._normalize_cache.clear()
 
@@ -698,7 +698,7 @@ class FilenameSuggestionEngine:
                         f"previously mapped to '{existing_alias}', now being mapped to '{new_series}'. "
                         f"Using latest value. Manual review recommended."
                     )
-                    # Armazenar conflito para análise
+                    # Store conflict for analysis
                     conflicts = self.learning_data.setdefault(
                         "_conflicts", {}).setdefault("comics", [])
                     conflicts.append({
@@ -735,7 +735,7 @@ class FilenameSuggestionEngine:
                         f"previously mapped to '{existing_alias}', now being mapped to '{new_author}'. "
                         f"Using latest value. Manual review recommended."
                     )
-                    # Armazenar conflito
+                    # Store conflict
                     conflicts = self.learning_data.setdefault(
                         "_conflicts", {}).setdefault("books", [])
                     conflicts.append({

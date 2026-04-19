@@ -150,7 +150,7 @@ class TestMainNavidromeCli(unittest.TestCase):
         self.assertIn(
             "Diff: add=2 | remove=1 | existing=4 | target=5", result.output)
         self.assertIn(
-            "Resumo: adicionaria 2 música(s) e removeria 1 música(s)", result.output)
+            "Summary: would add 2 track(s) and remove 1 track(s)", result.output)
         self.assertIn("Sample IDs to add:", result.output)
         self.assertIn("+ song-a", result.output)
         self.assertIn("Sample IDs to remove:", result.output)

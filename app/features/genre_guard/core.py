@@ -1310,8 +1310,8 @@ def _evaluate_genre_action(file_path: Path, genre_value: Any) -> Tuple[str, str,
 
     confidence = _score_genre_confidence(genre)
 
-    # PRIORITY 3b: Heuristica por confianca baseada em tokens.
-    # Remove imediatamente quando e claramente editorial e sem sinal musical.
+    # PRIORITY 3b: Heuristic by confidence based on tokens.
+    # Remove immediately when clearly editorial and without musical signal.
     if (
         confidence["editorial_hits"] >= thresholds["editorial_overload_hits"]
         and confidence["musical_hits"] <= thresholds["editorial_overload_max_musical_hits"]
@@ -1352,7 +1352,7 @@ def _evaluate_genre_action(file_path: Path, genre_value: Any) -> Tuple[str, str,
     ):
         return "quarantine", "token_editorial_bias", 55
 
-    # PRIORITY 5c: Se houver forte evidência musical, manter com confiança.
+    # PRIORITY 5c: If there is strong musical evidence, keep with confidence.
     if (
         confidence["keyword_phrase_hits"] >= thresholds["musical_confident_min_keyword_hits"]
         and confidence["confidence"] >= thresholds["musical_confident_min_score"]

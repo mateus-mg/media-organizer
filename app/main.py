@@ -380,12 +380,12 @@ def navidrome_sync_simple(name: str, artist: str, genre: str, album: str, limit:
             if preview_diff:
                 if add_count == 0 and remove_count == 0:
                     console.print(
-                        "Resumo: nenhum ajuste necessário, a playlist já está alinhada aos filtros.",
+                        "Summary: no adjustments needed, playlist is already aligned with filters.",
                         style="magenta",
                     )
                 else:
                     console.print(
-                        f"Resumo: adicionaria {add_count} música(s) e removeria {remove_count} música(s) para alinhar com os filtros atuais.",
+                        f"Summary: would add {add_count} track(s) and remove {remove_count} track(s) to align with current filters.",
                         style="magenta",
                     )
                 add_samples = preview.get("to_add_song_ids", [])

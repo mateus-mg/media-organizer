@@ -1610,12 +1610,12 @@ class MusicOrganizer(BaseOrganizer):
             )
 
     def _clean_final_track_name(self, final: Dict[str, Any]) -> None:
-        """Limpar track_name e title removendo nome do artista se presente.
+        """Clean track_name and title by removing artist name if present.
 
-        Aplica _clean_track_name após toda a resolução de metadados para garantir
-        que títulos não contenham nomes de artistas.
+        Applies _clean_track_name after all metadata resolution to ensure
+        titles do not contain artist names.
 
-        Exemplos:
+        Examples:
             "Love Generation - Bob Sinclar, Gary Pine" + artist "Bob Sinclar"
             -> "Love Generation"
         """
