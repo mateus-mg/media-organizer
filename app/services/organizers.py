@@ -4089,6 +4089,98 @@ class BookOrganizer(BaseOrganizer):
 
         return self._finalize_book_metadata(updated)
 
+    async def _enrich_comic_metadata_if_needed(
+        self,
+        file_path: Path,
+        metadata: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Enrich comic metadata using Comic Vine API with PT→EN translation.
+        
+        IMPORTANT: Series and title names in Portuguese are PRESERVED from original metadata.
+        Comic Vine is only used for: writer, penciller, inker, colorist, letterer,
+        editor, publisher, description, cover_image_url.
+        """
+        updated = dict(metadata)
+
+        if not self.config.comic_vine_enabled:
+            return updated
+
+        if not self.config.comic_vine_api_key:
+            self.logger.debug("Comic Vine API key not configured")
+            return updated
+
+        series_name = updated.get("series") or updated.get("title")
+        if not series_name:
+            self.logger.debug("No series name available for Comic Vine search")
+            return updated
+
+        issue_number = updated.get("issue_number")
+        year = updated.get("year")
+
+        if not issue_number and not year:
+            self.logger.debug("No issue number or year for Comic Vine search")
+            return updated
+
+        try:
+            from app.metadata.comic_vine import ComicVineClient
+
+            client = ComicVineClient(
+                api_key=self.config.comic_vine_api_key,
+                translate=self.config.comic_vine_translate_series_names,
+                api_delay_seconds=self.config.comic_vine_api_delay_seconds,
+                timeout_seconds=self.config.comic_vine_timeout_seconds,
+                min_match_score=self.config.comic_vine_min_match_score,
+            )
+
+            self.logger.info(
+                "Searching Comic Vine for: series=%s issue=%s year=%s",
+                series_name,
+                issue_number,
+                year,
+            )
+
+            results = await client.search_issue(
+                series_name=str(series_name),
+                year=int(year) if year else None,
+                issue_number=str(issue_number) if issue_number else None,
+            )
+
+            if not results:
+                self.logger.info(
+                    "No Comic Vine results for %s #%s",
+                    series_name,
+                    issue_number,
+                )
+                return updated
+
+            best_match = results[0]
+            comic_meta = client.map_to_comic_metadata(best_match)
+
+            allowed_enrichment_fields = {
+                "author", "penciller", "inker", "colorist", "letterer",
+                "editor", "cover_artist", "publisher", "description",
+                "cover_image_url", "age_rating", "comic_vine_id", "comic_vine_url"
+            }
+
+            for key, value in comic_meta.items():
+                if key in allowed_enrichment_fields:
+                    if not updated.get(key):
+                        updated[key] = value
+                        self.logger.debug("Added %s from Comic Vine: %s", key, value)
+
+            self.logger.info(
+                "Enriched comic metadata from Comic Vine: %s #%s",
+                series_name,
+                issue_number,
+            )
+
+        except ImportError:
+            self.logger.warning("Comic Vine client not available (deep-translator missing)")
+        except Exception as exc:
+            self.logger.warning("Comic Vine enrichment failed: %s", exc)
+
+        return updated
+
     def _detect_book_type(self, file_path: Path) -> str:
         ext = file_path.suffix.lower()
         if ext == ".pdf":
@@ -4220,6 +4312,7 @@ class BookOrganizer(BaseOrganizer):
 
         if final_type == "comic":
             metadata = self._extract_comic_metadata(file_path)
+            metadata = await self._enrich_comic_metadata_if_needed(file_path, metadata)
             dest_path = self.get_comic_destination_path(file_path, metadata)
             early_skip = self._early_skip_if_conflict(
                 file_path, dest_path, metadata)
