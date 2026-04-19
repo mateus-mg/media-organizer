@@ -1344,7 +1344,7 @@ def _evaluate_genre_action(file_path: Path, genre_value: Any) -> Tuple[str, str,
             return "keep", "valid_compound_despite_pattern", 0
         return "quarantine", suspicious_reason or "regex_match_musical_like", 50
 
-    # PRIORITY 5b: Se houver viés editorial sem certeza musical, quarentena.
+    # PRIORITY 5b: If there is editorial bias without musical confidence, quarantine.
     if (
         (confidence["editorial_hits"] - confidence["musical_hits"]
          ) >= thresholds["editorial_bias_min_delta"]
