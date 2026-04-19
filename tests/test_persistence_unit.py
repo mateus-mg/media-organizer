@@ -4,6 +4,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from tinydb import Query
 
 from app.infrastructure.database import OrganizationDatabase
 
@@ -52,6 +53,31 @@ class TestOrganizationDatabase(unittest.TestCase):
         self.assertIsNotNone(record)
         self.assertEqual(record["organized_path"], "/lib/book.epub")
         self.assertTrue(self.db.is_file_organized("/src/book.epub"))
+
+    def test_add_media_prevents_duplicate_organized_path(self):
+        ok_first = self.db.adicionar_midia(
+            file_hash="h4",
+            original_path="/src/a.flac",
+            organized_path="/lib/shared.flac",
+            metadata={"media_type": "music", "genre": "Pop"},
+        )
+        ok_second = self.db.adicionar_midia(
+            file_hash="h5",
+            original_path="/src/b.flac",
+            organized_path="/lib/shared.flac",
+            metadata={"media_type": "music", "genre": "Rock"},
+        )
+
+        Media = self.db.media_table
+        records = Media.search(Query().organized_path == "/lib/shared.flac")
+
+        self.assertTrue(ok_first)
+        self.assertTrue(ok_second)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["metadata"].get("genre"), "Rock")
+
+        stats = self.db.get_stats()
+        self.assertEqual(stats["total_files_organized"], 1)
 
     def test_add_failure_increments_counter(self):
         before = self.db.get_stats()["failed_operations"]

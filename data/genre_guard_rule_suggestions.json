@@ -1,18 +1,87 @@
 {
-  "updated_at": "2026-04-03T23:14:28",
+  "updated_at": "2026-04-11T01:37:47",
   "source": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_decisions_latest.json",
   "unknown_genre_candidates": [
     {
-      "genre": "sexy",
-      "count": 2,
+      "genre": "drum-and-bass",
+      "count": 1,
       "example_files": [
-        "/media/mateus/Servidor/containers/media/downloads/musics/Mega Hit Mix/Levitating (feat. DaBaby) - Dua Lipa.flac"
+        "/tmp/tmp1_slo0ze/downloads/musics/x/song.flac"
+      ],
+      "suggested_action": "review_for_keywords_or_exceptions"
+    },
+    {
+      "genre": "drum & bass",
+      "count": 1,
+      "example_files": [
+        "/tmp/tmp1_slo0ze/downloads/musics/x/song.flac"
       ],
       "suggested_action": "review_for_keywords_or_exceptions"
     }
   ],
-  "total_unknown_unique": 1,
+  "total_unknown_unique": 2,
   "total_unknown_events": 2,
-  "canonical_alias_candidates": [],
-  "total_alias_candidates": 0
+  "canonical_alias_candidates": [
+    {
+      "canonical_key": "pop chart",
+      "total_events": 5,
+      "variants": [
+        {
+          "value": "pop & chart",
+          "count": 1
+        },
+        {
+          "value": "pop chart",
+          "count": 1
+        },
+        {
+          "value": "pop-chart",
+          "count": 1
+        },
+        {
+          "value": "pop_chart",
+          "count": 1
+        },
+        {
+          "value": "pop + chart",
+          "count": 1
+        }
+      ],
+      "suggested_canonical": "pop & chart",
+      "suggested_action": "review_for_alias_normalization"
+    },
+    {
+      "canonical_key": "drum bass",
+      "total_events": 2,
+      "variants": [
+        {
+          "value": "drum-and-bass",
+          "count": 1
+        },
+        {
+          "value": "drum & bass",
+          "count": 1
+        }
+      ],
+      "suggested_canonical": "drum-and-bass",
+      "suggested_action": "review_for_alias_normalization"
+    },
+    {
+      "canonical_key": "blues rock",
+      "total_events": 2,
+      "variants": [
+        {
+          "value": "blues rock",
+          "count": 1
+        },
+        {
+          "value": "blues-rock",
+          "count": 1
+        }
+      ],
+      "suggested_canonical": "blues rock",
+      "suggested_action": "review_for_alias_normalization"
+    }
+  ],
+  "total_alias_candidates": 3
 }

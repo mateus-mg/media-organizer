@@ -21,7 +21,7 @@ import shutil
 import threading
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from tinydb import TinyDB, Query
 
 from app.logging.config import get_logger, log_success, log_error, log_info, log_warning
@@ -176,7 +176,7 @@ class LinkRegistry:
                 File = Query()
                 existing = self.files_table.get(File.inode == inode)
 
-                now = datetime.utcnow().isoformat()
+                now = datetime.now(timezone.utc).isoformat()
 
                 if existing:
                     # Update existing record - add new link

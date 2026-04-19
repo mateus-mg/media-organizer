@@ -7,6 +7,7 @@ from app.services.organizers import (
     BookOrganizer,
     RenamerOrganizer,
 )
+from app.services.playlists import PlaylistService
 
 __all__ = [
     "MusicOrganizer",
@@ -14,4 +15,5 @@ __all__ = [
     "ArtworkOrganizer",
     "BookOrganizer",
     "RenamerOrganizer",
+    "PlaylistService",
 ]

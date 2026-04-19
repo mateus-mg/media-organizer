@@ -11,6 +11,8 @@ Supported organizers:
 """
 
 import asyncio
+from collections import Counter, defaultdict
+from datetime import datetime, timezone
 import json
 import logging
 import os
@@ -18,21 +20,28 @@ import re
 import shutil
 import subprocess
 import tempfile
+import unicodedata
 import urllib.request
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, cast
 
 from app.config import Config
 from app.core import MediaType, OrganizadorInterface, OrganizationResult
-from app.features.genre_guard import sanitize_genre_values
+from app.features.genre_guard import load_genre_exceptions, load_musical_keywords, sanitize_genre_values
 from app.infrastructure.link_registry import LinkRegistry
 from app.config.constants import AUDIO_EXTS, BOOK_EXTS, COMIC_EXTS, IMAGE_EXTS
 from app.metadata.metadata import (
     enrich_book_metadata_with_online_sources,
     enrich_music_metadata_with_online_sources,
 )
-from app.utils.helpers import ConflictResolution, calculate_file_hash
+from app.utils.helpers import (
+    ConflictResolution,
+    calculate_file_hash,
+    normalize_comic_series_title,
+    parse_book_filename_fields,
+    parse_comic_filename_fields,
+)
 from app.utils.value_utils import is_missing_value
 
 
@@ -135,16 +144,154 @@ class BaseOrganizer(OrganizadorInterface):
         if action != ConflictResolution.SKIPPED:
             return None
 
-        reason = "conflict_destination_exists"
-        self.logger.info(
-            "Early skip before metadata update: source=%s destination=%s reason=%s",
-            str(source_path),
-            str(final_dest_path or dest_path),
-            reason,
+        return self._handle_conflict_skip(
+            source_path=source_path,
+            dest_path=final_dest_path or dest_path,
+            metadata=metadata,
+            early_skip=True,
         )
+
+    def _paths_are_content_equivalent(self, source_path: Path, dest_path: Path) -> bool:
+        """Return True when source and destination represent the same content."""
+        try:
+            if not source_path.exists() or not dest_path.exists():
+                return False
+
+            if source_path.samefile(dest_path):
+                return True
+
+            source_stat = source_path.stat()
+            dest_stat = dest_path.stat()
+
+            if source_stat.st_size != dest_stat.st_size:
+                return False
+
+            if (
+                source_stat.st_ino == dest_stat.st_ino
+                and source_stat.st_dev == dest_stat.st_dev
+            ):
+                return True
+
+            # Fallback for non-hardlink duplicates with same size.
+            source_hash = self.calculate_file_hash(source_path)
+            dest_hash = self.calculate_file_hash(dest_path)
+            return bool(source_hash and source_hash == dest_hash)
+        except Exception:
+            return False
+
+    def _register_existing_source_mapping(
+        self,
+        source_path: Path,
+        dest_path: Path,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> bool:
+        """Register source->destination mapping without counting as new organized media."""
+        try:
+            if self.database.get_record_by_original_path(str(source_path)):
+                return True
+
+            media_table = getattr(self.database, "media_table", None)
+            if media_table is None:
+                return False
+
+            from tinydb import Query
+
+            Media = Query()
+            destination_record = media_table.get(
+                Media.organized_path == str(dest_path)
+            )
+
+            record_metadata = dict(metadata or {})
+            if not record_metadata and isinstance(destination_record, dict):
+                record_metadata = dict(
+                    destination_record.get("metadata") or {})
+
+            file_hash = ""
+            if isinstance(destination_record, dict):
+                file_hash = str(destination_record.get(
+                    "file_hash") or "").strip()
+            if not file_hash:
+                file_hash = self.calculate_file_hash(source_path)
+
+            now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            media_table.insert(
+                {
+                    "file_hash": file_hash,
+                    "original_path": str(source_path),
+                    "organized_path": str(dest_path),
+                    "processed_date": now,
+                    "last_checked": now,
+                    "file_exists": True,
+                    "hardlink_created": False,
+                    "metadata": record_metadata,
+                    "errors": [],
+                }
+            )
+
+            if self.database.backup_enabled:
+                self.database.create_backup_if_needed()
+
+            try:
+                link_registry = self._get_link_registry()
+                link_registry.register_link(
+                    source_path=source_path,
+                    dest_path=dest_path,
+                    metadata=record_metadata,
+                )
+            except Exception as exc:
+                self.logger.warning(
+                    "Conflict mapping registered but link registry update failed for %s: %s",
+                    source_path.name,
+                    exc,
+                )
+
+            return True
+        except Exception as exc:
+            self.logger.error(
+                "Could not register existing conflict mapping for %s: %s",
+                source_path.name,
+                exc,
+            )
+            return False
+
+    def _handle_conflict_skip(
+        self,
+        source_path: Path,
+        dest_path: Path,
+        metadata: Optional[Dict[str, Any]] = None,
+        early_skip: bool = False,
+    ) -> OrganizationResult:
+        equivalent = self._paths_are_content_equivalent(source_path, dest_path)
+        reason = "conflict_destination_exists"
+
+        if equivalent:
+            reason = "conflict_destination_already_organized"
+            if not self.dry_run:
+                registered = self._register_existing_source_mapping(
+                    source_path=source_path,
+                    dest_path=dest_path,
+                    metadata=metadata,
+                )
+                if not registered:
+                    reason = "conflict_destination_exists"
+
+        if early_skip:
+            self.logger.info(
+                "Early skip before metadata update: source=%s destination=%s reason=%s",
+                str(source_path),
+                str(dest_path),
+                reason,
+            )
+        else:
+            self.logger.info(
+                "Conflict skip: source=%s destination=%s reason=%s",
+                str(source_path),
+                str(dest_path),
+                reason,
+            )
         return OrganizationResult(
             success=True,
-            organized_path=final_dest_path or dest_path,
+            organized_path=dest_path,
             skipped=True,
             skip_reason=reason,
             metadata=metadata or {},
@@ -179,19 +326,11 @@ class BaseOrganizer(OrganizadorInterface):
                 )
 
             if action == ConflictResolution.SKIPPED:
-                reason = "conflict_destination_exists"
-                self.logger.info(
-                    "Conflict skip: source=%s destination=%s reason=%s",
-                    str(source_path),
-                    str(final_dest_path),
-                    reason,
-                )
-                return OrganizationResult(
-                    success=True,
-                    organized_path=final_dest_path,
-                    skipped=True,
-                    skip_reason=reason,
+                return self._handle_conflict_skip(
+                    source_path=source_path,
+                    dest_path=final_dest_path,
                     metadata=metadata,
+                    early_skip=False,
                 )
 
             if not self.dry_run:
@@ -331,6 +470,14 @@ class MusicOrganizer(BaseOrganizer):
         super().__init__(*args, **kwargs)
         self.library_path = self.config.library_path_music
         self._online_cache: Dict[str, Dict[str, Any]] = {}
+        self._genre_lexicon: Optional[set[str]] = None
+        database_path = getattr(
+            self.config, "database_path", "data/organization.json")
+        self._genre_enrichment_retry_queue_path = (
+            Path(database_path).parent / "genre_enrichment_retry_queue.json"
+        )
+        # Tracks whether the last tag-write call actually changed on-disk tags.
+        self._last_audio_tag_write_had_changes: bool = False
 
     def _normalize_artist_name(self, value: Any) -> str:
         text = str(value or "").strip()
@@ -390,55 +537,260 @@ class MusicOrganizer(BaseOrganizer):
 
         return album if album else "Unknown Album"
 
-    def _normalize_genre_name(self, value: Any) -> str:
-        """Normalize a genre label into canonical form.
+    def _extract_release_year(self, metadata: Dict[str, Any]) -> Optional[int]:
+        year_value = metadata.get("year")
+        if isinstance(year_value, int):
+            return year_value
+        if isinstance(year_value, str):
+            year_candidate = year_value.strip()[:4]
+            if year_candidate.isdigit():
+                return int(year_candidate)
 
-        Preserves valid compound genres like "Drum & Bass" and "R&B".
-        Normalizes variations like "Drum And Bass" into "Drum & Bass".
-        """
+        for key in ("date", "originaldate", "releasedate"):
+            raw_value = metadata.get(key)
+            if not raw_value:
+                continue
+            year_candidate = str(raw_value).strip()[:4]
+            if year_candidate.isdigit():
+                return int(year_candidate)
+        return None
+
+    def _parse_numeric_tag_value(self, value: Any) -> Optional[int]:
+        """Parse tags like '3', '03', or '3/12' into an integer value."""
+        text = str(value or "").strip()
+        if not text:
+            return None
+        match = re.match(r"^(\d+)(?:\s*/\s*\d+)?$", text)
+        if not match:
+            return None
+        try:
+            return int(match.group(1))
+        except ValueError:
+            return None
+
+    def _normalize_track_number_for_compare(self, value: Any) -> str:
         text = str(value or "").strip()
         if not text:
             return ""
 
-        # Normalize "And" to "&" for compound genres (general case)
-        # to avoid duplicates like "Drum And Bass" vs "Drum & Bass".
-        text = re.sub(r'\s+And\s+', ' & ', text)
-        text = re.sub(r'\s+and\s+', ' & ', text)
+        numeric_value = self._parse_numeric_tag_value(text)
+        if numeric_value is not None:
+            return str(numeric_value)
 
-        # Normalize repeated spaces.
-        text = re.sub(r"\s+", " ", text)
+        return text
 
-        # Canonical mapping for common genre variations.
-        canonical = {
-            "r & b": "R&B",
-            "r&b": "R&B",
-            "r b": "R&B",
-            "rnb": "R&B",
-            "hiphop": "Hip Hop",
-            "hip-hop": "Hip Hop",
+    def _extract_track_from_filename(self, file_path: Path) -> Optional[int]:
+        """Extract leading track index from file names like '03 - Song Name.flac'."""
+        stem = str(file_path.stem or "").strip()
+        match = re.match(r"^(\d{1,3})\s*[-_.\s]", stem)
+        if not match:
+            return None
+        try:
+            return int(match.group(1))
+        except ValueError:
+            return None
+
+    def _has_legacy_year_tag(self, file_path: Path) -> bool:
+        """Return True when file still contains legacy YEAR tag that should be removed."""
+        ext = file_path.suffix.lower()
+        if ext not in {".flac", ".ogg", ".opus"}:
+            return False
+        try:
+            from mutagen import File as MutagenFile
+
+            audio = MutagenFile(file_path)
+            tags = getattr(audio, "tags", None)
+            if tags is None:
+                return False
+            return "year" in tags
+        except Exception:
+            return False
+
+    def _infer_album_from_library_path(self, file_path: Path) -> str:
+        """Infer album name from organized library path .../Artist/Album/Track.ext."""
+        try:
+            parent_album = str(file_path.parent.name or "").strip()
+            if not parent_album:
+                return ""
+
+            library_music = self.library_path
+            if library_music and str(library_music).strip():
+                try:
+                    relative = file_path.resolve().relative_to(library_music.resolve())
+                    # Expected layout: Artist/Album/Track
+                    if len(relative.parts) >= 3:
+                        return self._normalize_album_name(parent_album)
+                except Exception:
+                    return ""
+
+            # Conservative fallback: only accept path-based album when under known library tree marker.
+            path_text = str(file_path).replace("\\", "/").lower()
+            if "/library/musics/" in path_text:
+                return self._normalize_album_name(parent_album)
+        except Exception:
+            return ""
+        return ""
+
+    def _normalize_album_identity(self, metadata: Dict[str, Any]) -> tuple[str, str]:
+        primary_artist = self._get_primary_artist(
+            str(
+                metadata.get("primary_artist")
+                or metadata.get("album_artist")
+                or metadata.get("artist")
+                or ""
+            )
+        )
+        album = self._normalize_album_name(str(metadata.get("album") or ""))
+        return primary_artist.casefold(), album.casefold()
+
+    def _is_music_record_for_recheck(self, metadata: Dict[str, Any], organized_path: Path) -> bool:
+        """Best-effort detection for music records, even when media_type is missing."""
+        media_type = str(metadata.get("media_type") or "").strip().lower()
+        media_subtype = str(metadata.get("media_subtype")
+                            or "").strip().lower()
+        if media_type == "music" or media_subtype == "music":
+            return True
+
+        ext = organized_path.suffix.lower()
+        if ext in AUDIO_EXTS:
+            return True
+
+        path_text = str(organized_path).replace("\\", "/").lower()
+        return "/library/musics/" in path_text
+
+    def _prefer_album_variant(self, values: List[str]) -> str:
+        cleaned = [str(value).strip()
+                   for value in values if str(value).strip()]
+        if not cleaned:
+            return ""
+
+        counts = Counter(cleaned)
+
+        def score(text: str) -> tuple[int, int, int, int]:
+            words = [word for word in re.split(r"[\s\-:()]+", text) if word]
+            title_like = sum(1 for word in words if word[:1].isupper())
+            all_upper = 0 if text == text.upper() else 1
+            mixed_case = 1 if any(ch.islower() for ch in text) else 0
+            return (counts[text], all_upper, mixed_case, title_like)
+
+        return max(cleaned, key=score)
+
+    def _canonical_genre_signature(self, value: Any) -> str:
+        text = str(value or "").strip().lower()
+        if not text:
+            return ""
+
+        text = unicodedata.normalize("NFKD", text)
+        text = "".join(ch for ch in text if not unicodedata.combining(ch))
+
+        text = re.sub(r"\br\s*(?:&|and)?\s*b\b|\brnb\b", "rnb", text)
+        text = re.sub(
+            r"\bdrum\s*(?:and|&|n)?\s*bass\b|\bdnb\b",
+            "drum bass",
+            text,
+        )
+
+        text = re.sub(r"[-_/&+]+", " ", text)
+        text = re.sub(r"[^a-z0-9\s]", " ", text)
+        text = re.sub(r"\s+", " ", text).strip()
+        return text
+
+    def _genre_keyword_lexicon(self) -> set[str]:
+        if self._genre_lexicon is not None:
+            return self._genre_lexicon
+
+        lexicon: set[str] = set()
+        for source in (load_musical_keywords(), load_genre_exceptions()):
+            for item in source:
+                key = self._canonical_genre_signature(item)
+                if not key:
+                    continue
+                lexicon.add(key)
+                for token in key.split():
+                    if len(token) >= 3:
+                        lexicon.add(token)
+
+        self._genre_lexicon = lexicon
+        return self._genre_lexicon
+
+    def _split_compound_genre_token(self, token: str) -> List[str]:
+        if len(token) < 6:
+            return [token]
+
+        lexicon = self._genre_keyword_lexicon()
+
+        # Detect glued compounds like "europop"/"electropop" using genre-family suffixes.
+        family_suffixes = {
+            "pop", "rock", "metal", "jazz", "soul", "funk", "house",
+            "trance", "wave", "bass", "punk", "folk", "country",
+            "blues", "disco", "hop", "rap", "dance",
+        }
+        for suffix in family_suffixes:
+            if token.endswith(suffix) and len(token) > len(suffix) + 2:
+                prefix = token[: -len(suffix)]
+                if len(prefix) >= 3 and prefix in lexicon:
+                    return [prefix, suffix]
+
+        if token in lexicon:
+            return [token]
+
+        best_parts: Optional[List[str]] = None
+        best_score = -1
+
+        for index in range(3, len(token) - 2):
+            left = token[:index]
+            right = token[index:]
+            if left in lexicon and right in lexicon:
+                score = min(len(left), len(right))
+                if score > best_score:
+                    best_score = score
+                    best_parts = [left, right]
+
+        return best_parts or [token]
+
+    def _display_genre_token(self, token: str) -> str:
+        acronyms = {
             "edm": "EDM",
             "mpb": "MPB",
-            "drum & bass": "Drum & Bass",
-            "drum and bass": "Drum & Bass",
-            "rock & roll": "Rock and Roll",
-            "rock and roll": "Rock and Roll",
-            "rock n roll": "Rock and Roll",
-            "rock n' roll": "Rock and Roll",
+            "rnb": "R&B",
         }
-        lowered = text.lower()
-        if lowered in canonical:
-            return canonical[lowered]
+        if token == "and":
+            return "and"
+        if token in acronyms:
+            return acronyms[token]
+        return token.title()
 
-        # Preserve separators and capitalize words around separators.
-        if "-" in text:
-            return "-".join(part.strip().title() for part in text.split("-"))
-        if "/" in text:
-            return "/".join(part.strip().title() for part in text.split("/"))
-        if " & " in text:
-            # Compound genre with "&": capitalize each side.
-            return " & ".join(part.strip().title() for part in text.split(" & "))
+    def _normalize_genre_name(self, value: Any) -> str:
+        """Normalize genre names using canonical rules instead of manual alias lists."""
+        signature = self._canonical_genre_signature(value)
+        if not signature:
+            return ""
 
-        return text.title()
+        if signature == "drum bass":
+            return "Drum & Bass"
+
+        parts: List[str] = []
+        for token in signature.split():
+            parts.extend(self._split_compound_genre_token(token))
+
+        parts = [part for part in parts if part]
+        if not parts:
+            return ""
+
+        # Prefer canonical hyphenated compounds for common style families.
+        if len(parts) == 2:
+            pair = (parts[0], parts[1])
+            hyphen_compounds = {
+                ("electro", "pop"): "Electro-Pop",
+                ("synth", "pop"): "Synth-Pop",
+                ("k", "pop"): "K-Pop",
+                ("j", "pop"): "J-Pop",
+                ("c", "pop"): "C-Pop",
+            }
+            if pair in hyphen_compounds:
+                return hyphen_compounds[pair]
+
+        return " ".join(self._display_genre_token(part) for part in parts)
 
     def _clean_track_name(self, track_name: str, artist: str) -> str:
         """Remove artist name from track name if present.
@@ -1238,16 +1590,16 @@ class MusicOrganizer(BaseOrganizer):
             track_cycle_stats=False,
         )
 
-        # Keep only the cleaned list form and preserve order.
-        filtered = list(dict.fromkeys(filtered)) if filtered else []
-        final["genres"] = filtered
+        # Keep only normalized cleaned list using canonical signatures.
+        normalized_filtered = self._normalize_genre_values(filtered)
+        final["genres"] = normalized_filtered
 
         # Select most specific genre as primary
         final["genre"] = self._select_primary_genre(
-            filtered) if filtered else ""
+            normalized_filtered) if normalized_filtered else ""
 
         # If all genres were removed, clear genre_source as well.
-        if not filtered and not final.get("genre"):
+        if not normalized_filtered and not final.get("genre"):
             final.pop("genre_source", None)
 
         if removed:
@@ -1329,8 +1681,9 @@ class MusicOrganizer(BaseOrganizer):
 
         filtered, removed = sanitize_genre_values(
             file_path, raw_genres, logger=self.logger)
-        cleaned["genres"] = filtered
-        cleaned["genre"] = filtered[0] if filtered else ""
+        normalized_filtered = self._normalize_genre_values(filtered)
+        cleaned["genres"] = normalized_filtered
+        cleaned["genre"] = normalized_filtered[0] if normalized_filtered else ""
 
         if not self._is_missing(cleaned.get("genre")):
             return cleaned
@@ -1423,6 +1776,7 @@ class MusicOrganizer(BaseOrganizer):
 
     def _normalize_genre_values(self, values: Any) -> List[str]:
         normalized: List[str] = []
+        seen_signatures: set[str] = set()
         if isinstance(values, (str, bytes)) or values is None:
             iterable = [values] if values is not None else []
         else:
@@ -1430,8 +1784,10 @@ class MusicOrganizer(BaseOrganizer):
 
         for value in iterable:
             genre_name = self._normalize_genre_name(value)
-            if genre_name and genre_name not in normalized:
+            signature = self._canonical_genre_signature(genre_name)
+            if genre_name and signature and signature not in seen_signatures:
                 normalized.append(genre_name)
+                seen_signatures.add(signature)
         return normalized
 
     def _merge_genre_lists(self, *lists: List[str]) -> List[str]:
@@ -1448,7 +1804,9 @@ class MusicOrganizer(BaseOrganizer):
         for item in self._coerce_genre_list(metadata):
             genre_name = self._normalize_genre_name(item)
             if genre_name:
-                normalized.add(genre_name.lower().strip())
+                signature = self._canonical_genre_signature(genre_name)
+                if signature:
+                    normalized.add(signature)
         return normalized
 
     def _verify_and_repair_genre_persistence(
@@ -1502,13 +1860,13 @@ class MusicOrganizer(BaseOrganizer):
 
         return True
 
-    def _should_complement_genres(self, metadata: Dict[str, Any]) -> bool:
+    def _complement_genre_decision(self, metadata: Dict[str, Any]) -> tuple[bool, str]:
         if not getattr(self.config, "music_genre_complement_enabled", True):
-            return False
+            return False, "config_disabled"
 
         genres = self._coerce_genre_list(metadata)
         if not genres:
-            return False
+            return False, "no_existing_genres"
 
         max_existing = getattr(
             self.config,
@@ -1516,10 +1874,57 @@ class MusicOrganizer(BaseOrganizer):
             1,
         )
         if len(genres) <= int(max_existing):
-            return True
+            return True, "under_existing_threshold"
 
         normalized = {genre.lower().strip() for genre in genres}
-        return normalized.issubset(self.GENERIC_GENRE_HINTS)
+        if normalized.issubset(self.GENERIC_GENRE_HINTS):
+            return True, "generic_only"
+
+        return False, "already_specific"
+
+    def _is_missing_genre_after_processing(self, metadata: Dict[str, Any]) -> bool:
+        normalized_genres = self._normalize_genre_values(
+            self._coerce_genre_list(metadata))
+        return not bool(normalized_genres)
+
+    def _enqueue_genre_enrichment_retry(self, entry: Dict[str, Any]) -> None:
+        try:
+            queue_path = self._genre_enrichment_retry_queue_path
+            queue_path.parent.mkdir(parents=True, exist_ok=True)
+
+            if queue_path.exists():
+                payload = json.loads(queue_path.read_text(encoding="utf-8"))
+                if not isinstance(payload, dict):
+                    payload = {}
+            else:
+                payload = {}
+
+            entries = payload.get("entries")
+            if not isinstance(entries, list):
+                entries = []
+
+            source_path = str(entry.get("source_path") or "")
+            replaced = False
+            for index, current in enumerate(entries):
+                if str(current.get("source_path") or "") == source_path:
+                    entries[index] = entry
+                    replaced = True
+                    break
+
+            if not replaced:
+                entries.append(entry)
+
+            payload["updated_at"] = datetime.now(
+                timezone.utc).isoformat(timespec="seconds")
+            payload["entries"] = entries
+            payload["count"] = len(entries)
+
+            queue_path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        except Exception as exc:
+            self.logger.warning("Failed to update genre retry queue: %s", exc)
 
     def _calculate_missing_fields(
         self,
@@ -1537,6 +1942,7 @@ class MusicOrganizer(BaseOrganizer):
         final_metadata: Dict[str, Any],
         online_metadata: Optional[Dict[str, Any]] = None,
         force_overwrite_fields: Optional[set[str]] = None,
+        normalize_release_year_cleanup: bool = False,
     ) -> bool:
         """
         Update audio file tags with Navidrome-compatible metadata.
@@ -1547,6 +1953,7 @@ class MusicOrganizer(BaseOrganizer):
         Supports: MP3 (ID3v2), FLAC/OGG/Opus (Vorbis), M4A, WMA.
         """
         try:
+            self._last_audio_tag_write_had_changes = False
             ext = file_path.suffix.lower()
             changed_fields: Dict[str, Any] = {}
             force_overwrite_fields = force_overwrite_fields or set()
@@ -1581,12 +1988,16 @@ class MusicOrganizer(BaseOrganizer):
                 "artists": final_metadata.get("artists") or original_metadata.get("artists"),
                 "album": (online_metadata or {}).get("album") or final_metadata.get("album"),
                 "year": (online_metadata or {}).get("year") or final_metadata.get("year"),
+                "track_number": final_metadata.get("track_number"),
             }
 
             def _as_comp(value: Any) -> str:
                 if isinstance(value, list):
                     return "|".join(str(v).strip() for v in value if str(v).strip()).lower()
                 return str(value or "").strip().lower()
+
+            def _as_text_preserve_case(value: Any) -> str:
+                return " ".join(str(value or "").strip().split())
 
             for field, candidate in candidate_map.items():
                 # Always sanitize genre values, even when tags already exist.
@@ -1677,7 +2088,13 @@ class MusicOrganizer(BaseOrganizer):
                     continue
 
                 if field in force_overwrite_fields:
-                    if _as_comp(original_metadata.get(field)) != _as_comp(candidate):
+                    if field in {"album", "title", "artist", "album_artist"}:
+                        if _as_text_preserve_case(original_metadata.get(field)) != _as_text_preserve_case(candidate):
+                            changed_fields[field] = candidate
+                    elif field == "track_number":
+                        if self._normalize_track_number_for_compare(original_metadata.get(field)) != self._normalize_track_number_for_compare(candidate):
+                            changed_fields[field] = candidate
+                    elif _as_comp(original_metadata.get(field)) != _as_comp(candidate):
                         changed_fields[field] = candidate
                     continue
 
@@ -1712,12 +2129,23 @@ class MusicOrganizer(BaseOrganizer):
                         changed_fields["genres"] = normalized_final_genres
                         changed_fields.pop("genre", None)
 
+            if normalize_release_year_cleanup and ext in {".flac", ".ogg", ".opus"}:
+                try:
+                    from mutagen.flac import FLAC
+                    audio = FLAC(file_path)
+                    audio_tags = cast(Any, audio.tags)
+                    if audio_tags is not None and "year" in audio_tags and "__cleanup_release_year__" not in changed_fields:
+                        changed_fields["__cleanup_release_year__"] = True
+                except Exception:
+                    pass
+
             if not changed_fields:
                 self.logger.debug(
                     "File already has normalized metadata or no updates needed: %s", file_path.name)
                 return True
 
             if self.dry_run:
+                self._last_audio_tag_write_had_changes = True
                 self.logger.info(
                     "[DRY RUN] Would update %s with fields: %s",
                     file_path.name,
@@ -1732,9 +2160,20 @@ class MusicOrganizer(BaseOrganizer):
 
                 # Always sanitize existing on-disk genre tags.
                 from app.features.genre_guard import sanitize_genre_values
+                audio_tags = cast(Any, audio.tags)
+                year_cleanup_requested = changed_fields.pop(
+                    "__cleanup_release_year__", None) is not None
+                year_cleanup_applied = False
+                if year_cleanup_requested and audio_tags is not None and "year" in audio_tags:
+                    try:
+                        del audio_tags["year"]
+                        year_cleanup_applied = True
+                    except Exception:
+                        pass
 
                 # Read current on-disk genres.
-                current_audio_genres = audio.tags.get('genre', [])
+                current_audio_genres = audio_tags.get(
+                    'genre', []) if audio_tags is not None else []
                 if current_audio_genres:
                     # Apply sanitizer on every write path.
                     sanitized, removed = sanitize_genre_values(
@@ -1743,18 +2182,29 @@ class MusicOrganizer(BaseOrganizer):
                         track_cycle_stats=False,
                     )
                     normalized_current_audio_genres = self._normalize_genre_values(
-                        current_audio_genres
+                        sanitized
                     )
+                    needs_sanitizer_cleanup = sanitized != current_audio_genres
+                    needs_normalization_cleanup = normalized_current_audio_genres != sanitized
 
                     # Update tags if values changed or invalid ones were removed.
                     if (
                         removed
-                        or sanitized != current_audio_genres
-                        or normalized_current_audio_genres != current_audio_genres
+                        or needs_sanitizer_cleanup
+                        or needs_normalization_cleanup
                     ):
                         changed_fields['genres'] = normalized_current_audio_genres
-                        self.logger.info("Forcing genre cleanup for %s: removed %s invalid",
-                                         file_path.name, len(removed))
+                        if removed:
+                            self.logger.info(
+                                "Forcing genre cleanup for %s: removed %s invalid",
+                                file_path.name,
+                                len(removed),
+                            )
+                        else:
+                            self.logger.info(
+                                "Forcing genre normalization for %s: canonicalized existing genre values",
+                                file_path.name,
+                            )
 
                 preferred_genres = self._normalize_genre_values(
                     final_metadata.get("genres")
@@ -1775,19 +2225,25 @@ class MusicOrganizer(BaseOrganizer):
                     # Write native multi-value tag, or remove when empty.
                     if clean_genres:
                         audio["genre"] = clean_genres
-                    elif "genre" in audio.tags:
-                        del audio.tags["genre"]
+                    elif audio_tags is not None and "genre" in audio_tags:
+                        try:
+                            del audio_tags["genre"]
+                        except Exception:
+                            pass
 
                     # Ensure a concatenated string value is not kept.
-                    if "genre" in audio.tags:
-                        existing = audio.tags["genre"]
+                    if audio_tags is not None and "genre" in audio_tags:
+                        existing = audio_tags["genre"]
                         if isinstance(existing, str) and (',' in existing or ';' in existing):
                             # Remove concatenated value and keep only multi-value.
-                            del audio.tags["genre"]
+                            try:
+                                del audio_tags["genre"]
+                            except Exception:
+                                pass
 
-                elif "genre" in changed_fields:
+                elif "genres" in changed_fields or "genre" in changed_fields:
                     single_genre = self._normalize_genre_name(
-                        changed_fields["genre"])
+                        changed_fields.get("genre"))
                     if single_genre and ',' not in single_genre and ';' not in single_genre:
                         audio["genre"] = [single_genre]
                     elif single_genre:
@@ -1795,8 +2251,8 @@ class MusicOrganizer(BaseOrganizer):
                         separator = ';' if ';' in single_genre else ','
                         audio["genre"] = [p.strip()
                                           for p in single_genre.split(separator) if p.strip()]
-                    elif "genre" in audio.tags:
-                        del audio.tags["genre"]
+                    elif audio_tags is not None and "genre" in audio_tags:
+                        del audio_tags["genre"]
                 if "musicbrainz_trackid" in changed_fields:
                     audio["musicbrainz_trackid"] = [
                         str(changed_fields["musicbrainz_trackid"])]
@@ -1819,6 +2275,9 @@ class MusicOrganizer(BaseOrganizer):
                     audio["album"] = [str(changed_fields["album"])]
                 if "year" in changed_fields:
                     audio["date"] = [str(changed_fields["year"])]
+                if "track_number" in changed_fields:
+                    audio["tracknumber"] = [
+                        str(changed_fields["track_number"])]
                 # Preserve disc number if exists
                 if "disc_number" in original_metadata and original_metadata["disc_number"]:
                     audio["discnumber"] = [
@@ -1829,12 +2288,16 @@ class MusicOrganizer(BaseOrganizer):
                         str(original_metadata["compilation"])]
 
                 audio.save()
+                self._last_audio_tag_write_had_changes = True
+                logged_fields = sorted(changed_fields.keys())
+                if year_cleanup_applied:
+                    logged_fields.append("release_year_cleanup")
                 self.logger.info("Updated tags (FLAC): %s | fields: %s",
-                                 file_path.name, ", ".join(sorted(changed_fields.keys())))
+                                 file_path.name, ", ".join(logged_fields))
                 return True
 
             if ext == ".mp3":
-                from mutagen.id3 import ID3, TALB, TDRC, TCON, TIT2, TPE1, TPE2, TSRC, TXXX, TPOS, TCMP
+                from mutagen.id3 import ID3, TALB, TDRC, TCON, TIT2, TPE1, TPE2, TSRC, TXXX, TPOS, TCMP, TRCK
 
                 audio = ID3(file_path)
 
@@ -1852,16 +2315,27 @@ class MusicOrganizer(BaseOrganizer):
                         track_cycle_stats=False,
                     )
                     normalized_current_audio_genres = self._normalize_genre_values(
-                        current_audio_genres
+                        sanitized
                     )
+                    needs_sanitizer_cleanup = sanitized != current_audio_genres
+                    needs_normalization_cleanup = normalized_current_audio_genres != sanitized
                     if (
                         removed
-                        or sanitized != current_audio_genres
-                        or normalized_current_audio_genres != current_audio_genres
+                        or needs_sanitizer_cleanup
+                        or needs_normalization_cleanup
                     ):
                         changed_fields['genres'] = normalized_current_audio_genres
-                        self.logger.info("Forcing genre cleanup for %s: removed %s invalid",
-                                         file_path.name, len(removed))
+                        if removed:
+                            self.logger.info(
+                                "Forcing genre cleanup for %s: removed %s invalid",
+                                file_path.name,
+                                len(removed),
+                            )
+                        else:
+                            self.logger.info(
+                                "Forcing genre normalization for %s: canonicalized existing genre values",
+                                file_path.name,
+                            )
 
                 preferred_genres = self._normalize_genre_values(
                     final_metadata.get("genres")
@@ -1911,6 +2385,9 @@ class MusicOrganizer(BaseOrganizer):
                 if "year" in changed_fields:
                     audio["TDRC"] = TDRC(
                         encoding=3, text=str(changed_fields["year"]))
+                if "track_number" in changed_fields:
+                    audio["TRCK"] = TRCK(
+                        encoding=3, text=str(changed_fields["track_number"]))
                 # Preserve disc number if exists
                 if "disc_number" in original_metadata and original_metadata["disc_number"]:
                     audio["TPOS"] = TPOS(encoding=3, text=str(
@@ -1921,6 +2398,7 @@ class MusicOrganizer(BaseOrganizer):
                         encoding=3, text=original_metadata["compilation"])
 
                 audio.save()
+                self._last_audio_tag_write_had_changes = True
                 self.logger.info("Updated tags (MP3): %s | fields: %s",
                                  file_path.name, ", ".join(sorted(changed_fields.keys())))
                 return True
@@ -1933,7 +2411,9 @@ class MusicOrganizer(BaseOrganizer):
                 # Always sanitize existing on-disk genre tags.
                 from app.features.genre_guard import sanitize_genre_values
 
-                current_audio_genres = audio.tags.get('\xa9gen', [])
+                audio_tags = cast(Any, audio.tags)
+                current_audio_genres = audio_tags.get(
+                    '\xa9gen', []) if audio_tags is not None else []
                 if current_audio_genres:
                     sanitized, removed = sanitize_genre_values(
                         file_path,
@@ -1941,16 +2421,27 @@ class MusicOrganizer(BaseOrganizer):
                         track_cycle_stats=False,
                     )
                     normalized_current_audio_genres = self._normalize_genre_values(
-                        current_audio_genres
+                        sanitized
                     )
+                    needs_sanitizer_cleanup = sanitized != current_audio_genres
+                    needs_normalization_cleanup = normalized_current_audio_genres != sanitized
                     if (
                         removed
-                        or sanitized != current_audio_genres
-                        or normalized_current_audio_genres != current_audio_genres
+                        or needs_sanitizer_cleanup
+                        or needs_normalization_cleanup
                     ):
                         changed_fields['genres'] = normalized_current_audio_genres
-                        self.logger.info("Forcing genre cleanup for %s: removed %s invalid",
-                                         file_path.name, len(removed))
+                        if removed:
+                            self.logger.info(
+                                "Forcing genre cleanup for %s: removed %s invalid",
+                                file_path.name,
+                                len(removed),
+                            )
+                        else:
+                            self.logger.info(
+                                "Forcing genre normalization for %s: canonicalized existing genre values",
+                                file_path.name,
+                            )
 
                 preferred_genres = self._normalize_genre_values(
                     final_metadata.get("genres")
@@ -1961,8 +2452,13 @@ class MusicOrganizer(BaseOrganizer):
                 if preferred_genres:
                     audio["\xa9gen"] = [
                         str(v) for v in preferred_genres if str(v).strip()]
-                elif "genre" in changed_fields:
-                    audio["\xa9gen"] = [str(changed_fields["genre"])]
+                elif "genres" in changed_fields or "genre" in changed_fields:
+                    single_genre = str(
+                        changed_fields.get("genre") or "").strip()
+                    if single_genre:
+                        audio["\xa9gen"] = [single_genre]
+                    elif audio_tags is not None and "\xa9gen" in audio_tags:
+                        del audio_tags["\xa9gen"]
                 if "title" in changed_fields:
                     audio["\xa9nam"] = [str(changed_fields["title"])]
                 if "artists" in changed_fields and isinstance(changed_fields["artists"], list) and changed_fields["artists"]:
@@ -1976,10 +2472,21 @@ class MusicOrganizer(BaseOrganizer):
                     audio["\xa9alb"] = [str(changed_fields["album"])]
                 if "year" in changed_fields:
                     audio["\xa9day"] = [str(changed_fields["year"])]
+                if "track_number" in changed_fields:
+                    track_text = str(
+                        changed_fields["track_number"] or "").strip()
+                    track_match = re.match(
+                        r"^(\d+)(?:\s*/\s*(\d+))?$", track_text)
+                    if track_match:
+                        track_num = int(track_match.group(1))
+                        total = int(track_match.group(
+                            2)) if track_match.group(2) else 0
+                        audio["trkn"] = [(track_num, total)]
                 if "isrc" in changed_fields:
                     audio["ISRC"] = [str(changed_fields["isrc"])]
 
                 audio.save()
+                self._last_audio_tag_write_had_changes = True
                 self.logger.info("Updated tags (M4A): %s | fields: %s",
                                  file_path.name, ", ".join(sorted(changed_fields.keys())))
                 return True
@@ -1988,6 +2495,7 @@ class MusicOrganizer(BaseOrganizer):
                 "Tag update not implemented for format %s (%s)", ext, file_path.name)
             return True
         except Exception as exc:
+            self._last_audio_tag_write_had_changes = False
             self.logger.error(
                 f"Failed to update tags for {file_path.name}: {exc}")
             return False
@@ -2054,7 +2562,8 @@ class MusicOrganizer(BaseOrganizer):
                 self.dry_run = previous_dry_run
 
             result["processed"] = True
-            result["updated"] = bool(updated)
+            result["updated"] = bool(
+                updated and self._last_audio_tag_write_had_changes)
             result["removed_genres"] = removed
             return result
         except Exception as exc:
@@ -2116,6 +2625,12 @@ class MusicOrganizer(BaseOrganizer):
         from datetime import datetime
         from tinydb import Query
 
+        def _log_recheck_stage(title: str) -> None:
+            self.logger.info("")
+            self.logger.info("%s", "-" * 80)
+            self.logger.info("Music | DB RECHECK | %s", title)
+            self.logger.info("%s", "-" * 80)
+
         if dry_run is None:
             effective_dry_run = self.dry_run
         else:
@@ -2124,6 +2639,7 @@ class MusicOrganizer(BaseOrganizer):
         report = {
             "music_records_scanned": 0,
             "tracks_flagged_invalid_genres": 0,
+            "tracks_flagged_genre_normalization": 0,
             "db_metadata_updates": 0,
             "tracks_reprocessed": 0,
             "tracks_updated": 0,
@@ -2133,22 +2649,21 @@ class MusicOrganizer(BaseOrganizer):
 
         records = self.database.media_table.all()
         Media = Query()
+        _log_recheck_stage("TRACK PASS START")
 
         for record in records:
             metadata = dict(record.get("metadata") or {})
-            media_type = str(metadata.get("media_type") or "").strip().lower()
-            media_subtype = str(metadata.get(
-                "media_subtype") or "").strip().lower()
-            if media_type != "music" and media_subtype != "music":
+            organized_path = Path(str(record.get("organized_path") or ""))
+            if not self._is_music_record_for_recheck(metadata, organized_path):
                 continue
 
             report["music_records_scanned"] += 1
 
             current_genres: List[str] = []
-            if isinstance(metadata.get("genres"), list):
+            genres_value = metadata.get("genres") or []
+            if isinstance(genres_value, list):
                 current_genres.extend(
-                    [str(v).strip()
-                     for v in metadata.get("genres") if str(v).strip()]
+                    [str(v).strip() for v in genres_value if str(v).strip()]
                 )
             single_genre = str(metadata.get("genre") or "").strip()
             if single_genre:
@@ -2168,13 +2683,30 @@ class MusicOrganizer(BaseOrganizer):
                 track_cycle_stats=False,
             )
 
-            if not removed:
+            normalized_filtered = self._normalize_genre_values(filtered)
+            current_normalized = self._normalize_genre_values(current_genres)
+            needs_normalization = current_normalized != normalized_filtered
+
+            if not removed and not needs_normalization:
                 continue
 
-            report["tracks_flagged_invalid_genres"] += 1
+            track_label = str(record.get("organized_path") or "")
+            if track_label:
+                track_label = Path(track_label).name
+            else:
+                track_label = Path(
+                    str(record.get("original_path") or "unknown")).name
+
+            _log_recheck_stage(
+                f"TRACK START | file={track_label} | removed_invalid={len(removed)} | needs_normalization={int(needs_normalization)}"
+            )
+
+            if removed:
+                report["tracks_flagged_invalid_genres"] += 1
+            if needs_normalization:
+                report["tracks_flagged_genre_normalization"] += 1
             report["removed_genre_values"] += len(removed)
 
-            normalized_filtered = self._normalize_genre_values(filtered)
             cleaned_metadata = dict(metadata)
             cleaned_metadata["genres"] = normalized_filtered
             cleaned_metadata["genre"] = normalized_filtered[0] if normalized_filtered else ""
@@ -2217,19 +2749,312 @@ class MusicOrganizer(BaseOrganizer):
             if outcome.get("error"):
                 report["file_errors"] += 1
 
-        return report
-
-    async def organizar(self, file_path: Path) -> OrganizationResult:
-        if self.database.is_file_organized(str(file_path)):
-            return OrganizationResult(
-                success=True,
-                skipped=True,
-                skip_reason="already_registered_in_database",
+            _log_recheck_stage(
+                f"TRACK END | file={track_label} | processed={int(bool(outcome.get('processed')))} | updated={int(bool(outcome.get('updated')))} | error={int(bool(outcome.get('error')))}"
             )
 
-        # Clean original file tags before destination/metadata decisions.
-        self.clean_invalid_genres_in_file(file_path)
+        _log_recheck_stage("TRACK PASS END")
 
+        return report
+
+    def reprocess_db_tracks_with_album_identity(
+        self,
+        dry_run: Optional[bool] = None,
+    ) -> Dict[str, Any]:
+        """Normalize album identity fields across organized music tracks."""
+        from datetime import datetime
+        from tinydb import Query
+
+        if dry_run is None:
+            effective_dry_run = self.dry_run
+        else:
+            effective_dry_run = dry_run
+
+        report: Dict[str, Any] = {
+            "music_records_scanned": 0,
+            "album_groups_scanned": 0,
+            "album_groups_with_variants": 0,
+            "track_groups_with_inconsistencies": 0,
+            "path_album_mismatches": 0,
+            "tracks_updated": 0,
+            "files_skipped": 0,
+            "file_errors": 0,
+            "groups": [],
+        }
+
+        records = self.database.media_table.all()
+        Media = Query()
+        grouped: Dict[tuple[str, str],
+                      List[Dict[str, Any]]] = defaultdict(list)
+        seen_organized_paths: set[str] = set()
+
+        for record in records:
+            metadata = dict(record.get("metadata") or {})
+            organized_path = Path(str(record.get("organized_path") or ""))
+            if not self._is_music_record_for_recheck(metadata, organized_path):
+                continue
+
+            organized_path = Path(str(record.get("organized_path") or ""))
+            if not organized_path.exists() or not self.pode_processar(organized_path):
+                report["files_skipped"] += 1
+                continue
+
+            # Same organized file can appear multiple times in DB (legacy duplicates).
+            # Recheck each physical file only once to avoid repeated track rewrites.
+            organized_path_key = str(organized_path)
+            if organized_path_key in seen_organized_paths:
+                report["files_skipped"] += 1
+                continue
+            seen_organized_paths.add(organized_path_key)
+
+            current_metadata = self._read_audio_tags(organized_path)
+            if not current_metadata:
+                report["files_skipped"] += 1
+                continue
+
+            report["music_records_scanned"] += 1
+            grouped[self._normalize_album_identity(current_metadata)].append(
+                {
+                    "record": record,
+                    "metadata": current_metadata,
+                    "path": organized_path,
+                }
+            )
+
+        for group_key, items in grouped.items():
+            report["album_groups_scanned"] += 1
+            album_values = [
+                str(item["metadata"].get("album") or "").strip()
+                for item in items
+                if str(item["metadata"].get("album") or "").strip()
+            ]
+            album_artist_values = [
+                self._get_primary_artist(
+                    str(
+                        item["metadata"].get("album_artist")
+                        or item["metadata"].get("artist")
+                        or ""
+                    )
+                )
+                for item in items
+                if str(
+                    item["metadata"].get("album_artist")
+                    or item["metadata"].get("artist")
+                    or ""
+                ).strip()
+            ]
+            year_values = [
+                year for year in (
+                    self._extract_release_year(item["metadata"]) for item in items
+                ) if year is not None
+            ]
+
+            canonical_album = self._prefer_album_variant(
+                [self._normalize_album_name(value) for value in album_values]
+            )
+            canonical_album_artist = self._prefer_album_variant(
+                album_artist_values)
+            canonical_year = max(
+                year_values,
+                key=lambda value: (year_values.count(value), -value),
+                default=None,
+            )
+
+            if not canonical_album:
+                canonical_album = self._normalize_album_name(
+                    album_values[0] if album_values else ""
+                )
+            if not canonical_album_artist:
+                canonical_album_artist = self._get_primary_artist(
+                    album_artist_values[0] if album_artist_values else ""
+                )
+
+            needs_normalization = (
+                len(set(album_values)) > 1
+                or len(set(album_artist_values)) > 1
+                or len(set(year_values)) > 1
+            )
+
+            track_entries: List[Dict[str, Any]] = []
+            for item in items:
+                current_metadata = item["metadata"]
+                file_path = item["path"]
+                disc_num = self._parse_numeric_tag_value(
+                    current_metadata.get("disc_number")) or 1
+                track_num = self._parse_numeric_tag_value(
+                    current_metadata.get("track_number"))
+                filename_track = self._extract_track_from_filename(file_path)
+                title_value = str(
+                    current_metadata.get("title") or file_path.stem or "").strip().casefold()
+                track_entries.append(
+                    {
+                        "item": item,
+                        "disc": disc_num,
+                        "track": track_num,
+                        "filename_track": filename_track,
+                        "title": title_value,
+                    }
+                )
+
+            keyed_tracks = [
+                (entry["disc"], entry["track"])
+                for entry in track_entries
+                if entry["track"] is not None
+            ]
+            has_missing_track = any(
+                entry["track"] is None for entry in track_entries)
+            has_duplicate_track = len(set(keyed_tracks)) != len(keyed_tracks)
+            needs_track_rebuild = len(track_entries) > 1 and (
+                has_missing_track or has_duplicate_track
+            )
+
+            track_targets: Dict[int, str] = {}
+            if needs_track_rebuild:
+                report["track_groups_with_inconsistencies"] += 1
+                ordered_entries = sorted(
+                    track_entries,
+                    key=lambda entry: (
+                        entry["disc"],
+                        entry["filename_track"] if entry["filename_track"] is not None else 10_000,
+                        entry["track"] if entry["track"] is not None else 10_000,
+                        entry["title"],
+                        entry["item"]["path"].name.casefold(),
+                    ),
+                )
+                current_disc = None
+                next_track = 0
+                for entry in ordered_entries:
+                    disc_num = int(entry["disc"])
+                    if current_disc != disc_num:
+                        current_disc = disc_num
+                        next_track = 1
+                    target_track = str(next_track)
+                    track_targets[id(entry["item"])] = target_track
+                    next_track += 1
+
+            if needs_normalization:
+                report["album_groups_with_variants"] += 1
+                report["groups"].append(
+                    {
+                        "album": canonical_album,
+                        "artist": canonical_album_artist,
+                        "years": sorted(set(year_values)),
+                        "album_variants": sorted(set(album_values)),
+                        "album_artist_variants": sorted(set(album_artist_values)),
+                        "track_inconsistency": bool(needs_track_rebuild),
+                        "tracks": len(items),
+                    }
+                )
+
+            for item in items:
+                file_path: Path = item["path"]
+                current_metadata = item["metadata"]
+                final_metadata = dict(current_metadata)
+                final_metadata["album"] = canonical_album
+                final_metadata["album_artist"] = canonical_album_artist
+                final_metadata["primary_artist"] = canonical_album_artist
+
+                expected_album_from_path = self._infer_album_from_library_path(
+                    file_path)
+                # Apply path-based correction only when group is otherwise stable.
+                # If this group already has album variants, prefer canonical group name.
+                if expected_album_from_path and not needs_normalization:
+                    current_album_norm = self._normalize_album_name(
+                        str(current_metadata.get("album") or "")
+                    )
+                    if not current_album_norm or current_album_norm.casefold() != expected_album_from_path.casefold():
+                        final_metadata["album"] = expected_album_from_path
+                        report["path_album_mismatches"] += 1
+
+                if canonical_year is not None:
+                    final_metadata["year"] = canonical_year
+                if needs_track_rebuild:
+                    target_track_number = track_targets.get(id(item))
+                    if target_track_number:
+                        final_metadata["track_number"] = target_track_number
+
+                needs_year_cleanup = self._has_legacy_year_tag(file_path)
+
+                should_update = (
+                    self._normalize_album_name(
+                        str(current_metadata.get("album") or ""))
+                    != self._normalize_album_name(
+                        str(final_metadata.get("album") or ""))
+                    or self._get_primary_artist(
+                        str(
+                            current_metadata.get("album_artist")
+                            or current_metadata.get("artist")
+                            or ""
+                        )
+                    ) != canonical_album_artist
+                    or self._extract_release_year(current_metadata) != canonical_year
+                    or (
+                        needs_track_rebuild
+                        and self._normalize_track_number_for_compare(current_metadata.get("track_number"))
+                        != self._normalize_track_number_for_compare(final_metadata.get("track_number"))
+                    )
+                    or needs_year_cleanup
+                )
+
+                if not should_update:
+                    continue
+
+                if effective_dry_run:
+                    report["tracks_updated"] += 1
+                    continue
+
+                updated = self._update_audio_tags(
+                    file_path=file_path,
+                    original_metadata=current_metadata,
+                    final_metadata=final_metadata,
+                    online_metadata=None,
+                    force_overwrite_fields={
+                        "album", "album_artist", "year", "track_number"},
+                    normalize_release_year_cleanup=True,
+                )
+                if updated:
+                    report["tracks_updated"] += 1
+                    updated_metadata = dict(
+                        item["record"].get("metadata") or {})
+                    updated_metadata.update(current_metadata)
+                    updated_metadata["album"] = canonical_album
+                    updated_metadata["album_artist"] = canonical_album_artist
+                    updated_metadata["primary_artist"] = canonical_album_artist
+                    if canonical_year is not None:
+                        updated_metadata["year"] = canonical_year
+                    if needs_track_rebuild and str(final_metadata.get("track_number") or "").strip():
+                        updated_metadata["track_number"] = str(
+                            final_metadata.get("track_number")).strip()
+                    update_payload = {
+                        "metadata": updated_metadata,
+                        "last_checked": datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S"),
+                    }
+                    record = item["record"]
+                    organized_path = str(record.get("organized_path") or "")
+                    original_path = str(record.get("original_path") or "")
+                    if organized_path:
+                        self.database.media_table.update(
+                            update_payload,
+                            Media.organized_path == organized_path,
+                        )
+                    elif original_path:
+                        self.database.media_table.update(
+                            update_payload,
+                            Media.original_path == original_path,
+                        )
+                else:
+                    report["file_errors"] += 1
+
+        return report
+
+    async def backfill_music_album_metadata(self, dry_run: bool = True) -> Dict[str, Any]:
+        """Normalize album identity metadata across organized music tracks."""
+        report = self.reprocess_db_tracks_with_album_identity(dry_run=dry_run)
+        report["dry_run"] = dry_run
+        return report
+
+    def _build_music_organization_context(self, file_path: Path) -> Dict[str, Any]:
+        """Build baseline metadata/destination context for one music file."""
         existing_meta = self._sanitize_polluted_genre_from_metadata(
             self._read_audio_tags(file_path),
             file_path,
@@ -2246,29 +3071,47 @@ class MusicOrganizer(BaseOrganizer):
             file_path=file_path,
         )
         baseline_dest = self.get_destination_path(file_path, baseline_meta)
-        early_skip = self._early_skip_if_conflict(
-            file_path,
-            baseline_dest,
-            baseline_meta,
-        )
-        if early_skip:
-            return early_skip
 
+        return {
+            "existing_meta": existing_meta,
+            "filename_meta": filename_meta,
+            "baseline_meta": baseline_meta,
+            "baseline_dest": baseline_dest,
+        }
+
+    async def _resolve_enrichment_policy_with_retry(
+        self,
+        *,
+        file_path: Path,
+        existing_meta: Dict[str, Any],
+        filename_meta: Dict[str, Any],
+        baseline_meta: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Resolve online enrichment policy (including retry queue behavior)."""
         online_meta: Dict[str, Any] = {}
+        missing_before_online: List[str] = []
+        should_complement_genres = False
+        complement_reason = "not_evaluated"
+        enrichment_status = "disabled"
+        enrichment_error = ""
+
         if self.config.enrich_music_metadata_online:
             # Calculate against raw file tags; only true gaps should trigger lookups.
             missing_before_online = self._calculate_missing_fields(
                 existing_meta)
-            should_complement_genres = self._should_complement_genres(
-                existing_meta)
+            should_complement_genres, complement_reason = self._complement_genre_decision(
+                existing_meta
+            )
             if missing_before_online or should_complement_genres:
                 enrichment_reason = ",".join(
                     missing_before_online) if missing_before_online else "genre"
+                enrichment_status = "started"
                 self.logger.info(
-                    "Metadata enrichment start: %s | missing-targets=%s | complement-genres=%s",
+                    "Metadata enrichment start: %s | missing-targets=%s | complement-genres=%s | complement-reason=%s",
                     file_path.name,
                     enrichment_reason,
                     should_complement_genres,
+                    complement_reason,
                 )
                 try:
                     online_meta = await asyncio.wait_for(
@@ -2283,14 +3126,30 @@ class MusicOrganizer(BaseOrganizer):
                         ),
                         timeout=self.config.music_metadata_api_timeout_seconds,
                     )
+                    enrichment_status = "success" if online_meta else "empty_result"
                     self.logger.info(
-                        "Metadata enrichment done: %s", file_path.name)
+                        "Metadata enrichment done: %s | status=%s | genre-in-result=%s",
+                        file_path.name,
+                        enrichment_status,
+                        bool(self._coerce_genre_list(online_meta)),
+                    )
                 except asyncio.TimeoutError:
+                    enrichment_status = "timeout"
+                    enrichment_error = "timeout"
                     self.logger.warning(
                         "Metadata enrichment timed out for %s; continuing without online data",
                         file_path.name,
                     )
+                except Exception as exc:
+                    enrichment_status = "request_error"
+                    enrichment_error = str(exc)
+                    self.logger.warning(
+                        "Metadata enrichment failed for %s; continuing without online data: %s",
+                        file_path.name,
+                        exc,
+                    )
             else:
+                enrichment_status = "skipped_no_gaps"
                 self.logger.info(
                     "Metadata enrichment skipped (no gaps): %s",
                     file_path.name,
@@ -2300,25 +3159,119 @@ class MusicOrganizer(BaseOrganizer):
                     "Metadata enrichment complement enabled for %s",
                     file_path.name,
                 )
+            if (
+                not should_complement_genres
+                and "genre" in set(missing_before_online)
+            ):
+                self.logger.info(
+                    "Genre complement not requested for %s | reason=%s",
+                    file_path.name,
+                    complement_reason,
+                )
 
         final_meta = self._determine_final_metadata(
             existing_tags_metadata=existing_meta,
             filename_metadata=filename_meta,
             file_path=file_path,
             online_metadata=online_meta,
-            complement_genres=self._should_complement_genres(existing_meta),
+            complement_genres=should_complement_genres,
         )
 
-        final_dest = self.get_destination_path(file_path, final_meta)
-        if final_dest != baseline_dest:
-            early_skip = self._early_skip_if_conflict(
-                file_path,
-                final_dest,
-                final_meta,
+        genre_still_missing = self._is_missing_genre_after_processing(
+            final_meta)
+        should_retry_genre_enrichment = (
+            "genre" in set(missing_before_online)
+            and genre_still_missing
+            and enrichment_status in {"timeout", "request_error", "empty_result"}
+        )
+        if should_retry_genre_enrichment:
+            self.logger.info(
+                "Retrying genre enrichment for %s | previous-status=%s",
+                file_path.name,
+                enrichment_status,
             )
-            if early_skip:
-                return early_skip
+            try:
+                retry_online_meta = await asyncio.wait_for(
+                    self._fetch_online_music_metadata(
+                        file_path,
+                        baseline_meta,
+                        needs_genre=True,
+                    ),
+                    timeout=self.config.music_metadata_api_timeout_seconds,
+                )
+                if retry_online_meta:
+                    retry_final_meta = self._determine_final_metadata(
+                        existing_tags_metadata=existing_meta,
+                        filename_metadata=filename_meta,
+                        file_path=file_path,
+                        online_metadata=retry_online_meta,
+                        complement_genres=should_complement_genres,
+                    )
+                    if not self._is_missing_genre_after_processing(retry_final_meta):
+                        final_meta = retry_final_meta
+                        online_meta = retry_online_meta
+                        enrichment_status = "retry_success"
+                        genre_still_missing = False
+                    else:
+                        enrichment_status = "retry_empty_genre"
+                else:
+                    enrichment_status = "retry_empty_result"
+            except asyncio.TimeoutError:
+                enrichment_status = "retry_timeout"
+                enrichment_error = "retry_timeout"
+                self.logger.warning(
+                    "Genre enrichment retry timed out for %s",
+                    file_path.name,
+                )
+            except Exception as exc:
+                enrichment_status = "retry_request_error"
+                enrichment_error = str(exc)
+                self.logger.warning(
+                    "Genre enrichment retry failed for %s: %s",
+                    file_path.name,
+                    exc,
+                )
 
+        if "genre" in set(missing_before_online) and genre_still_missing:
+            self.logger.warning(
+                "Genre enrichment unresolved for %s | enrichment-status=%s | complement-genres=%s | complement-reason=%s",
+                file_path.name,
+                enrichment_status,
+                should_complement_genres,
+                complement_reason,
+            )
+            self._enqueue_genre_enrichment_retry(
+                {
+                    "queued_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                    "source_path": str(file_path),
+                    "intended_destination": str(self.get_destination_path(file_path, final_meta)),
+                    "missing_targets": missing_before_online,
+                    "enrichment_status": enrichment_status,
+                    "enrichment_error": enrichment_error,
+                    "complement_genres": should_complement_genres,
+                    "complement_reason": complement_reason,
+                }
+            )
+
+        return {
+            "online_meta": online_meta,
+            "missing_before_online": missing_before_online,
+            "should_complement_genres": should_complement_genres,
+            "complement_reason": complement_reason,
+            "enrichment_status": enrichment_status,
+            "enrichment_error": enrichment_error,
+            "final_meta": final_meta,
+        }
+
+    def _persist_music_tags_with_verification(
+        self,
+        *,
+        file_path: Path,
+        existing_meta: Dict[str, Any],
+        final_meta: Dict[str, Any],
+        online_meta: Dict[str, Any],
+    ) -> Optional[OrganizationResult]:
+        """Persist tag updates and verify genre persistence when required."""
         tags_updated = self._update_audio_tags(
             file_path,
             existing_meta,
@@ -2343,7 +3296,74 @@ class MusicOrganizer(BaseOrganizer):
                     error_message="Genre persistence mismatch after retry; organization aborted before database write",
                 )
 
+        return None
+
+    async def _run_music_organization_pipeline(
+        self,
+        *,
+        file_path: Path,
+        context: Dict[str, Any],
+    ) -> OrganizationResult:
+        """Run the music organization pipeline from prepared context."""
+        existing_meta = context["existing_meta"]
+        filename_meta = context["filename_meta"]
+        baseline_meta = context["baseline_meta"]
+        baseline_dest = context["baseline_dest"]
+
+        early_skip = self._early_skip_if_conflict(
+            file_path,
+            baseline_dest,
+            baseline_meta,
+        )
+        if early_skip:
+            return early_skip
+
+        enrichment = await self._resolve_enrichment_policy_with_retry(
+            file_path=file_path,
+            existing_meta=existing_meta,
+            filename_meta=filename_meta,
+            baseline_meta=baseline_meta,
+        )
+        final_meta = enrichment["final_meta"]
+        online_meta = enrichment["online_meta"]
+
+        final_dest = self.get_destination_path(file_path, final_meta)
+        if final_dest != baseline_dest:
+            early_skip = self._early_skip_if_conflict(
+                file_path,
+                final_dest,
+                final_meta,
+            )
+            if early_skip:
+                return early_skip
+
+        persistence_error = self._persist_music_tags_with_verification(
+            file_path=file_path,
+            existing_meta=existing_meta,
+            final_meta=final_meta,
+            online_meta=online_meta,
+        )
+        if persistence_error is not None:
+            return persistence_error
+
         return await self.organizar_file(file_path, final_dest, final_meta)
+
+    async def organizar(self, file_path: Path) -> OrganizationResult:
+        if self.database.is_file_organized(str(file_path)):
+            return OrganizationResult(
+                success=True,
+                skipped=True,
+                skip_reason="already_registered_in_database",
+            )
+
+        # Clean original file tags before destination/metadata decisions.
+        self.clean_invalid_genres_in_file(file_path)
+
+        context = self._build_music_organization_context(file_path)
+        return await self._run_music_organization_pipeline(
+            file_path=file_path,
+            context=context,
+        )
 
     def pode_processar(self, file_path: Path) -> bool:
         return file_path.suffix.lower() in AUDIO_EXTS
@@ -2585,94 +3605,81 @@ class MusicOrganizer(BaseOrganizer):
         return report
 
 
-class LyricsOrganizer(BaseOrganizer):
-    """Lyrics organizer for sidecar `.lrc` files."""
+class MusicSidecarOrganizerBase(BaseOrganizer):
+    """Shared helpers for music sidecar organizers (lyrics/artwork)."""
 
     AUDIO_EXTS = AUDIO_EXTS
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Reuse music destination logic for unmatched DB cases.
-        self.music_helper = MusicOrganizer(*args, **kwargs)
         self.library_path = self.config.library_path_music
-        # Cache of available audio files for pairing (all source folders)
         self._available_audio_paths: Optional[Dict[str, Path]] = None
 
-    def pode_processar(self, file_path: Path) -> bool:
-        return file_path.suffix.lower() == ".lrc"
-
-    def obter_tipo_midia(self) -> MediaType:
-        return MediaType.LYRICS
+    def _iter_music_download_roots(self) -> List[Path]:
+        roots: List[Path] = []
+        if self.config.download_path_music:
+            roots.append(Path(self.config.download_path_music))
+        return roots
 
     def _build_available_audio_index(self) -> Dict[str, Path]:
-        """Build index of all available audio files across all download folders.
-
-        Returns dict mapping normalized filename (without extension) to file path.
-        """
+        """Build index of all available audio files across download roots."""
         if self._available_audio_paths is not None:
             return self._available_audio_paths
 
         index: Dict[str, Path] = {}
-
-        # Scan all configured download paths for music
-        download_paths = []
-        if self.config.download_path_music:
-            download_paths.append(Path(self.config.download_path_music))
-
-        for download_path in download_paths:
+        for download_path in self._iter_music_download_roots():
             if not download_path.exists():
                 continue
             for ext in self.AUDIO_EXTS:
                 for audio_file in download_path.rglob(f"*{ext}"):
-                    if audio_file.is_file():
-                        # Use stem (filename without extension) as key
-                        key = audio_file.stem.lower().strip()
-                        if key and key not in index:
-                            index[key] = audio_file
+                    if not audio_file.is_file():
+                        continue
+                    key = audio_file.stem.lower().strip()
+                    if key and key not in index:
+                        index[key] = audio_file
 
         self._available_audio_paths = index
         return index
 
-    def _find_audio_pairs(self, lyrics_file: Path) -> List[Path]:
-        """Find matching audio files for lyrics.
-
-        First checks same-folder matches (legacy behavior), then searches
-        all download folders for matching filenames.
-        """
+    def _find_audio_pairs(self, sidecar_file: Path, *, include_fuzzy: bool = False) -> List[Path]:
+        """Find matching audio files for sidecar files."""
         pairs: List[Path] = []
-        lyrics_stem = lyrics_file.stem.lower().strip()
+        sidecar_stem = sidecar_file.stem.lower().strip()
 
-        # First: check same-folder matches (original behavior)
+        # First: same-folder matches
         for ext in self.AUDIO_EXTS:
-            same_folder_match = lyrics_file.with_suffix(ext)
+            same_folder_match = sidecar_file.with_suffix(ext)
             if same_folder_match.exists():
                 pairs.append(same_folder_match)
 
-        # Second: search all download folders for matching filenames
-        if not pairs:
+        # Second: exact stem match in global index
+        if not pairs and sidecar_stem:
             audio_index = self._build_available_audio_index()
-            if lyrics_stem in audio_index:
-                pairs.append(audio_index[lyrics_stem])
+            if sidecar_stem in audio_index:
+                pairs.append(audio_index[sidecar_stem])
 
-        # Third: try fuzzy matching (partial stem match)
-        if not pairs:
+        # Third: optional fuzzy matching for cases where filenames drift.
+        if include_fuzzy and not pairs and sidecar_stem:
             audio_index = self._build_available_audio_index()
             for audio_key, audio_path in audio_index.items():
-                # Check if lyrics stem is contained in audio key or vice versa
-                if lyrics_stem in audio_key or audio_key in lyrics_stem:
-                    # Additional check: ensure artist/title structure matches
-                    if " - " in lyrics_stem and " - " in audio_key:
-                        lyrics_parts = lyrics_stem.split(" - ", 1)
+                if sidecar_stem in audio_key or audio_key in sidecar_stem:
+                    if " - " in sidecar_stem and " - " in audio_key:
+                        sidecar_parts = sidecar_stem.split(" - ", 1)
                         audio_parts = audio_key.split(" - ", 1)
-                        # Match if title portion is similar
-                        if lyrics_parts[0].strip() == audio_parts[0].strip():
+                        if sidecar_parts[0].strip() == audio_parts[0].strip():
                             pairs.append(audio_path)
                             break
 
         return pairs
 
-    def _dest_from_existing_audio_record(self, lyrics_file: Path) -> Optional[Path]:
-        for audio_file in self._find_audio_pairs(lyrics_file):
+    def _dest_from_existing_audio_record_for_sidecar(
+        self,
+        sidecar_file: Path,
+        build_dest_from_audio: Callable[[Path, Path], Path],
+        *,
+        include_fuzzy: bool = False,
+    ) -> Optional[Path]:
+        for audio_file in self._find_audio_pairs(sidecar_file, include_fuzzy=include_fuzzy):
             record = self.database.get_record_by_original_path(str(audio_file))
             if not record:
                 continue
@@ -2681,12 +3688,35 @@ class LyricsOrganizer(BaseOrganizer):
             if not organized_audio:
                 continue
 
-            return organized_audio.with_suffix(lyrics_file.suffix)
+            return build_dest_from_audio(organized_audio, sidecar_file)
 
         return None
 
+
+class LyricsOrganizer(MusicSidecarOrganizerBase):
+    """Lyrics organizer for sidecar `.lrc` files."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Reuse music destination logic for unmatched DB cases.
+        self.music_helper = MusicOrganizer(*args, **kwargs)
+
+    def pode_processar(self, file_path: Path) -> bool:
+        return file_path.suffix.lower() == ".lrc"
+
+    def obter_tipo_midia(self) -> MediaType:
+        return MediaType.LYRICS
+
+    def _dest_from_existing_audio_record(self, lyrics_file: Path) -> Optional[Path]:
+        return self._dest_from_existing_audio_record_for_sidecar(
+            lyrics_file,
+            lambda organized_audio, sidecar_file: organized_audio.with_suffix(
+                sidecar_file.suffix),
+            include_fuzzy=True,
+        )
+
     def _dest_from_audio_metadata(self, lyrics_file: Path) -> Optional[Path]:
-        for audio_file in self._find_audio_pairs(lyrics_file):
+        for audio_file in self._find_audio_pairs(lyrics_file, include_fuzzy=True):
             filename_meta = self.music_helper._extract_metadata_from_filename(
                 audio_file)
             existing_meta = self.music_helper._read_audio_tags(audio_file)
@@ -2714,7 +3744,7 @@ class LyricsOrganizer(BaseOrganizer):
                 skip_reason="already_registered_in_database",
             )
 
-        paired_audio = self._find_audio_pairs(file_path)
+        paired_audio = self._find_audio_pairs(file_path, include_fuzzy=True)
 
         dest_path = (
             self._dest_from_existing_audio_record(file_path)
@@ -2734,16 +3764,13 @@ class LyricsOrganizer(BaseOrganizer):
         return await self.organizar_file(file_path, dest_path, metadata)
 
 
-class ArtworkOrganizer(BaseOrganizer):
+class ArtworkOrganizer(MusicSidecarOrganizerBase):
     """Artwork organizer for sidecar cover images in music downloads."""
 
-    AUDIO_EXTS = AUDIO_EXTS
     IMAGE_EXTS = IMAGE_EXTS
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.library_path = self.config.library_path_music
-        self._available_audio_paths: Optional[Dict[str, Path]] = None
 
     def pode_processar(self, file_path: Path) -> bool:
         return file_path.suffix.lower() in self.IMAGE_EXTS
@@ -2751,53 +3778,12 @@ class ArtworkOrganizer(BaseOrganizer):
     def obter_tipo_midia(self) -> MediaType:
         return MediaType.ARTWORK
 
-    def _build_available_audio_index(self) -> Dict[str, Path]:
-        if self._available_audio_paths is not None:
-            return self._available_audio_paths
-
-        index: Dict[str, Path] = {}
-        download_path = Path(self.config.download_path_music)
-        if download_path.exists():
-            for ext in self.AUDIO_EXTS:
-                for audio_file in download_path.rglob(f"*{ext}"):
-                    if not audio_file.is_file():
-                        continue
-                    key = audio_file.stem.lower().strip()
-                    if key and key not in index:
-                        index[key] = audio_file
-
-        self._available_audio_paths = index
-        return index
-
-    def _find_audio_pairs(self, image_file: Path) -> List[Path]:
-        pairs: List[Path] = []
-        stem = image_file.stem.lower().strip()
-
-        for ext in self.AUDIO_EXTS:
-            same_folder_match = image_file.with_suffix(ext)
-            if same_folder_match.exists():
-                pairs.append(same_folder_match)
-
-        if not pairs and stem:
-            audio_index = self._build_available_audio_index()
-            if stem in audio_index:
-                pairs.append(audio_index[stem])
-
-        return pairs
-
     def _dest_from_existing_audio_record(self, image_file: Path) -> Optional[Path]:
-        for audio_file in self._find_audio_pairs(image_file):
-            record = self.database.get_record_by_original_path(str(audio_file))
-            if not record:
-                continue
-
-            organized_audio = Path(record.get("organized_path", ""))
-            if not organized_audio:
-                continue
-
-            return organized_audio.parent / image_file.name
-
-        return None
+        return self._dest_from_existing_audio_record_for_sidecar(
+            image_file,
+            lambda organized_audio, sidecar_file: organized_audio.parent / sidecar_file.name,
+            include_fuzzy=False,
+        )
 
     def _fallback_dest(self, image_file: Path) -> Path:
         return self.library_path / "_artwork_unmatched" / image_file.name
@@ -2810,7 +3796,7 @@ class ArtworkOrganizer(BaseOrganizer):
                 skip_reason="already_registered_in_database",
             )
 
-        paired_audio = self._find_audio_pairs(file_path)
+        paired_audio = self._find_audio_pairs(file_path, include_fuzzy=False)
         dest_path = (
             self._dest_from_existing_audio_record(file_path)
             or self._fallback_dest(file_path)
@@ -3645,6 +4631,56 @@ class BookOrganizer(BaseOrganizer):
             if cover_temp_path and cover_temp_path.exists():
                 cover_temp_path.unlink(missing_ok=True)
 
+    def _parse_comicinfo_xml_payload(self, raw: bytes) -> Dict[str, Any]:
+        import xml.etree.ElementTree as ET
+
+        root = ET.fromstring(raw)
+
+        def get_text(tag: str) -> Optional[str]:
+            el = root.find(tag)
+            return el.text.strip() if el is not None and el.text else None
+
+        year_str = get_text("Year")
+        year = int(year_str) if year_str and year_str.isdigit() else None
+
+        result: Dict[str, Any] = {
+            "title": get_text("Series"),
+            "chapter_title": get_text("Title"),
+            "localized_series": get_text("LocalizedSeries"),
+            "series_sort": get_text("SeriesSort"),
+            "issue_number": get_text("Number"),
+            "page_count": get_text("PageCount"),
+            "count": get_text("Count"),
+            "volume": get_text("Volume"),
+            "alternative_series": get_text("AlternativeSeries"),
+            "alternative_count": get_text("AlternativeCount"),
+            "publisher": get_text("Publisher"),
+            "imprint": get_text("Imprint"),
+            "year": year,
+            "month": get_text("Month"),
+            "day": get_text("Day"),
+            "description": get_text("Summary"),
+            "genre": get_text("Genre"),
+            "tags": get_text("Tags"),
+            "author": get_text("Writer"),
+            "penciller": get_text("Penciller"),
+            "inker": get_text("Inker"),
+            "colorist": get_text("Colorist"),
+            "letterer": get_text("Letterer"),
+            "cover_artist": get_text("CoverArtist"),
+            "editor": get_text("Editor"),
+            "translator": get_text("Translator"),
+            "language": get_text("LanguageISO"),
+            "isbn": get_text("GTIN"),
+            "story_arc": get_text("StoryArc"),
+            "story_arc_number": get_text("StoryArcNumber"),
+            "age_rating": get_text("AgeRating"),
+            "series_group": get_text("SeriesGroup"),
+            "format": get_text("Format"),
+            "web": get_text("Web"),
+        }
+        return {k: v for k, v in result.items() if v is not None}
+
     def _read_comicinfo_xml(self, file_path: Path) -> Dict[str, Any]:
         """Read ComicInfo.xml from a CBZ(ZIP) archive.
 
@@ -3654,56 +4690,6 @@ class BookOrganizer(BaseOrganizer):
         ext = file_path.suffix.lower()
         if ext not in {".cbz", ".cbr"}:
             return {}
-
-        def _parse_comicinfo_xml(raw: bytes) -> Dict[str, Any]:
-            import xml.etree.ElementTree as ET
-
-            root = ET.fromstring(raw)
-
-            def get_text(tag: str) -> Optional[str]:
-                el = root.find(tag)
-                return el.text.strip() if el is not None and el.text else None
-
-            year_str = get_text("Year")
-            year = int(year_str) if year_str and year_str.isdigit() else None
-
-            result: Dict[str, Any] = {
-                "title": get_text("Series"),
-                "chapter_title": get_text("Title"),
-                "localized_series": get_text("LocalizedSeries"),
-                "series_sort": get_text("SeriesSort"),
-                "issue_number": get_text("Number"),
-                "page_count": get_text("PageCount"),
-                "count": get_text("Count"),
-                "volume": get_text("Volume"),
-                "alternative_series": get_text("AlternativeSeries"),
-                "alternative_count": get_text("AlternativeCount"),
-                "publisher": get_text("Publisher"),
-                "imprint": get_text("Imprint"),
-                "year": year,
-                "month": get_text("Month"),
-                "day": get_text("Day"),
-                "description": get_text("Summary"),
-                "genre": get_text("Genre"),
-                "tags": get_text("Tags"),
-                "author": get_text("Writer"),
-                "penciller": get_text("Penciller"),
-                "inker": get_text("Inker"),
-                "colorist": get_text("Colorist"),
-                "letterer": get_text("Letterer"),
-                "cover_artist": get_text("CoverArtist"),
-                "editor": get_text("Editor"),
-                "translator": get_text("Translator"),
-                "language": get_text("LanguageISO"),
-                "isbn": get_text("GTIN"),
-                "story_arc": get_text("StoryArc"),
-                "story_arc_number": get_text("StoryArcNumber"),
-                "age_rating": get_text("AgeRating"),
-                "series_group": get_text("SeriesGroup"),
-                "format": get_text("Format"),
-                "web": get_text("Web"),
-            }
-            return {k: v for k, v in result.items() if v is not None}
 
         try:
             if ext == ".cbz":
@@ -3719,7 +4705,7 @@ class BookOrganizer(BaseOrganizer):
                         return {}
 
                     with zf.open(ci_name) as f:
-                        return _parse_comicinfo_xml(f.read())
+                        return self._parse_comicinfo_xml_payload(f.read())
             else:
                 # CBR (RAR): read ComicInfo.xml using unrar/7z without conversion.
                 listing_cmd = None
@@ -3758,7 +4744,7 @@ class BookOrganizer(BaseOrganizer):
                 )
                 if content.returncode != 0 or not content.stdout:
                     return {}
-                return _parse_comicinfo_xml(content.stdout)
+                return self._parse_comicinfo_xml_payload(content.stdout)
         except Exception as exc:
             self.logger.debug(
                 "Could not read ComicInfo.xml from %s: %s",
@@ -3784,55 +4770,8 @@ class BookOrganizer(BaseOrganizer):
             return {}
 
         try:
-            # Reuse the same parser by feeding sidecar content as raw XML bytes.
-            import xml.etree.ElementTree as ET
-
             raw = existing.read_bytes()
-            root = ET.fromstring(raw)
-
-            def get_text(tag: str) -> Optional[str]:
-                el = root.find(tag)
-                return el.text.strip() if el is not None and el.text else None
-
-            year_str = get_text("Year")
-            year = int(year_str) if year_str and year_str.isdigit() else None
-            result: Dict[str, Any] = {
-                "title": get_text("Series"),
-                "chapter_title": get_text("Title"),
-                "localized_series": get_text("LocalizedSeries"),
-                "series_sort": get_text("SeriesSort"),
-                "issue_number": get_text("Number"),
-                "page_count": get_text("PageCount"),
-                "count": get_text("Count"),
-                "volume": get_text("Volume"),
-                "alternative_series": get_text("AlternativeSeries"),
-                "alternative_count": get_text("AlternativeCount"),
-                "publisher": get_text("Publisher"),
-                "imprint": get_text("Imprint"),
-                "year": year,
-                "month": get_text("Month"),
-                "day": get_text("Day"),
-                "description": get_text("Summary"),
-                "genre": get_text("Genre"),
-                "tags": get_text("Tags"),
-                "author": get_text("Writer"),
-                "penciller": get_text("Penciller"),
-                "inker": get_text("Inker"),
-                "colorist": get_text("Colorist"),
-                "letterer": get_text("Letterer"),
-                "cover_artist": get_text("CoverArtist"),
-                "editor": get_text("Editor"),
-                "translator": get_text("Translator"),
-                "language": get_text("LanguageISO"),
-                "isbn": get_text("GTIN"),
-                "story_arc": get_text("StoryArc"),
-                "story_arc_number": get_text("StoryArcNumber"),
-                "age_rating": get_text("AgeRating"),
-                "series_group": get_text("SeriesGroup"),
-                "format": get_text("Format"),
-                "web": get_text("Web"),
-            }
-            return {k: v for k, v in result.items() if v is not None}
+            return self._parse_comicinfo_xml_payload(raw)
         except Exception as exc:
             self.logger.debug(
                 "Could not read sidecar .comicinfo.xml for %s: %s",
@@ -3846,12 +4785,19 @@ class BookOrganizer(BaseOrganizer):
         sidecar_path = file_path.parent / f"{file_path.stem}.comicinfo.xml"
         if self.dry_run:
             self.logger.info(
-                "[DRY RUN] Would write sidecar %s", sidecar_path.name)
+                "[DRY RUN] Would generate sidecar .comicinfo.xml for %s -> %s",
+                file_path.name,
+                sidecar_path.name,
+            )
             return True
 
         try:
             sidecar_path.write_text(xml_content, encoding="utf-8")
-            self.logger.info("Written sidecar %s", sidecar_path.name)
+            self.logger.info(
+                "Generated sidecar .comicinfo.xml for %s -> %s",
+                file_path.name,
+                sidecar_path.name,
+            )
             return True
         except Exception as exc:
             self.logger.warning(
@@ -3860,6 +4806,53 @@ class BookOrganizer(BaseOrganizer):
                 exc,
             )
             return False
+
+    def _sync_comic_sidecar_to_destination(self, source_path: Path, dest_path: Path) -> None:
+        """Ensure sidecar metadata follows comics into the destination folder."""
+        source_candidates = [
+            source_path.parent / f"{source_path.stem}.comicinfo.xml",
+            source_path.parent / ".comicinfo.xml",
+        ]
+        source_sidecar = next(
+            (p for p in source_candidates if p.exists() and p.is_file()),
+            None,
+        )
+        if source_sidecar is None:
+            return
+
+        # If destination archive already has embedded ComicInfo, sidecar is unnecessary.
+        if self._read_comicinfo_xml(dest_path):
+            return
+
+        dest_sidecar = dest_path.parent / f"{dest_path.stem}.comicinfo.xml"
+        try:
+            if source_sidecar.resolve() == dest_sidecar.resolve():
+                return
+        except Exception:
+            pass
+
+        if self.dry_run:
+            self.logger.info(
+                "[DRY RUN] Would sync sidecar %s -> %s",
+                source_sidecar,
+                dest_sidecar,
+            )
+            return
+
+        try:
+            dest_sidecar.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(source_sidecar), str(dest_sidecar))
+            self.logger.info(
+                "Synced comic sidecar %s -> %s",
+                source_sidecar.name,
+                dest_sidecar.name,
+            )
+        except Exception as exc:
+            self.logger.warning(
+                "Could not sync comic sidecar to destination for %s: %s",
+                source_path.name,
+                exc,
+            )
 
     def _write_comicinfo_xml(self, file_path: Path, metadata: Dict[str, Any]) -> bool:
         """Write or update ComicInfo.xml inside a comic archive.
@@ -3940,7 +4933,7 @@ class BookOrganizer(BaseOrganizer):
                 suffix=file_path.suffix, dir=file_path.parent))
             cover_temp_path: Optional[Path] = None
             cover_archive_name: Optional[str] = None
-            if self.config.comic_download_covers:
+            if getattr(self.config, "comic_download_covers", False):
                 cover_temp_path = self._download_cover_temp_file(
                     str(metadata.get("cover_image_url") or "")
                 )
@@ -3961,7 +4954,10 @@ class BookOrganizer(BaseOrganizer):
                     dst.writestr("ComicInfo.xml", xml_content.encode("utf-8"))
 
                 shutil.move(str(temp_path), str(file_path))
-                self.logger.info("Written ComicInfo.xml to %s", file_path.name)
+                self.logger.info(
+                    "Embedded ComicInfo.xml inside archive %s",
+                    file_path.name,
+                )
                 return True
 
             # CBR update path (without conversion): requires writable archive tool.
@@ -3975,7 +4971,7 @@ class BookOrganizer(BaseOrganizer):
 
             if not tool_cmd:
                 self.logger.warning(
-                    "Skipping ComicInfo write for %s: no writable CBR tool (rar/7z update)",
+                    "Cannot embed ComicInfo.xml inside CBR %s: no writable tool (rar/7z update); generating sidecar .comicinfo.xml",
                     file_path.name,
                 )
                 return self._write_comicinfo_sidecar(file_path, xml_content)
@@ -4002,26 +4998,34 @@ class BookOrganizer(BaseOrganizer):
 
                 run = subprocess.run(cmd, capture_output=True, timeout=120)
                 if run.returncode != 0:
-                    self.logger.warning(
-                        "Could not write ComicInfo.xml to CBR %s: %s",
+                    self.logger.info(
+                        "Could not embed ComicInfo.xml inside archive %s; generating sidecar .comicinfo.xml | reason=%s",
                         file_path.name,
                         (run.stderr.decode("utf-8", errors="replace")
                          if run.stderr else "tool failed"),
                     )
                     return self._write_comicinfo_sidecar(file_path, xml_content)
 
-                self.logger.info("Written ComicInfo.xml to %s", file_path.name)
+                self.logger.info(
+                    "Embedded ComicInfo.xml inside archive %s",
+                    file_path.name,
+                )
                 return True
         except Exception as exc:
-            self.logger.warning(
-                "Could not write ComicInfo.xml to %s: %s",
-                file_path.name,
-                exc,
-            )
-            self._write_comicinfo_sidecar(file_path, xml_content)
-            if "temp_path" in dir() and temp_path.exists():
-                temp_path.unlink(missing_ok=True)
-            return False
+            if self._write_comicinfo_sidecar(file_path, xml_content):
+                self.logger.info(
+                    "Could not embed ComicInfo.xml inside archive %s; generating sidecar .comicinfo.xml | reason=%s",
+                    file_path.name,
+                    exc,
+                )
+                return True
+            else:
+                self.logger.warning(
+                    "Could not write ComicInfo.xml to %s: %s",
+                    file_path.name,
+                    exc,
+                )
+                return False
         finally:
             if "cover_temp_path" in dir() and cover_temp_path and cover_temp_path.exists():
                 cover_temp_path.unlink(missing_ok=True)
@@ -4101,92 +5105,34 @@ class BookOrganizer(BaseOrganizer):
         return "book"
 
     def _extract_book_metadata(self, file_path: Path) -> Dict[str, Any]:
-        from app.utils.helpers import normalize_title
-
-        filename = file_path.stem
-        working_name = filename
+        parsed = parse_book_filename_fields(file_path.stem)
         metadata: Dict[str, Any] = {
-            "title": normalize_title(filename),
-            "author": "Unknown Author",
-            "authors": [],
-            "year": None,
+            "title": parsed.get("title") or file_path.stem,
+            "author": parsed.get("author") or "Unknown Author",
+            "authors": parsed.get("authors") or [],
+            "year": parsed.get("year"),
+            "series": parsed.get("series"),
+            "series_index": parsed.get("series_index"),
             "media_type": "book",
             "media_subtype": "book",
+            "filename_schema_valid": bool(parsed.get("is_valid")),
+            "filename_schema_error": str(parsed.get("error") or ""),
         }
-
-        # Optional explicit series marker in filename:
-        #   Author - Title [Series;Index] (Year)
-        #   Author - Title [Series] (Year)
-        # The last [] block is interpreted as series metadata only when
-        # it appears after the title section and before optional year.
-        series_block_match = re.search(
-            r"\s\[([^\[\]]+)\]\s*(?:\(\d{4}\))?\s*$", working_name)
-        if series_block_match:
-            series_block = series_block_match.group(1).strip()
-            parts = [p.strip() for p in series_block.split(";", 1)]
-            if parts and parts[0]:
-                metadata["series"] = normalize_title(parts[0])
-
-            if len(parts) == 2 and parts[1]:
-                index_raw = parts[1]
-                try:
-                    metadata["series_index"] = float(index_raw)
-                except ValueError:
-                    metadata["series_index"] = index_raw
-
-            # Remove series marker from filename before author/title parsing
-            working_name = re.sub(
-                r"\s\[[^\[\]]+\]\s*(?:\(\d{4}\))?\s*$", "", working_name).strip()
-
-            # Re-append year for normal year extraction path below
-            year_suffix = re.search(r"\((\d{4})\)\s*$", filename)
-            if year_suffix:
-                working_name = f"{working_name} ({year_suffix.group(1)})"
-
-        year_match = re.search(r"\((\d{4})\)", working_name)
-        if year_match:
-            metadata["year"] = int(year_match.group(1))
-
-        if " - " in working_name:
-            parts = working_name.split(" - ", 1)
-            if len(parts) == 2:
-                raw_author = parts[0].strip()
-                # Support comma-separated multiple authors
-                authors = [a.strip()
-                           for a in raw_author.split(",") if a.strip()]
-                metadata["authors"] = authors
-                # First author used for folder path; full string kept for display
-                metadata["author"] = authors[0] if authors else raw_author
-                # Strip year from title — already captured in metadata["year"]
-                title_part = re.sub(
-                    r"\s*\(\d{4}\)\s*", "", parts[1].strip()).strip()
-                metadata["title"] = normalize_title(title_part)
-
         return metadata
 
     def _extract_comic_metadata(self, file_path: Path) -> Dict[str, Any]:
-        from app.utils.helpers import normalize_comic_filename
-
-        series, issue, publisher, year = normalize_comic_filename(
-            file_path.stem)
-
+        parsed = parse_comic_filename_fields(file_path.stem)
         base: Dict[str, Any] = {
-            "title": series or "Unknown Series",
-            "issue_number": issue,
-            "publisher": publisher or "Unknown",
-            "year": year,
+            "title": parsed.get("title") or "Unknown Title",
+            "series": parsed.get("series"),
+            "issue_number": parsed.get("issue_number"),
+            "publisher": "Unknown",
+            "year": parsed.get("year"),
             "media_type": "comic",
             "media_subtype": "comic",
+            "filename_schema_valid": bool(parsed.get("is_valid")),
+            "filename_schema_error": str(parsed.get("error") or ""),
         }
-
-        # Prefer embedded ComicInfo.xml, with sidecar fallback when available.
-        embedded = self._read_comicinfo_xml(file_path)
-        if not embedded:
-            embedded = self._read_comicinfo_sidecar(file_path)
-        if embedded:
-            for key, value in embedded.items():
-                if not self._is_missing_book_field(value):
-                    base[key] = value
 
         return base
 
@@ -4196,16 +5142,24 @@ class BookOrganizer(BaseOrganizer):
         return self.library_path / author / file_path.name
 
     def get_comic_destination_path(self, file_path: Path, metadata: Dict[str, Any]) -> Path:
-        series = self.sanitize_title(metadata.get("title", "Unknown Series"))
-        issue = metadata.get("issue_number")
+        title = self.sanitize_title(
+            str(metadata.get("title") or "Unknown Title"))
+        series_value = str(metadata.get("series") or "").strip()
+        grouping_series = self.sanitize_title(
+            normalize_comic_series_title(series_value or title)
+        )
+        issue = str(metadata.get("issue_number") or "").strip()
+        year = metadata.get("year")
 
-        if issue:
-            file_name = f"{series} #{issue}{file_path.suffix}"
+        if issue and isinstance(year, int):
+            if series_value:
+                file_name = f"{title} ({year}) - {series_value} #{issue}{file_path.suffix}"
+            else:
+                file_name = f"{title} ({year}) - #{issue}{file_path.suffix}"
         else:
             file_name = file_path.name
 
-        # Keep comics grouped by series only; year differences should not split folders.
-        return self.library_path / series / file_name
+        return self.library_path / grouping_series / file_name
 
     async def organizar(self, file_path: Path) -> OrganizationResult:
         if self.database.is_file_organized(str(file_path)):
@@ -4220,14 +5174,32 @@ class BookOrganizer(BaseOrganizer):
 
         if final_type == "comic":
             metadata = self._extract_comic_metadata(file_path)
+            if not metadata.get("filename_schema_valid"):
+                return OrganizationResult(
+                    success=True,
+                    skipped=True,
+                    skip_reason=str(metadata.get(
+                        "filename_schema_error") or "comic_schema_invalid"),
+                    metadata=metadata,
+                )
             dest_path = self.get_comic_destination_path(file_path, metadata)
             early_skip = self._early_skip_if_conflict(
                 file_path, dest_path, metadata)
             if early_skip:
                 return early_skip
             self._write_comicinfo_xml(file_path, metadata)
+            result = await self.organizar_file(file_path, dest_path, metadata)
+            return result
         else:
             metadata = self._extract_book_metadata(file_path)
+            if not metadata.get("filename_schema_valid"):
+                return OrganizationResult(
+                    success=True,
+                    skipped=True,
+                    skip_reason=str(metadata.get(
+                        "filename_schema_error") or "book_schema_invalid"),
+                    metadata=metadata,
+                )
 
             baseline_dest = self.get_book_destination_path(file_path, metadata)
             early_skip = self._early_skip_if_conflict(
@@ -4256,7 +5228,7 @@ class BookOrganizer(BaseOrganizer):
 
     def pode_processar(self, file_path: Path) -> bool:
         if self.book_type == "comic":
-            return file_path.suffix.lower() in COMIC_EXTS
+            return file_path.suffix.lower() in (COMIC_EXTS | {".pdf"})
         return file_path.suffix.lower() in (BOOK_EXTS | COMIC_EXTS)
 
     def obter_tipo_midia(self) -> MediaType:

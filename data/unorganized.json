@@ -1,0 +1,54 @@
+{
+  "unorganized": [
+    {
+      "file_path": "/tmp/tmpbufiirpe/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmpbufiirpe/downloads/music",
+      "last_attempt": "2026-04-11T00:32:46.607744",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmpbufiirpe/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmpbufiirpe/downloads/music",
+      "last_attempt": "2026-04-11T00:32:46.611935",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmpe_ihkrwq/downloads/mixed/Saga #012.cbz",
+      "filename": "Saga #012.cbz",
+      "directory": "/tmp/tmpe_ihkrwq/downloads/mixed",
+      "last_attempt": "2026-04-11T00:33:01.560377",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
+    },
+    {
+      "file_path": "/tmp/tmpx8q2gjvm/downloads/music/book.epub",
+      "filename": "book.epub",
+      "directory": "/tmp/tmpx8q2gjvm/downloads/music",
+      "last_attempt": "2026-04-11T00:37:33.628617+00:00",
+      "attempts_count": 1,
+      "media_type": "book",
+      "reason": "book_schema_missing_year",
+      "error": "book_schema_missing_year"
+    },
+    {
+      "file_path": "/tmp/tmpx8q2gjvm/downloads/music/comic.cbz",
+      "filename": "comic.cbz",
+      "directory": "/tmp/tmpx8q2gjvm/downloads/music",
+      "last_attempt": "2026-04-11T00:37:33.633268+00:00",
+      "attempts_count": 1,
+      "media_type": "comic",
+      "reason": "comic_schema_missing_title_or_year",
+      "error": "comic_schema_missing_title_or_year"
+    }
+  ]
+}

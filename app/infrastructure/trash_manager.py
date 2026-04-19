@@ -21,7 +21,7 @@ import shutil
 import uuid
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from tinydb import TinyDB, Query
 
 from app.logging.config import get_logger, log_success, log_error, log_info, log_warning
@@ -89,7 +89,7 @@ class TrashManager:
             # Create trash item directory
             trash_item_path.mkdir(parents=True, exist_ok=True)
 
-            now = datetime.utcnow().isoformat()
+            now = datetime.now(timezone.utc).isoformat()
 
             # Copy the primary file to trash
             preserved_path = None
@@ -133,7 +133,7 @@ class TrashManager:
                 json.dump(manifest, f, indent=2, ensure_ascii=False)
 
             # Calculate expiration date
-            expires_at = (datetime.utcnow() +
+            expires_at = (datetime.now(timezone.utc) +
                           timedelta(days=self.retention_days)).isoformat()
 
             # Add to index
@@ -338,7 +338,9 @@ class TrashManager:
                 expires_at_str = item.get('expires_at', '')
                 try:
                     expires_at = datetime.fromisoformat(expires_at_str)
-                    days_remaining = (expires_at - datetime.utcnow()).days
+                    if expires_at.tzinfo is None:
+                        expires_at = expires_at.replace(tzinfo=timezone.utc)
+                    days_remaining = (expires_at - datetime.now(timezone.utc)).days
                     display_item['days_remaining'] = max(0, days_remaining)
                 except (ValueError, TypeError):
                     display_item['days_remaining'] = None
@@ -398,12 +400,14 @@ class TrashManager:
                              for i in items if i.get('status') == 'active')
 
             # Check for expired items
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             expired_items = 0
             for item in items:
                 expires_at_str = item.get('expires_at', '')
                 try:
                     expires_at = datetime.fromisoformat(expires_at_str)
+                    if expires_at.tzinfo is None:
+                        expires_at = expires_at.replace(tzinfo=timezone.utc)
                     if expires_at < now and item.get('status') == 'active':
                         expired_items += 1
                 except (ValueError, TypeError):
@@ -430,7 +434,7 @@ class TrashManager:
         Returns:
             Number of items removed
         """
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         Item = Query()
         all_items = self.items_table.search(Item.status == 'active')
 
@@ -439,6 +443,8 @@ class TrashManager:
             expires_at_str = item.get('expires_at', '')
             try:
                 expires_at = datetime.fromisoformat(expires_at_str)
+                if expires_at.tzinfo is None:
+                    expires_at = expires_at.replace(tzinfo=timezone.utc)
                 if expires_at < now:
                     trash_id = item.get('trash_id', '')
 

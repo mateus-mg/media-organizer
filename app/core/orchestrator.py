@@ -11,6 +11,7 @@ Contains:
 import asyncio
 import hashlib
 import logging
+import os
 import re
 from collections import Counter
 from datetime import datetime
@@ -32,6 +33,7 @@ from app.core.interfaces import (
     DatabaseInterface,
 )
 from app.config.constants import AUDIO_EXTS
+from app.infrastructure.database import UnorganizedDatabase
 from app.utils.helpers import is_incomplete_file, is_junk_file
 
 
@@ -169,6 +171,39 @@ class Orquestrador:
         self.database = database
         self.file_completion_validator = file_completion_validator
         self.logger = logger or logging.getLogger(__name__)
+        unorganized_path = Path(
+            os.getenv("UNORGANIZED_DB_PATH", "data/unorganized.json")
+        )
+        self.unorganized_db = UnorganizedDatabase(unorganized_path)
+
+    def _is_schema_skip_reason(self, reason: str) -> bool:
+        value = str(reason or "").strip().lower()
+        return value.startswith("comic_schema_") or value.startswith("book_schema_")
+
+    def _sync_unorganized_registry(
+        self,
+        arquivo: Path,
+        media_type: MediaType,
+        resultado: OrganizationResult,
+    ) -> None:
+        if resultado.success and not resultado.skipped:
+            self.unorganized_db.remove_unorganized(str(arquivo))
+            return
+
+        if not resultado.skipped:
+            return
+
+        skip_reason = str(
+            resultado.skip_reason or resultado.error_message or "").strip()
+        if not self._is_schema_skip_reason(skip_reason):
+            return
+
+        self.unorganized_db.add_unorganized(
+            file_path=str(arquivo),
+            error_message=skip_reason,
+            media_type=getattr(media_type, "value", str(media_type)),
+            reason=skip_reason,
+        )
 
     def _ordenar_arquivos_para_processamento(self, arquivos: List[Path]) -> List[Path]:
         """Order files to keep audio tracks and sidecar lyrics together.
@@ -225,6 +260,12 @@ class Orquestrador:
             if isinstance(dry_run, bool):
                 return dry_run
         return False
+
+    def _log_stage(self, cycle_label: str, stage: str) -> None:
+        self.logger.info("")
+        self.logger.info("%s", "=" * 88)
+        self.logger.info("%s | %s", cycle_label, stage)
+        self.logger.info("%s", "=" * 88)
 
     def _normalize_lyrics_stem_for_dedup(self, stem: str) -> str:
         """Normalize common duplicate suffixes from downloaded lyrics names."""
@@ -354,16 +395,20 @@ class Orquestrador:
             List of processed files
         """
         cycle_label = source_label or diretorio_origem.name
+        self._log_stage(cycle_label, "ORCHESTRATION START")
         self.logger.info(
             "Starting %s organization cycle: %s",
             cycle_label,
             diretorio_origem,
         )
 
+        self._log_stage(cycle_label, "SCAN START")
         all_files = self.scanner.escanear_diretorio(diretorio_origem)
         self.logger.info("%s scan: found %s %s", cycle_label,
                          len(all_files), progress_unit)
+        self._log_stage(cycle_label, "SCAN END")
 
+        self._log_stage(cycle_label, "PENDING FILTER START")
         files_to_process = [
             f for f in all_files
             if not self.database.is_file_organized(str(f))
@@ -374,34 +419,83 @@ class Orquestrador:
             len(files_to_process),
             progress_unit,
         )
+        self._log_stage(cycle_label, "PENDING FILTER END")
 
+        self._log_stage(cycle_label, "VALIDATION START")
         if validar_completude_arquivo and self.file_completion_validator:
             valid_files = self.file_completion_validator.validar_arquivos(
                 files_to_process)
         else:
             valid_files = files_to_process
+        self._log_stage(cycle_label, "VALIDATION END")
 
+        self._log_stage(cycle_label, "DEDUP/SORT START")
         valid_files = self._deduplicate_lyrics_files(valid_files)
         valid_files = self._ordenar_arquivos_para_processamento(valid_files)
+        self._log_stage(cycle_label, "DEDUP/SORT END")
+
+        classified_valid_files = [
+            (file_path, self.classifier.classificar_tipo_midia(file_path))
+            for file_path in valid_files
+        ]
+        ignored_unknown = sum(
+            1 for _, media_type in classified_valid_files if media_type == MediaType.UNKNOWN
+        )
+        if ignored_unknown:
+            self.logger.info(
+                "%s pre-filter: ignored=%s unsupported %s",
+                cycle_label,
+                ignored_unknown,
+                progress_unit,
+            )
+
+        valid_files = [
+            file_path
+            for file_path, media_type in classified_valid_files
+            if media_type != MediaType.UNKNOWN
+        ]
 
         pending_by_type: Counter[MediaType] = Counter(
-            self.classifier.classificar_tipo_midia(file_path)
-            for file_path in valid_files
+            media_type
+            for _, media_type in classified_valid_files
+            if media_type != MediaType.UNKNOWN
         )
-        track_total = pending_by_type.get(MediaType.MUSIC, 0)
-        lyrics_total = pending_by_type.get(MediaType.LYRICS, 0)
-        artwork_total = pending_by_type.get(MediaType.ARTWORK, 0)
-        if track_total or lyrics_total or artwork_total:
+        type_order = {
+            MediaType.MUSIC: 0,
+            MediaType.LYRICS: 1,
+            MediaType.ARTWORK: 2,
+            MediaType.BOOK: 3,
+            MediaType.COMIC: 4,
+            MediaType.RENAMER: 5,
+            MediaType.UNKNOWN: 6,
+        }
+
+        cycle_types = [
+            media_type
+            for media_type, count in pending_by_type.items()
+            if count > 0
+        ]
+        cycle_types.sort(
+            key=lambda media_type: (
+                type_order.get(media_type, 99),
+                getattr(media_type, "value", str(media_type)),
+            )
+        )
+
+        if cycle_types:
+            pending_breakdown = " | ".join(
+                f"{getattr(media_type, 'value', str(media_type))}={pending_by_type.get(media_type, 0)}"
+                for media_type in cycle_types
+            )
             self.logger.info(
-                "%s breakdown: tracks=%s | lyrics=%s | artwork=%s",
+                "%s breakdown: %s",
                 cycle_label,
-                track_total,
-                lyrics_total,
-                artwork_total,
+                pending_breakdown,
             )
 
         resultados = []
         total_valid = len(valid_files)
+        self._log_stage(cycle_label, "PROCESSING START")
         progress_step = 10 if total_valid >= 10 else 1
         organized_count = 0
         skipped_count = 0
@@ -429,27 +523,21 @@ class Orquestrador:
 
             if index == 1 or index % progress_step == 0 or index == total_valid:
                 breakdown_suffix = ""
-                if track_total or lyrics_total or artwork_total:
-                    breakdown_suffix = (
-                        " | tracks(o/s/f)="
-                        f"{organized_by_type.get(MediaType.MUSIC, 0)}/"
-                        f"{skipped_by_type.get(MediaType.MUSIC, 0)}/"
-                        f"{failed_by_type.get(MediaType.MUSIC, 0)}"
-                        " | lyrics(o/s/f)="
-                        f"{organized_by_type.get(MediaType.LYRICS, 0)}/"
-                        f"{skipped_by_type.get(MediaType.LYRICS, 0)}/"
-                        f"{failed_by_type.get(MediaType.LYRICS, 0)}"
-                        " | artwork(o/s/f)="
-                        f"{organized_by_type.get(MediaType.ARTWORK, 0)}/"
-                        f"{skipped_by_type.get(MediaType.ARTWORK, 0)}/"
-                        f"{failed_by_type.get(MediaType.ARTWORK, 0)}"
+                if cycle_types:
+                    breakdown_suffix = " | " + " | ".join(
+                        f"{getattr(media_type, 'value', str(media_type))}(o/s/f)="
+                        f"{organized_by_type.get(media_type, 0)}/"
+                        f"{skipped_by_type.get(media_type, 0)}/"
+                        f"{failed_by_type.get(media_type, 0)}"
+                        for media_type in cycle_types
                     )
 
                 self.logger.info(
-                    "%s progress: %s/%s processed files | organized=%s skipped=%s failed=%s | current_type=%s | current=%s%s",
+                    "%s progress: %s/%s processed %s | organized=%s skipped=%s failed=%s | current_type=%s | current=%s%s",
                     cycle_label,
                     index,
                     total_valid,
+                    progress_unit,
                     organized_count,
                     skipped_count,
                     failed_count,
@@ -459,24 +547,17 @@ class Orquestrador:
                 )
 
         final_breakdown = ""
-        if track_total or lyrics_total or artwork_total:
-            final_breakdown = (
-                " | tracks(o/s/f)="
-                f"{organized_by_type.get(MediaType.MUSIC, 0)}/"
-                f"{skipped_by_type.get(MediaType.MUSIC, 0)}/"
-                f"{failed_by_type.get(MediaType.MUSIC, 0)}"
-                " | lyrics(o/s/f)="
-                f"{organized_by_type.get(MediaType.LYRICS, 0)}/"
-                f"{skipped_by_type.get(MediaType.LYRICS, 0)}/"
-                f"{failed_by_type.get(MediaType.LYRICS, 0)}"
-                " | artwork(o/s/f)="
-                f"{organized_by_type.get(MediaType.ARTWORK, 0)}/"
-                f"{skipped_by_type.get(MediaType.ARTWORK, 0)}/"
-                f"{failed_by_type.get(MediaType.ARTWORK, 0)}"
+        if cycle_types:
+            final_breakdown = " | " + " | ".join(
+                f"{getattr(media_type, 'value', str(media_type))}(o/s/f)="
+                f"{organized_by_type.get(media_type, 0)}/"
+                f"{skipped_by_type.get(media_type, 0)}/"
+                f"{failed_by_type.get(media_type, 0)}"
+                for media_type in cycle_types
             )
 
         self.logger.info(
-            "%s completed: %s/%s organized | skipped=%s failed=%s%s",
+            "%s organization completed: %s/%s organized | skipped=%s failed=%s%s",
             cycle_label,
             organized_count,
             total_valid,
@@ -484,6 +565,8 @@ class Orquestrador:
             failed_count,
             final_breakdown,
         )
+        self._log_stage(cycle_label, "PROCESSING END")
+        self._log_stage(cycle_label, "ORCHESTRATION END")
         return resultados
 
     async def _processar_arquivo(self, arquivo: Path) -> ProcessedFile:
@@ -534,6 +617,7 @@ class Orquestrador:
             processed_file.success = resultado.success
             processed_file.organized_path = resultado.organized_path
             processed_file.was_skipped = resultado.skipped
+            self._sync_unorganized_registry(arquivo, media_type, resultado)
 
             if resultado.error_message:
                 processed_file.error_message = resultado.error_message

@@ -1367,22 +1367,9 @@ async def enrich_comic_metadata_with_online_sources(
     existing_metadata: Dict,
     logger=None
 ) -> Dict:
-    """
-    Enrich comic metadata from ComicVine
-
-    Args:
-        file_path: Path to comic file
-        existing_metadata: Existing metadata dict
-        logger: Logger instance
-
-    Returns:
-        Updated metadata dict
-    """
-    logger = logger or logging.getLogger(__name__)
-
-    # ComicVine requires API key, so this is a placeholder
-    # Implementation would depend on having a valid API key
-
+    """Keep compatibility for callers while comics metadata is filename/local-only."""
+    _ = file_path
+    _ = logger
     return existing_metadata
 
 

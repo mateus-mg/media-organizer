@@ -142,6 +142,73 @@ class TestMusicQualityMonitor(unittest.TestCase):
             loaded = json.loads(saved_path.read_text(encoding="utf-8"))
             self.assertEqual(loaded["metrics"]["total_tracks"], 0)
 
+    def test_name_tag_issues_ignore_artist_when_not_required(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "data"
+            organization_path = data_dir / "organization.json"
+
+            organization_payload = {
+                "media": {
+                    "1": {
+                        "organized_path": "/library/musics/Coldplay/Parachutes/02 - Shiver.flac",
+                        "metadata": {
+                            "media_type": "music",
+                            "title": "Shiver",
+                            "artist": "Coldplay",
+                            "album": "Parachutes",
+                            "genre": "Pop",
+                            "genres": ["Pop"],
+                        },
+                    }
+                }
+            }
+            self._write_json(organization_path, organization_payload)
+
+            monitor = MusicQualityMonitor(
+                data_dir=data_dir,
+                organization_path=organization_path,
+                expect_artist_in_filename=False,
+            )
+            report = monitor.generate_report(top_n=5)
+            self.assertEqual(report["metrics"]["name_tag_issues_count"], 0)
+
+    def test_name_tag_issues_flags_artist_when_required(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_dir = root / "data"
+            organization_path = data_dir / "organization.json"
+
+            organization_payload = {
+                "media": {
+                    "1": {
+                        "organized_path": "/library/musics/Coldplay/Parachutes/02 - Shiver.flac",
+                        "metadata": {
+                            "media_type": "music",
+                            "title": "Shiver",
+                            "artist": "Coldplay",
+                            "album": "Parachutes",
+                            "genre": "Pop",
+                            "genres": ["Pop"],
+                        },
+                    }
+                }
+            }
+            self._write_json(organization_path, organization_payload)
+
+            monitor = MusicQualityMonitor(
+                data_dir=data_dir,
+                organization_path=organization_path,
+                expect_artist_in_filename=True,
+            )
+            report = monitor.generate_report(top_n=5)
+
+            self.assertEqual(report["metrics"]["name_tag_issues_count"], 1)
+            self.assertEqual(
+                report["name_tag_issues_sample"][0]["issue"],
+                "artist_not_in_filename",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

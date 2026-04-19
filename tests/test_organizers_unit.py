@@ -3,11 +3,13 @@
 
 import asyncio
 import io
+import json
 import logging
 import tempfile
 import unittest
+from subprocess import CompletedProcess
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from app.core import MediaType, OrganizationResult
 from app.services.organizers import BookOrganizer, LyricsOrganizer, MusicOrganizer
@@ -226,6 +228,72 @@ class TestMusicOrganizer(unittest.TestCase):
 
             self.assertIn("/Charlie Brown Jr/", str(dest))
             self.assertNotIn("/Charlie Brown Jr./", str(dest))
+
+    def test_complement_genre_decision_reports_explicit_reason(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            should, reason = organizer._complement_genre_decision(
+                {"genre": "Pop"})
+            self.assertTrue(should)
+            self.assertEqual(reason, "under_existing_threshold")
+
+            should, reason = organizer._complement_genre_decision(
+                {"genres": ["Progressive Rock", "Psychedelic Rock"]}
+            )
+            self.assertFalse(should)
+            self.assertEqual(reason, "already_specific")
+
+            cfg.music_genre_complement_enabled = False
+            should, reason = organizer._complement_genre_decision(
+                {"genre": "Pop"})
+            self.assertFalse(should)
+            self.assertEqual(reason, "config_disabled")
+
+    def test_enqueue_genre_enrichment_retry_upserts_by_source_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            entry1 = {
+                "queued_at": "2026-04-06T10:00:00",
+                "source_path": "/tmp/source_a.flac",
+                "enrichment_status": "timeout",
+            }
+            organizer._enqueue_genre_enrichment_retry(entry1)
+
+            entry2 = {
+                "queued_at": "2026-04-06T10:05:00",
+                "source_path": "/tmp/source_a.flac",
+                "enrichment_status": "request_error",
+            }
+            organizer._enqueue_genre_enrichment_retry(entry2)
+
+            payload = json.loads(
+                organizer._genre_enrichment_retry_queue_path.read_text(
+                    encoding="utf-8")
+            )
+            self.assertEqual(payload.get("count"), 1)
+            self.assertEqual(len(payload.get("entries", [])), 1)
+            self.assertEqual(
+                payload["entries"][0].get("enrichment_status"),
+                "request_error",
+            )
 
     def test_normalize_metadata_values_canonicalizes_jr_suffix(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -866,6 +934,59 @@ class TestMusicOrganizer(unittest.TestCase):
             self.assertTrue(result)
             self.assertEqual(fake_audio.tags.get("genre"), ["Rock and Roll"])
 
+    def test_update_audio_tags_removes_invalid_flac_genre_when_cleaned_list_is_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test.music.genre.remove_empty"),
+                dry_run=False,
+            )
+
+            file_path = base / "sample.flac"
+            file_path.write_text("dummy", encoding="utf-8")
+
+            class _FakeFlac:
+                def __init__(self):
+                    self.tags = {
+                        "genre": ["British"],
+                        "artist": ["The Shapeshifters"],
+                    }
+
+                def __setitem__(self, key, value):
+                    self.tags[key] = value
+
+                def save(self):
+                    return None
+
+            fake_audio = _FakeFlac()
+
+            with patch("mutagen.flac.FLAC", return_value=fake_audio):
+                result = organizer._update_audio_tags(
+                    file_path=file_path,
+                    original_metadata={
+                        "artist": "The Shapeshifters",
+                        "album": "Lola's Theme",
+                        "genre": "British",
+                        "genres": ["British"],
+                    },
+                    final_metadata={
+                        "primary_artist": "The Shapeshifters",
+                        "artist": "The Shapeshifters",
+                        "album": "Lola's Theme",
+                        "genre": "",
+                        "genres": [],
+                    },
+                    online_metadata=None,
+                )
+
+            self.assertTrue(result)
+            self.assertNotIn("genre", fake_audio.tags)
+
     def test_organizar_aborts_when_tag_update_fails_before_db_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
@@ -1182,6 +1303,316 @@ class TestMusicOrganizer(unittest.TestCase):
             self.assertEqual(final.get("artist"), "Artist")
             self.assertEqual(final.get("album"), "Singles")
 
+    def test_build_music_organization_context_composes_expected_payload(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "Artist - Song.flac"
+            src.write_text("dummy", encoding="utf-8")
+
+            existing = {"artist": "Artist", "title": "Song"}
+            filename_meta = {
+                "artist": "Artist",
+                "title": "Song",
+                "track_name": "Song",
+            }
+            baseline_meta = {
+                "artist": "Artist",
+                "album": "Singles",
+                "track_name": "Song",
+            }
+            baseline_dest = base / "library" / "music" / "Artist" / "Singles" / "Song.flac"
+
+            with patch.object(
+                organizer,
+                "_read_audio_tags",
+                return_value=existing,
+            ), patch.object(
+                organizer,
+                "_sanitize_polluted_genre_from_metadata",
+                side_effect=lambda meta, _path: meta,
+            ), patch.object(
+                organizer,
+                "_extract_metadata_from_filename",
+                return_value=filename_meta,
+            ), patch.object(
+                organizer,
+                "_determine_final_metadata",
+                return_value=baseline_meta,
+            ), patch.object(
+                organizer,
+                "get_destination_path",
+                return_value=baseline_dest,
+            ):
+                context = organizer._build_music_organization_context(src)
+
+            self.assertEqual(context["existing_meta"], existing)
+            self.assertEqual(context["filename_meta"], filename_meta)
+            self.assertEqual(context["baseline_meta"], baseline_meta)
+            self.assertEqual(context["baseline_dest"], baseline_dest)
+
+    def test_persist_music_tags_returns_error_when_update_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+
+            with patch.object(organizer, "_update_audio_tags", return_value=False):
+                result = organizer._persist_music_tags_with_verification(
+                    file_path=src,
+                    existing_meta={},
+                    final_meta={},
+                    online_meta={},
+                )
+
+            self.assertIsNotNone(result)
+            self.assertFalse(result.success)
+            self.assertIn("Tag update failed", str(result.error_message))
+
+    def test_persist_music_tags_skips_genre_verify_in_dry_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+
+            with patch.object(organizer, "_update_audio_tags", return_value=True), patch.object(
+                organizer,
+                "_verify_and_repair_genre_persistence",
+            ) as verify_mock:
+                result = organizer._persist_music_tags_with_verification(
+                    file_path=src,
+                    existing_meta={},
+                    final_meta={},
+                    online_meta={},
+                )
+
+            self.assertIsNone(result)
+            verify_mock.assert_not_called()
+
+    def test_persist_music_tags_requires_genre_verify_outside_dry_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=False,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+
+            with patch.object(organizer, "_update_audio_tags", return_value=True), patch.object(
+                organizer,
+                "_verify_and_repair_genre_persistence",
+                return_value=False,
+            ):
+                result = organizer._persist_music_tags_with_verification(
+                    file_path=src,
+                    existing_meta={},
+                    final_meta={},
+                    online_meta={},
+                )
+
+            self.assertIsNotNone(result)
+            self.assertFalse(result.success)
+            self.assertIn("Genre persistence mismatch",
+                          str(result.error_message))
+
+    def test_run_music_organization_pipeline_honors_early_skip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+            context = {
+                "existing_meta": {"artist": "Artist"},
+                "filename_meta": {"artist": "Artist", "title": "Song"},
+                "baseline_meta": {"artist": "Artist", "album": "Singles"},
+                "baseline_dest": base / "library" / "music" / "Artist" / "Singles" / "song.flac",
+            }
+            early = OrganizationResult(
+                success=True, skipped=True, skip_reason="conflict")
+
+            with patch.object(
+                organizer,
+                "_early_skip_if_conflict",
+                return_value=early,
+            ), patch.object(
+                organizer,
+                "_resolve_enrichment_policy_with_retry",
+                new=AsyncMock(),
+            ) as resolve_mock:
+                result = asyncio.run(
+                    organizer._run_music_organization_pipeline(
+                        file_path=src,
+                        context=context,
+                    )
+                )
+
+            self.assertTrue(result.skipped)
+            resolve_mock.assert_not_awaited()
+
+    def test_run_music_organization_pipeline_success_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+            baseline_dest = base / "library" / "music" / "Artist" / "Singles" / "song.flac"
+            context = {
+                "existing_meta": {"artist": "Artist"},
+                "filename_meta": {"artist": "Artist", "title": "Song"},
+                "baseline_meta": {"artist": "Artist", "album": "Singles"},
+                "baseline_dest": baseline_dest,
+            }
+            final_meta = {
+                "artist": "Artist",
+                "album": "Singles",
+                "track_name": "Song",
+            }
+            expected = OrganizationResult(
+                success=True, organized_path=baseline_dest)
+
+            with patch.object(
+                organizer,
+                "_early_skip_if_conflict",
+                return_value=None,
+            ), patch.object(
+                organizer,
+                "_resolve_enrichment_policy_with_retry",
+                new=AsyncMock(
+                    return_value={"final_meta": final_meta, "online_meta": {}}),
+            ), patch.object(
+                organizer,
+                "get_destination_path",
+                return_value=baseline_dest,
+            ), patch.object(
+                organizer,
+                "_persist_music_tags_with_verification",
+                return_value=None,
+            ), patch.object(
+                organizer,
+                "organizar_file",
+                new=AsyncMock(return_value=expected),
+            ):
+                result = asyncio.run(
+                    organizer._run_music_organization_pipeline(
+                        file_path=src,
+                        context=context,
+                    )
+                )
+
+            self.assertTrue(result.success)
+            self.assertEqual(result.organized_path, baseline_dest)
+
+    def test_resolve_enrichment_policy_enqueues_retry_when_genre_unresolved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            cfg.enrich_music_metadata_online = True
+            cfg.music_metadata_api_timeout_seconds = 0.1
+            organizer = MusicOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+            )
+
+            src = base / "song.flac"
+            src.write_text("dummy", encoding="utf-8")
+            baseline_meta = {
+                "artist": "Artist",
+                "album": "Singles",
+                "track_name": "Song",
+            }
+
+            with patch.object(
+                organizer,
+                "_calculate_missing_fields",
+                return_value=["genre"],
+            ), patch.object(
+                organizer,
+                "_complement_genre_decision",
+                return_value=(False, "no_existing_genres"),
+            ), patch.object(
+                organizer,
+                "_fetch_online_music_metadata",
+                new=AsyncMock(return_value={}),
+            ), patch.object(
+                organizer,
+                "_determine_final_metadata",
+                return_value={"artist": "Artist", "genre": ""},
+            ), patch.object(
+                organizer,
+                "_is_missing_genre_after_processing",
+                return_value=True,
+            ), patch.object(
+                organizer,
+                "get_destination_path",
+                return_value=base / "library" / "music" / "Artist" / "Singles" / "song.flac",
+            ), patch.object(
+                organizer,
+                "_enqueue_genre_enrichment_retry",
+            ) as enqueue_mock:
+                enriched = asyncio.run(
+                    organizer._resolve_enrichment_policy_with_retry(
+                        file_path=src,
+                        existing_meta={"artist": "Artist"},
+                        filename_meta={"artist": "Artist", "title": "Song"},
+                        baseline_meta=baseline_meta,
+                    )
+                )
+
+            self.assertEqual(enriched.get(
+                "enrichment_status"), "retry_empty_result")
+            enqueue_mock.assert_called_once()
+
 
 class TestLyricsOrganizer(unittest.IsolatedAsyncioTestCase):
     async def test_lyrics_follow_existing_audio_record_destination(self):
@@ -1256,6 +1687,7 @@ class TestBookOrganizer(unittest.TestCase):
             self.assertEqual(comic_org.obter_tipo_midia(), MediaType.COMIC)
             self.assertTrue(book_org.pode_processar(Path("a.epub")))
             self.assertTrue(comic_org.pode_processar(Path("a.cbz")))
+            self.assertTrue(comic_org.pode_processar(Path("a.pdf")))
 
     def test_detect_book_type_treats_pdf_as_comic_only_in_comics_downloads(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1506,7 +1938,7 @@ class TestBookOrganizer(unittest.TestCase):
                 book_type="comic",
             )
 
-            src = base / "Guerra Civil I #003 (Marvel) (2006).cbr"
+            src = base / "Guerra Civil I (2006) - Guerra Civil I #003.cbr"
             src.write_text("x", encoding="utf-8")
 
             meta = org._extract_comic_metadata(src)
@@ -1514,8 +1946,417 @@ class TestBookOrganizer(unittest.TestCase):
 
             self.assertEqual(
                 dest.parent, cfg.library_path_comics / "Guerra Civil I")
-            self.assertTrue(dest.name.startswith("Guerra Civil I #003"))
+            self.assertTrue(dest.name.startswith(
+                "Guerra Civil I (2006) - Guerra Civil I #003"))
 
+    def test_comic_metadata_supports_fractional_and_variant_issue_numbers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
 
-if __name__ == "__main__":
-    unittest.main()
+            fractional = base / "Invencivel (2003) - Invencivel #020.01.cbr"
+            variant = base / "Invencivel (2003) - Invencivel #001A.cbr"
+            fractional.write_text("x", encoding="utf-8")
+            variant.write_text("x", encoding="utf-8")
+
+            meta_fractional = org._extract_comic_metadata(fractional)
+            meta_variant = org._extract_comic_metadata(variant)
+
+            self.assertEqual(meta_fractional.get("title"), "Invencivel")
+            self.assertEqual(meta_fractional.get("issue_number"), "020.01")
+            self.assertEqual(meta_variant.get("title"), "Invencivel")
+            self.assertEqual(meta_variant.get("issue_number"), "001A")
+
+    def test_comic_metadata_keeps_filename_series_when_embedded_series_conflicts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
+
+            src = base / "Guerra Civil I (2006) - Guerra Civil I #008.cbr"
+            src.write_text("x", encoding="utf-8")
+
+            with patch.object(
+                org,
+                "_read_comicinfo_xml",
+                return_value={
+                    "title": "Guerra Civil",
+                    "issue_number": "008",
+                    "publisher": "Marvel",
+                },
+            ):
+                meta = org._extract_comic_metadata(src)
+
+            self.assertEqual(meta.get("title"), "Guerra Civil I")
+            self.assertEqual(meta.get("issue_number"), "008")
+
+    def test_comic_organizer_skips_when_schema_is_invalid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #003.cbr"
+            src.write_text("x", encoding="utf-8")
+
+            with patch.object(org, "_write_comicinfo_xml", return_value=True) as write_mock:
+                result = asyncio.run(org.organizar(src))
+
+            self.assertTrue(result.success)
+            self.assertTrue(result.skipped)
+            self.assertEqual(result.skip_reason,
+                             "comic_schema_missing_title_or_year")
+            write_mock.assert_not_called()
+
+    def test_comic_organizer_processes_valid_schema(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel (2003) - Invencivel #003.cbr"
+            src.write_text("x", encoding="utf-8")
+
+            with patch.object(org, "_write_comicinfo_xml", return_value=True) as write_mock:
+                result = asyncio.run(org.organizar(src))
+
+            self.assertTrue(result.success)
+            self.assertFalse(result.skipped)
+            write_mock.assert_called_once()
+
+    def test_comic_series_variants_share_same_base_folder(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
+
+            main_issue = base / \
+                "Dia do Juizo Final (2020) - Dia do Juizo Final #001.cbr"
+            omega_issue = base / \
+                "Dia do Juizo Final Omega (2020) - Dia do Juizo Final #001.cbr"
+            epilogue_issue = base / \
+                "Dia do Juizo Final - Epilogo - A Queda (2020) - Dia do Juizo Final #009.cbr"
+            prologue_issue = base / \
+                "Dia do Juizo Final - Prologo (2020) - Dia do Juizo Final #000.cbr"
+
+            for file_path in [main_issue, omega_issue, epilogue_issue, prologue_issue]:
+                file_path.write_text("x", encoding="utf-8")
+
+            main_dest = org.get_comic_destination_path(
+                main_issue,
+                org._extract_comic_metadata(main_issue),
+            )
+            omega_dest = org.get_comic_destination_path(
+                omega_issue,
+                org._extract_comic_metadata(omega_issue),
+            )
+            epilogue_dest = org.get_comic_destination_path(
+                epilogue_issue,
+                org._extract_comic_metadata(epilogue_issue),
+            )
+            prologue_dest = org.get_comic_destination_path(
+                prologue_issue,
+                org._extract_comic_metadata(prologue_issue),
+            )
+
+            expected_folder = cfg.library_path_comics / "Dia do Juizo Final"
+            self.assertEqual(main_dest.parent, expected_folder)
+            self.assertEqual(omega_dest.parent, expected_folder)
+            self.assertEqual(epilogue_dest.parent, expected_folder)
+            self.assertEqual(prologue_dest.parent, expected_folder)
+
+    def test_comic_destination_normalizes_series_variants_from_metadata_title(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=True,
+                book_type="comic",
+            )
+
+            src = base / "dummy.cbr"
+            src.write_text("x", encoding="utf-8")
+
+            dest = org.get_comic_destination_path(
+                src,
+                {
+                    "title": "Dia do Juizo Final - Epilogo - A Queda",
+                    "issue_number": "009",
+                },
+            )
+
+            self.assertEqual(
+                dest.parent, cfg.library_path_comics / "Dia do Juizo Final")
+
+    def test_comic_metadata_is_written_only_to_organized_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logging.getLogger("test"),
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = cfg.download_path_comics / \
+                "Invencivel (2003) - Invencivel #003.cbr"
+            src.parent.mkdir(parents=True, exist_ok=True)
+            src.write_text("comic", encoding="utf-8")
+
+            with patch.object(
+                org,
+                "_write_comicinfo_xml",
+                return_value=True,
+            ) as write_mock:
+                result = asyncio.run(org.organizar(src))
+
+            self.assertTrue(result.success)
+            self.assertIsNotNone(result.organized_path)
+            organized_path = result.organized_path
+            assert organized_path is not None
+            self.assertTrue(src.exists())
+            self.assertTrue(src.samefile(organized_path))
+            write_mock.assert_called_once()
+            self.assertEqual(write_mock.call_args.args[0], src)
+
+    def test_write_comicinfo_xml_falls_back_to_sidecar_without_warning(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            logger = MagicMock(spec=logging.Logger)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #001.cbr"
+            src.write_text("comic", encoding="utf-8")
+
+            with patch("app.services.organizers.shutil.which", return_value="/usr/bin/7z"), patch(
+                "app.services.organizers.subprocess.run",
+                return_value=CompletedProcess(
+                    args=["7z"], returncode=1, stdout=b"", stderr=b"not supported"),
+            ), patch.object(org, "_write_comicinfo_sidecar", return_value=True) as sidecar_mock:
+                result = org._write_comicinfo_xml(
+                    src,
+                    {
+                        "title": "Invencivel",
+                        "issue_number": "001",
+                    },
+                )
+
+            self.assertTrue(result)
+            sidecar_mock.assert_called_once()
+            logger.warning.assert_not_called()
+
+    def test_write_comicinfo_xml_prefers_rar_when_available(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            logger = MagicMock(spec=logging.Logger)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #002.cbr"
+            src.write_text("comic", encoding="utf-8")
+
+            completed = CompletedProcess(
+                args=["rar"], returncode=0, stdout=b"", stderr=b"")
+
+            with patch("app.services.organizers.shutil.which", return_value="/usr/bin/rar"), patch(
+                "app.services.organizers.subprocess.run",
+                return_value=completed,
+            ) as run_mock, patch.object(
+                org,
+                "_write_comicinfo_sidecar",
+                return_value=True,
+            ) as sidecar_mock:
+                result = org._write_comicinfo_xml(
+                    src,
+                    {
+                        "title": "Invencivel",
+                        "issue_number": "002",
+                    },
+                )
+
+            self.assertTrue(result)
+            run_mock.assert_called_once()
+            self.assertEqual(run_mock.call_args.args[0][0], "rar")
+            sidecar_mock.assert_not_called()
+            cfg = _FakeConfig(base)
+            with patch.object(
+                org,
+                "_write_comicinfo_xml",
+                return_value=True,
+            ) as write_mock:
+                result = asyncio.run(org.organizar(src))
+
+            self.assertTrue(result.success)
+            self.assertIsNotNone(result.organized_path)
+            self.assertTrue(src.exists())
+            self.assertFalse(src.samefile(result.organized_path))
+            write_mock.assert_called_once()
+            self.assertEqual(
+                write_mock.call_args.args[0], result.organized_path)
+
+    def test_write_comicinfo_xml_falls_back_to_sidecar_without_warning(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            logger = MagicMock(spec=logging.Logger)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #001.cbr"
+            src.write_text("comic", encoding="utf-8")
+
+            with patch("app.services.organizers.shutil.which", return_value="/usr/bin/7z"), patch(
+                "app.services.organizers.subprocess.run",
+                return_value=CompletedProcess(
+                    args=["7z"], returncode=1, stdout=b"", stderr=b"not supported"),
+            ), patch.object(org, "_write_comicinfo_sidecar", return_value=True) as sidecar_mock:
+                result = org._write_comicinfo_xml(
+                    src,
+                    {
+                        "title": "Invencivel",
+                        "issue_number": "001",
+                    },
+                )
+
+            self.assertTrue(result)
+            sidecar_mock.assert_called_once()
+            logger.warning.assert_not_called()
+
+    def test_write_comicinfo_xml_prefers_rar_when_available(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            logger = MagicMock(spec=logging.Logger)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #002.cbr"
+            src.write_text("comic", encoding="utf-8")
+
+            completed = CompletedProcess(
+                args=["rar"], returncode=0, stdout=b"", stderr=b"")
+
+            with patch("app.services.organizers.shutil.which", return_value="/usr/bin/rar"), patch(
+                "app.services.organizers.subprocess.run",
+                return_value=completed,
+            ) as run_mock, patch.object(
+                org,
+                "_write_comicinfo_sidecar",
+                return_value=True,
+            ) as sidecar_mock:
+                result = org._write_comicinfo_xml(
+                    src,
+                    {
+                        "title": "Invencivel",
+                        "issue_number": "002",
+                    },
+                )
+
+            self.assertTrue(result)
+            run_mock.assert_called_once()
+            self.assertEqual(run_mock.call_args.args[0][0], "rar")
+            sidecar_mock.assert_not_called()
+            logger.warning.assert_not_called()
+
+    def test_write_comicinfo_xml_exception_falls_back_to_sidecar_without_warning(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            cfg = _FakeConfig(base)
+            logger = MagicMock(spec=logging.Logger)
+            org = BookOrganizer(
+                config=cfg,
+                database=_FakeDatabase(),
+                conflict_handler=_FakeConflictHandler(),
+                logger=logger,
+                dry_run=False,
+                book_type="comic",
+            )
+
+            src = base / "Invencivel #003.cbr"
+            src.write_text("comic", encoding="utf-8")
+
+            with patch("app.services.organizers.shutil.which", return_value="/usr/bin/7z"), patch(
+                "app.services.organizers.subprocess.run",
+                side_effect=RuntimeError("boom"),
+            ), patch.object(org, "_write_comicinfo_sidecar", return_value=True) as sidecar_mock:
+                result = org._write_comicinfo_xml(
+                    src,
+                    {
+                        "title": "Invencivel",
+                        "issue_number": "003",
+                    },
+                )
+
+            self.assertTrue(result)
+            sidecar_mock.assert_called_once()
+            logger.warning.assert_not_called()

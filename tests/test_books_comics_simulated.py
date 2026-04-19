@@ -99,16 +99,17 @@ class TestBookComicOrganizerUnit(unittest.IsolatedAsyncioTestCase):
                 book_type="comic",
             )
 
-            src = base / "downloads" / "Batman #001.cbz"
+            src = base / "downloads" / "Batman (2011) - Batman #001.cbz"
             src.parent.mkdir(parents=True, exist_ok=True)
             src.write_text("comic", encoding="utf-8")
 
             result = await organizer.organizar(src)
 
             self.assertTrue(result.success)
+            self.assertFalse(result.skipped)
             self.assertIn("Batman", str(result.organized_path))
             self.assertTrue(
-                str(result.organized_path).endswith("Batman #001.cbz"))
+                str(result.organized_path).endswith("Batman (2011) - Batman #001.cbz"))
             self.assertEqual(result.metadata.get("media_type"), "comic")
             self.assertEqual(result.metadata.get("issue_number"), "001")
 
@@ -188,7 +189,7 @@ class TestBookComicEndToEndSimulated(unittest.IsolatedAsyncioTestCase):
             download_root.mkdir(parents=True, exist_ok=True)
             book_src = download_root / \
                 "Author Three - Practical Vim (2012).epub"
-            comic_src = download_root / "Saga #012.cbz"
+            comic_src = download_root / "Saga (2012) - Saga #012.cbz"
             book_src.write_text("book", encoding="utf-8")
             comic_src.write_text("comic", encoding="utf-8")
 

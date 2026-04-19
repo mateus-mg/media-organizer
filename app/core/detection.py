@@ -63,6 +63,23 @@ class MediaClassifier(MediaClassifierInterface):
 
         return False
 
+    def _is_image_in_music_downloads(self, file_path: Path) -> bool:
+        if file_path.suffix.lower() not in self.image_exts:
+            return False
+
+        parts = [part.lower() for part in file_path.parts]
+        for idx in range(len(parts) - 1):
+            if parts[idx] == "downloads" and parts[idx + 1] in {"music", "musics"}:
+                return True
+
+        return False
+
+    def _has_local_audio_pair(self, file_path: Path) -> bool:
+        for audio_ext in self.music_exts:
+            if file_path.with_suffix(audio_ext).exists():
+                return True
+        return False
+
     def classificar_tipo_midia(self, file_path: Path) -> MediaType:
         """
         Classify media type
@@ -79,7 +96,10 @@ class MediaClassifier(MediaClassifierInterface):
             return MediaType.MUSIC
         if ext in self.lyrics_exts:
             return MediaType.LYRICS
-        if ext in self.image_exts:
+        if ext in self.image_exts and (
+            self._is_image_in_music_downloads(file_path)
+            or self._has_local_audio_pair(file_path)
+        ):
             return MediaType.ARTWORK
         if self._is_pdf_in_comics_downloads(file_path):
             return MediaType.COMIC

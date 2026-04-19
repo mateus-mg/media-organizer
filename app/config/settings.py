@@ -267,12 +267,61 @@ class Config:
         return max(value, 5.0)  # Minimum 5 seconds
 
     @property
-    def comic_fetch_metadata(self) -> bool:
-        return os.getenv("COMIC_FETCH_METADATA", "true").lower() == "true"
+    def navidrome_enabled(self) -> bool:
+        return os.getenv("NAVIDROME_ENABLED", "false").lower() == "true"
 
     @property
-    def comic_metadata_source(self) -> str:
-        return os.getenv("COMIC_METADATA_SOURCE", "comicvine")
+    def navidrome_base_url(self) -> str:
+        return os.getenv("NAVIDROME_BASE_URL", "").strip().rstrip("/")
+
+    @property
+    def navidrome_username(self) -> str:
+        return os.getenv("NAVIDROME_USERNAME", "").strip()
+
+    @property
+    def navidrome_password(self) -> str:
+        return os.getenv("NAVIDROME_PASSWORD", "")
+
+    @property
+    def navidrome_api_version(self) -> str:
+        return os.getenv("NAVIDROME_API_VERSION", "1.16.1").strip() or "1.16.1"
+
+    @property
+    def navidrome_client_name(self) -> str:
+        return os.getenv("NAVIDROME_CLIENT_NAME", "media-organizer").strip() or "media-organizer"
+
+    @property
+    def navidrome_timeout_seconds(self) -> float:
+        try:
+            value = float(os.getenv("NAVIDROME_TIMEOUT_SECONDS", "20.0"))
+        except ValueError:
+            value = 20.0
+        return max(value, 3.0)
+
+    @property
+    def navidrome_verify_tls(self) -> bool:
+        return os.getenv("NAVIDROME_VERIFY_TLS", "true").lower() == "true"
+
+    @property
+    def navidrome_smart_playlist_dir(self) -> Path:
+        # NSP files should be in the music library folder (or subfolder) per Navidrome docs:
+        # https://www.navidrome.org/docs/usage/features/smart-playlists/
+        env_path = os.getenv("NAVIDROME_SMART_PLAYLIST_DIR", "")
+        if env_path:
+            return Path(env_path)
+        # Default: use music library if available, otherwise use data directory
+        music_lib = self.library_path_music
+        if music_lib and str(music_lib).strip():
+            return music_lib / ".smart_playlists"
+        return Path("./data/navidrome/smart_playlists")
+
+    @property
+    def navidrome_smart_playlist_auto_scan(self) -> bool:
+        return os.getenv("NAVIDROME_SMART_PLAYLIST_AUTO_SCAN", "true").lower() == "true"
+
+    @property
+    def navidrome_playlists_state_path(self) -> Path:
+        return Path(os.getenv("NAVIDROME_PLAYLISTS_STATE_PATH", "./data/navidrome/playlists_state.json"))
 
     @property
     def comic_download_covers(self) -> bool:
@@ -326,6 +375,10 @@ class Config:
             value = 10
         return max(value, 1)
 
+    @property
+    def quality_monitor_expect_artist_in_filename(self) -> bool:
+        return os.getenv("QUALITY_MONITOR_EXPECT_ARTIST_IN_FILENAME", "false").lower() == "true"
+
     def get_all_download_paths(self) -> Dict[str, Path]:
         return {
             "music": self.download_path_music,
@@ -353,5 +406,16 @@ class Config:
         library_paths = self.get_all_library_paths()
         if not any(path and path != Path("") for path in library_paths.values()):
             errors.append("No library paths configured")
+
+        if self.navidrome_enabled:
+            if not self.navidrome_base_url:
+                errors.append(
+                    "NAVIDROME_BASE_URL is required when NAVIDROME_ENABLED=true")
+            if not self.navidrome_username:
+                errors.append(
+                    "NAVIDROME_USERNAME is required when NAVIDROME_ENABLED=true")
+            if not self.navidrome_password:
+                errors.append(
+                    "NAVIDROME_PASSWORD is required when NAVIDROME_ENABLED=true")
 
         return len(errors) == 0, errors

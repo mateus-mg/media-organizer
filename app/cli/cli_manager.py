@@ -5,8 +5,9 @@ import asyncio
 import json
 import logging
 import os
+import re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from rich.console import Console
 from rich.prompt import Prompt
@@ -14,6 +15,7 @@ from rich.table import Table
 
 from app.config import Config
 from app.logging.config import get_logger, log_error, set_console_log_level
+from app.utils.helpers import log_cycle_stage, run_logged_cycle
 
 console = Console()
 
@@ -127,7 +129,8 @@ class CLIManager:
 
     def show_genre_catalogs_menu(self):
         while True:
-            console.print("\n[bold cyan]Genre Catalog Management[/bold cyan]")
+            console.print(
+                "\n[bold cyan]🗂️  Genre Catalog Management[/bold cyan]")
             console.print("[bold]Select a catalog:[/bold]\n")
 
             options = {
@@ -166,7 +169,7 @@ class CLIManager:
         from app.features.genre_guard.core import _canonical_genre_key
 
         while True:
-            console.print("\n[bold cyan]Invalid Music Genres[/bold cyan]")
+            console.print("\n[bold cyan]🚫 Invalid Music Genres[/bold cyan]")
             console.print("[bold]Select an operation:[/bold]\n")
 
             options = {
@@ -267,7 +270,7 @@ class CLIManager:
 
     def show_simple_catalog_menu(self, catalog_key: str, title: str, entry_label: str, list_label: str):
         while True:
-            console.print(f"\n[bold cyan]{title}[/bold cyan]")
+            console.print(f"\n[bold cyan]📚 {title}[/bold cyan]")
             console.print("[bold]Select an operation:[/bold]\n")
 
             options = {
@@ -338,7 +341,8 @@ class CLIManager:
 
     def show_interactive_menu(self):
         while True:
-            console.print("\n[bold cyan]Media Organizer System[/bold cyan]")
+            console.print(
+                "\n[bold cyan]🎛️  Media Organizer System[/bold cyan]")
             console.print("[bold]Select an operation:[/bold]\n")
 
             admin_backfill_visible = self._admin_backfill_enabled()
@@ -348,7 +352,8 @@ class CLIManager:
                 "2": "Filename suggestions",
                 "3": "System information",
                 "4": "Genre catalog management",
-                "5": "Exit",
+                "5": "Playlists (Navidrome)",
+                "6": "Exit",
             }
             if admin_backfill_visible:
                 options["9"] = "[Admin] Music genre backfill"
@@ -357,7 +362,7 @@ class CLIManager:
                 console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
             choice = Prompt.ask(
-                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="5")
+                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="6")
 
             if choice == "1":
                 self.show_organize_menu()
@@ -368,15 +373,750 @@ class CLIManager:
             elif choice == "4":
                 self.show_genre_catalogs_menu()
             elif choice == "5":
+                self.show_playlists_menu()
+            elif choice == "6":
                 break
             elif choice == "9" and admin_backfill_visible:
                 self.show_music_backfill_menu()
+
+    def show_playlists_menu(self):
+        from app.infrastructure import NavidromeAuthError, NavidromeClientError
+        from app.services import PlaylistService
+
+        navidrome_fields = [
+            "title",
+            "album",
+            "artist",
+            "albumartist",
+            "genre",
+            "hascoverart",
+            "tracknumber",
+            "discnumber",
+            "year",
+            "date",
+            "originalyear",
+            "originaldate",
+            "releaseyear",
+            "releasedate",
+            "size",
+            "compilation",
+            "dateadded",
+            "datemodified",
+            "discsubtitle",
+            "comment",
+            "lyrics",
+            "sorttitle",
+            "sortalbum",
+            "sortartist",
+            "sortalbumartist",
+            "albumtype",
+            "albumcomment",
+            "catalognumber",
+            "filepath",
+            "filetype",
+            "grouping",
+            "duration",
+            "bitrate",
+            "bitdepth",
+            "bpm",
+            "channels",
+            "loved",
+            "dateloved",
+            "lastplayed",
+            "daterated",
+            "playcount",
+            "rating",
+            "averagerating",
+            "albumrating",
+            "albumloved",
+            "albumplaycount",
+            "albumlastplayed",
+            "albumdateloved",
+            "albumdaterated",
+            "artistrating",
+            "artistloved",
+            "artistplaycount",
+            "mbz_album_id",
+            "mbz_album_artist_id",
+            "mbz_artist_id",
+            "mbz_recording_id",
+            "mbz_release_track_id",
+            "mbz_release_group_id",
+            "library_id",
+        ]
+
+        smart_operators = [
+            "is",
+            "isNot",
+            "gt",
+            "lt",
+            "contains",
+            "notContains",
+            "startsWith",
+            "endsWith",
+            "inTheRange",
+            "before",
+            "after",
+            "inTheLast",
+            "notInTheLast",
+            "inPlaylist",
+            "notInPlaylist",
+        ]
+
+        def _ask_indexed_choice(prompt: str, options: List[str], default_index: int = 1) -> str:
+            console.print(f"\n[bold]{prompt}[/bold]")
+            indexed: Dict[str, str] = {}
+            for idx, option in enumerate(options, start=1):
+                key = str(idx)
+                indexed[key] = option
+                console.print(f"  [bold cyan][{key}][/bold cyan] {option}")
+
+            default_key = str(default_index) if 1 <= default_index <= len(
+                options) else "1"
+            selected = Prompt.ask(
+                "Select option number",
+                choices=list(indexed.keys()),
+                default=default_key,
+            )
+            console.print("")
+            return indexed[selected]
+
+        def _definition_from_basic_query(query: str) -> Dict[str, Any]:
+            terms = [
+                term.strip()
+                for term in re.split(r"\s+OR\s+", str(query or ""), flags=re.IGNORECASE)
+                if term and term.strip()
+            ]
+            any_rules: List[Dict[str, Any]] = []
+            for term in terms:
+                any_rules.extend([
+                    {"contains": {"title": term}},
+                    {"contains": {"artist": term}},
+                    {"contains": {"album": term}},
+                ])
+            if not any_rules:
+                any_rules = [{"gt": {"playcount": -1}}]
+            return {"all": [{"any": any_rules}]}
+
+        def _confirm_smart_payload(
+            *,
+            operation: str,
+            name: str,
+            comment: str,
+            is_public: bool,
+            query: str,
+            nsp_definition: Optional[Dict[str, Any]],
+        ) -> bool:
+            definition = dict(
+                nsp_definition or _definition_from_basic_query(query))
+            preview_payload = {
+                "name": name,
+                "comment": comment,
+                "public": is_public,
+                **definition,
+            }
+            console.print(f"\n[bold]Preview ({operation})[/bold]")
+            console.print(json.dumps(preview_payload,
+                          ensure_ascii=False, indent=2))
+            return _ask_bool("Confirm operation?", default=True)
+
+        def _ask_bool(prompt: str, default: bool = False) -> bool:
+            choice = Prompt.ask(
+                prompt,
+                choices=["y", "n"],
+                default="y" if default else "n",
+            )
+            return choice.lower() == "y"
+
+        def _parse_scalar(raw: str) -> Any:
+            value = str(raw or "").strip()
+            lower = value.lower()
+            if lower == "true":
+                return True
+            if lower == "false":
+                return False
+            try:
+                if "." in value:
+                    return float(value)
+                return int(value)
+            except ValueError:
+                return value
+
+        def _build_smart_condition() -> Dict[str, Any]:
+            op = _ask_indexed_choice(
+                "Operator",
+                smart_operators,
+                default_index=5,
+            )
+
+            if op in {"inPlaylist", "notInPlaylist"}:
+                playlist_id = Prompt.ask(
+                    "Playlist ID", default="").strip()
+                return {op: {"id": playlist_id}}
+
+            field = _ask_indexed_choice(
+                "Field",
+                navidrome_fields,
+                default_index=1,
+            ).strip()
+
+            if op == "inTheRange":
+                start = Prompt.ask("Range start", default="").strip()
+                end = Prompt.ask("Range end", default="").strip()
+                return {op: {field: [_parse_scalar(start), _parse_scalar(end)]}}
+
+            raw_value = Prompt.ask("Value", default="").strip()
+            value = _parse_scalar(raw_value)
+            return {op: {field: value}}
+
+        def _build_smart_definition_interactive() -> Dict[str, Any]:
+            console.print(
+                "[cyan]Smart Query Builder (Feishin-style): conditions, groups, and sorting[/cyan]")
+
+            root_logic = _ask_indexed_choice(
+                "Root logic",
+                ["all", "any"],
+                default_index=1,
+            )
+
+            root_rules: List[Dict[str, Any]] = []
+
+            while True:
+                rule_type = _ask_indexed_choice(
+                    "Add rule type",
+                    ["condition", "or-group", "done"],
+                    default_index=1,
+                )
+
+                if rule_type == "done":
+                    break
+
+                if rule_type == "condition":
+                    root_rules.append(_build_smart_condition())
+                else:
+                    group_rules: List[Dict[str, Any]] = []
+                    while True:
+                        group_rules.append(_build_smart_condition())
+                        if not _ask_bool("Add another condition to this OR group?", default=False):
+                            break
+                    if group_rules:
+                        root_rules.append({"any": group_rules})
+
+                if not _ask_bool("Add another top-level rule?", default=True):
+                    break
+
+            if not root_rules:
+                root_rules = [{"gt": {"playcount": -1}}]
+
+            payload: Dict[str, Any] = {root_logic: root_rules}
+
+            sort_value = Prompt.ask(
+                "Sort fields (optional, ex: -year,-rating,title)",
+                default="",
+            ).strip()
+            if sort_value:
+                payload["sort"] = sort_value
+
+            order_value = _ask_indexed_choice(
+                "Global order (optional)",
+                ["skip", "asc", "desc"],
+                default_index=1,
+            ).strip()
+            if order_value in {"asc", "desc"}:
+                payload["order"] = order_value
+
+            limit_raw = Prompt.ask("Limit (0=skip)", default="0").strip()
+            limit_percent_raw = Prompt.ask(
+                "Limit percent 1-100 (0=skip)", default="0").strip()
+
+            try:
+                limit = int(limit_raw)
+            except ValueError:
+                limit = 0
+            try:
+                limit_percent = int(limit_percent_raw)
+            except ValueError:
+                limit_percent = 0
+
+            if limit > 0:
+                payload["limit"] = limit
+            if 1 <= limit_percent <= 100:
+                payload["limitPercent"] = limit_percent
+
+            return payload
+
+        service = PlaylistService(self.config, logger=self.logger)
+
+        def _select_local_playlist_id(kind: str, prompt_title: str) -> Optional[str]:
+            playlists = service.list_local_playlists(kind=kind)
+            if not playlists:
+                console.print(f"[yellow]No {kind} playlists found.[/yellow]")
+                return None
+
+            console.print(f"\n[bold]{prompt_title}[/bold]")
+            indexed: Dict[str, str] = {}
+            for idx, playlist in enumerate(playlists, start=1):
+                key = str(idx)
+                local_id = str(playlist.get("local_id", "")).strip()
+                name = str(playlist.get("name", "")).strip()
+                indexed[key] = local_id
+                console.print(
+                    f"  [bold cyan][{key}][/bold cyan] {name} (local_id={local_id})")
+
+            console.print("  [bold cyan][0][/bold cyan] Cancel")
+            selected = Prompt.ask(
+                "Select playlist number",
+                choices=["0", *list(indexed.keys())],
+                default="0",
+            )
+            if selected == "0":
+                return None
+            return indexed[selected]
+
+        def _show_simple_playlists_submenu() -> None:
+            while True:
+                console.print("\n[bold cyan]🎵 Simple Playlists[/bold cyan]")
+                options = {
+                    "1": "Create simple playlist",
+                    "2": "Sync simple playlist from organization.json",
+                    "3": "Delete simple playlist",
+                    "0": "Back",
+                }
+                for key, value in options.items():
+                    console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
+
+                choice = Prompt.ask(
+                    "\n[bold]Your choice[/bold]",
+                    choices=list(options.keys()),
+                    default="0",
+                )
+                if choice == "0":
+                    return
+
+                try:
+                    if choice == "1":
+                        name = Prompt.ask("Simple playlist name",
+                                          default="").strip()
+                        song_ids_csv = Prompt.ask(
+                            "Song IDs (comma-separated, optional)",
+                            default="",
+                        ).strip()
+                        is_public = _ask_bool(
+                            "Public playlist?", default=False)
+                        created = service.create_simple_playlist(
+                            name=name,
+                            song_ids_csv=song_ids_csv,
+                            public=is_public,
+                        )
+                        console.print(
+                            f"[green]Simple playlist created.[/green] local_id={created.get('local_id')} remote_id={created.get('remote_id')}")
+
+                    elif choice == "2":
+                        name = Prompt.ask("Playlist name", default="").strip()
+                        artist_filter = Prompt.ask(
+                            "Artist contains (optional)",
+                            default="",
+                        ).strip()
+                        genre_filter = Prompt.ask(
+                            "Genre contains (optional)",
+                            default="",
+                        ).strip()
+                        album_filter = Prompt.ask(
+                            "Album contains (optional)",
+                            default="",
+                        ).strip()
+                        limit_raw = Prompt.ask(
+                            "Max tracks (0 = no limit)",
+                            default="0",
+                        ).strip()
+                        try:
+                            limit = int(limit_raw)
+                        except ValueError:
+                            limit = 0
+                        is_public = _ask_bool(
+                            "Public playlist?", default=False)
+                        incremental_mode = _ask_bool(
+                            "Use incremental sync (diff) instead of full recreate?",
+                            default=True,
+                        )
+                        sync_mode = "incremental" if incremental_mode else "recreate"
+                        preview_only = _ask_bool(
+                            "Preview diff only (no remote/local changes)?",
+                            default=False,
+                        )
+
+                        report = service.sync_simple_playlist_from_organization(
+                            name=name,
+                            public=is_public,
+                            artist_filter=artist_filter,
+                            genre_filter=genre_filter,
+                            album_filter=album_filter,
+                            limit=limit,
+                            mode=sync_mode,
+                            preview_only=preview_only,
+                        )
+                        if preview_only:
+                            console.print(
+                                f"[green]Simple playlist preview from organization.json ({sync_mode}).[/green]"
+                            )
+                        else:
+                            console.print(
+                                f"[green]Simple playlist synced from organization.json ({sync_mode}).[/green]"
+                            )
+                        console.print(
+                            f"Matched={report.get('matched_records', 0)} | Resolved={report.get('resolved_count', 0)} | Unresolved={report.get('unresolved_count', 0)}"
+                        )
+
+                        preview = report.get("preview") or {}
+                        if preview:
+                            add_count = int(preview.get(
+                                "to_add_count", 0) or 0)
+                            remove_count = int(preview.get(
+                                "to_remove_count", 0) or 0)
+                            console.print(
+                                f"Diff: add={add_count} | remove={remove_count} | existing={preview.get('existing_song_count', 0)} | target={preview.get('target_song_count', 0)}"
+                            )
+
+                        unresolved_paths = report.get("unresolved_paths", [])
+                        if unresolved_paths:
+                            preview_count = min(10, len(unresolved_paths))
+                            console.print(
+                                "[yellow]Unresolved examples:[/yellow]")
+                            for path in unresolved_paths[:preview_count]:
+                                console.print(f"  - {path}")
+
+                    elif choice == "3":
+                        local_id = _select_local_playlist_id(
+                            "simple", "Select simple playlist")
+                        if not local_id:
+                            console.print(
+                                "[yellow]Operation canceled.[/yellow]")
+                            continue
+                        delete_remote = _ask_bool(
+                            "Delete remote playlist in Navidrome too?",
+                            default=True,
+                        )
+                        deleted = service.delete_simple_playlist(
+                            local_id=local_id,
+                            delete_remote=delete_remote,
+                        )
+                        if deleted:
+                            console.print(
+                                "[green]Simple playlist deleted.[/green]")
+                        else:
+                            console.print(
+                                "[yellow]Simple playlist not found.[/yellow]")
+
+                except NavidromeAuthError as exc:
+                    self.logger.error("Navidrome auth error: %s", exc)
+                    console.print(f"[red]Authentication failed: {exc}[/red]")
+                except NavidromeClientError as exc:
+                    self.logger.error("Navidrome API error: %s", exc)
+                    console.print(f"[red]Navidrome API error: {exc}[/red]")
+                except Exception as exc:
+                    self.logger.error("Unexpected Navidrome error: %s", exc)
+                    console.print(f"[red]Unexpected error: {exc}[/red]")
+
+        def _show_smart_playlists_submenu() -> None:
+            while True:
+                console.print("\n[bold cyan]🧠 Smart Playlists[/bold cyan]")
+                options = {
+                    "1": "Create smart playlist",
+                    "2": "Update smart playlist",
+                    "3": "Delete smart playlist",
+                    "0": "Back",
+                }
+                for key, value in options.items():
+                    console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
+
+                choice = Prompt.ask(
+                    "\n[bold]Your choice[/bold]",
+                    choices=list(options.keys()),
+                    default="0",
+                )
+                if choice == "0":
+                    return
+
+                try:
+                    if choice == "1":
+                        name = Prompt.ask("Smart playlist name",
+                                          default="").strip()
+                        create_mode = _ask_indexed_choice(
+                            "Creation mode",
+                            ["basic", "builder"],
+                            default_index=2,
+                        )
+                        query = ""
+                        nsp_definition: Optional[Dict[str, Any]] = None
+                        if create_mode == "basic":
+                            query = Prompt.ask(
+                                "Smart query (free text)",
+                                default="",
+                            ).strip()
+                        else:
+                            nsp_definition = _build_smart_definition_interactive()
+                        comment = Prompt.ask(
+                            "Comment (optional)", default="").strip()
+                        is_public = _ask_bool(
+                            "Public smart playlist?", default=False)
+                        if not _confirm_smart_payload(
+                            operation="create",
+                            name=name,
+                            comment=comment,
+                            is_public=is_public,
+                            query=query,
+                            nsp_definition=nsp_definition,
+                        ):
+                            console.print(
+                                "[yellow]Operation canceled.[/yellow]")
+                            continue
+                        created = service.create_smart_playlist(
+                            name=name,
+                            query=query,
+                            public=is_public,
+                            comment=comment,
+                            nsp_definition=nsp_definition,
+                        )
+                        console.print(
+                            f"[green]Smart playlist created.[/green] local_id={created.get('local_id')} nsp={created.get('nsp_path')}")
+
+                    elif choice == "2":
+                        local_id = _select_local_playlist_id(
+                            "smart", "Select smart playlist to update")
+                        if not local_id:
+                            console.print(
+                                "[yellow]Operation canceled.[/yellow]")
+                            continue
+                        current_record = service.store.get_playlist(local_id)
+                        if not current_record:
+                            console.print(
+                                "[yellow]Smart playlist not found.[/yellow]")
+                            continue
+
+                        current_name = str(
+                            current_record.get("name", "")).strip()
+                        current_comment = str(
+                            current_record.get("comment", "")).strip()
+                        current_public = bool(
+                            current_record.get("public", False))
+                        current_payload: Dict[str, Any] = {}
+                        nsp_path = Path(
+                            str(current_record.get("nsp_path", "")).strip())
+                        if nsp_path.exists():
+                            try:
+                                loaded = json.loads(
+                                    nsp_path.read_text(encoding="utf-8"))
+                                if isinstance(loaded, dict):
+                                    current_payload = loaded
+                            except Exception:
+                                current_payload = {}
+
+                        update_mode = _ask_indexed_choice(
+                            "Update mode",
+                            ["keep", "basic", "builder"],
+                            default_index=1,
+                        )
+                        query: Optional[str] = None
+                        nsp_definition: Optional[Dict[str, Any]] = None
+                        if update_mode == "basic":
+                            query = Prompt.ask(
+                                "New query (free text)",
+                                default="",
+                            ).strip()
+                        elif update_mode == "builder":
+                            nsp_definition = _build_smart_definition_interactive()
+                        comment = Prompt.ask(
+                            "New comment (leave empty to keep current)",
+                            default="",
+                        ).strip()
+                        update_public = _ask_bool(
+                            "Change public flag now?",
+                            default=False,
+                        )
+                        public_value: Optional[bool] = None
+                        if update_public:
+                            public_value = _ask_bool(
+                                "Set public=true?", default=False)
+
+                        preview_comment = comment or current_comment
+                        preview_public = current_public if public_value is None else bool(
+                            public_value)
+                        if update_mode == "keep":
+                            preview_definition = {
+                                key: value
+                                for key, value in current_payload.items()
+                                if key not in {"name", "comment", "public"}
+                            }
+                        elif update_mode == "basic":
+                            preview_definition = _definition_from_basic_query(
+                                query or "")
+                        else:
+                            preview_definition = dict(nsp_definition or {})
+
+                        if not _confirm_smart_payload(
+                            operation="update",
+                            name=current_name,
+                            comment=preview_comment,
+                            is_public=preview_public,
+                            query=query or "",
+                            nsp_definition=preview_definition,
+                        ):
+                            console.print(
+                                "[yellow]Operation canceled.[/yellow]")
+                            continue
+
+                        updated = service.update_smart_playlist(
+                            local_id=local_id,
+                            query=query,
+                            comment=comment or None,
+                            public=public_value,
+                            nsp_definition=nsp_definition,
+                        )
+                        console.print(
+                            f"[green]Smart playlist updated.[/green] local_id={updated.get('local_id')}")
+
+                    elif choice == "3":
+                        local_id = _select_local_playlist_id(
+                            "smart", "Select smart playlist to delete")
+                        if not local_id:
+                            console.print(
+                                "[yellow]Operation canceled.[/yellow]")
+                            continue
+                        delete_file = _ask_bool(
+                            "Delete .nsp file too?", default=True)
+                        deleted = service.delete_smart_playlist(
+                            local_id=local_id,
+                            delete_file=delete_file,
+                        )
+                        if deleted:
+                            console.print(
+                                "[green]Smart playlist deleted.[/green]")
+                        else:
+                            console.print(
+                                "[yellow]Smart playlist not found.[/yellow]")
+
+                except NavidromeAuthError as exc:
+                    self.logger.error("Navidrome auth error: %s", exc)
+                    console.print(f"[red]Authentication failed: {exc}[/red]")
+                except NavidromeClientError as exc:
+                    self.logger.error("Navidrome API error: %s", exc)
+                    console.print(f"[red]Navidrome API error: {exc}[/red]")
+                except Exception as exc:
+                    self.logger.error("Unexpected Navidrome error: %s", exc)
+                    console.print(f"[red]Unexpected error: {exc}[/red]")
+
+        while True:
+            console.print("\n[bold cyan]🎶 Navidrome Playlists[/bold cyan]")
+
+            if not self.config.navidrome_enabled:
+                console.print(
+                    "[yellow]NAVIDROME_ENABLED=false. Enable it in .env to use playlist features.[/yellow]")
+                console.print("[dim]Returning to main menu.[/dim]")
+                return
+
+            console.print("[bold]Select an operation:[/bold]\n")
+            options = {
+                "1": "Test connection",
+                "2": "List remote playlists",
+                "3": "List local managed playlists",
+                "4": "Force Navidrome scan now",
+                "5": "Simple playlists",
+                "6": "Smart playlists",
+                "0": "Return to main menu",
+            }
+            for key, value in options.items():
+                console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
+
+            choice = Prompt.ask(
+                "\n[bold]Your choice[/bold]",
+                choices=list(options.keys()),
+                default="0",
+            )
+
+            if choice == "0":
+                return
+
+            try:
+                if choice == "1":
+                    service.test_connection()
+                    console.print("[green]Connection successful.[/green]")
+
+                elif choice == "2":
+                    playlists = service.list_remote_playlists()
+                    if not playlists:
+                        console.print(
+                            "[yellow]No playlists found in Navidrome.[/yellow]")
+                        continue
+
+                    table = Table(title="Navidrome Playlists")
+                    table.add_column("#", style="cyan")
+                    table.add_column("Name", style="white")
+                    table.add_column("ID", style="green")
+                    table.add_column("Songs", style="magenta")
+                    table.add_column("Owner", style="yellow")
+
+                    for index, playlist in enumerate(playlists, start=1):
+                        table.add_row(
+                            str(index),
+                            str(playlist.get("name", "")),
+                            str(playlist.get("id", "")),
+                            str(playlist.get("songCount", 0)),
+                            str(playlist.get("owner", "")),
+                        )
+                    console.print(table)
+
+                elif choice == "3":
+                    playlists = service.list_local_playlists()
+                    if not playlists:
+                        console.print(
+                            "[yellow]No local managed playlists yet.[/yellow]")
+                        continue
+
+                    table = Table(title="Local Managed Playlists")
+                    table.add_column("Local ID", style="cyan")
+                    table.add_column("Kind", style="white")
+                    table.add_column("Name", style="green")
+                    table.add_column("Remote ID / NSP", style="magenta")
+
+                    for playlist in playlists:
+                        kind = str(playlist.get("kind", ""))
+                        value = str(playlist.get("remote_id", ""))
+                        if kind == "smart":
+                            value = str(playlist.get("nsp_path", ""))
+                        table.add_row(
+                            str(playlist.get("local_id", "")),
+                            kind,
+                            str(playlist.get("name", "")),
+                            value,
+                        )
+                    console.print(table)
+
+                elif choice == "4":
+                    service.trigger_scan()
+                    console.print(
+                        "[green]Navidrome scan triggered successfully.[/green]")
+
+                elif choice == "5":
+                    _show_simple_playlists_submenu()
+
+                elif choice == "6":
+                    _show_smart_playlists_submenu()
+
+            except NavidromeAuthError as exc:
+                self.logger.error("Navidrome auth error: %s", exc)
+                console.print(f"[red]Authentication failed: {exc}[/red]")
+            except NavidromeClientError as exc:
+                self.logger.error("Navidrome API error: %s", exc)
+                console.print(f"[red]Navidrome API error: {exc}[/red]")
+            except Exception as exc:
+                self.logger.error("Unexpected Navidrome error: %s", exc)
+                console.print(f"[red]Unexpected error: {exc}[/red]")
 
     def show_quality_dashboard_interactive(self):
         """Generate and display music quality dashboard metrics."""
         from app.features.quality_monitor import MusicQualityMonitor
 
-        console.print("\n[bold cyan]Music Quality Dashboard[/bold cyan]")
+        console.print("\n[bold cyan]📈 Music Quality Dashboard[/bold cyan]")
         top_n = int(Prompt.ask(
             "Top genres to display",
             default=str(self.config.quality_dashboard_top_n_default),
@@ -387,6 +1127,7 @@ class CLIManager:
                 data_dir=self.data_dir,
                 organization_path=self.config.database_path,
                 link_registry_path=self.config.link_registry_path,
+                expect_artist_in_filename=self.config.quality_monitor_expect_artist_in_filename,
             )
             report = monitor.generate_report(top_n=max(1, top_n))
 
@@ -407,6 +1148,8 @@ class CLIManager:
                           str(metrics.get("playlist_like_tokens", 0)))
             table.add_row("Genre equals folder", str(
                 metrics.get("genre_equal_folder", 0)))
+            table.add_row("Name/tag issues", str(
+                metrics.get("name_tag_issues_count", 0)))
             table.add_row("Avg tag quality score",
                           f"{metrics.get('avg_tag_quality_score', 0.0):.2f}")
             table.add_row("Registry music records", str(
@@ -446,7 +1189,7 @@ class CLIManager:
         from app.features.quality_monitor import MusicQualityMonitor
 
         console.print(
-            "\n[bold cyan]Genre Quality Report (Detailed)[/bold cyan]")
+            "\n[bold cyan]🧪 Genre Quality Report (Detailed)[/bold cyan]")
 
         try:
             monitor = MusicQualityMonitor(
@@ -573,7 +1316,11 @@ class CLIManager:
         engine = FilenameSuggestionEngine()
 
         while True:
-            console.print("\n[bold cyan]Filename Suggestions[/bold cyan]")
+            console.print("\n[bold cyan]💡 Filename Suggestions[/bold cyan]")
+            console.print(
+                "[dim]Tips:[/dim] Generate a report first, then preview/correct/apply. "
+                "Manual corrections learn for future suggestions."
+            )
             console.print("[bold]Select an operation:[/bold]\n")
 
             options = {
@@ -641,8 +1388,15 @@ class CLIManager:
                     style="cyan",
                 )
                 console.print(f"Report: {output_path}", style="green")
-                for line in iter_preview_lines(report, limit=max(0, preview_limit)):
+                preview_lines = list(iter_preview_lines(
+                    report, limit=max(0, preview_limit)))
+                for line in preview_lines:
                     console.print(line)
+
+                if int(report.get("changed_suggestions", 0) or 0) == 0:
+                    console.print(
+                        "[yellow]No filename changes detected. The report was generated for reference only; no apply step is required.[/yellow]"
+                    )
                 continue
 
             report_input = Prompt.ask(
@@ -663,7 +1417,9 @@ class CLIManager:
                     "Preview lines",
                     default=str(self.config.filename_preview_limit_default),
                 ))
-                for line in iter_preview_lines(report, limit=max(0, preview_limit)):
+                preview_lines = list(iter_preview_lines(
+                    report, limit=max(0, preview_limit)))
+                for line in preview_lines:
                     console.print(line)
                 continue
 
@@ -739,6 +1495,11 @@ class CLIManager:
 
             execute = choice == "4"
             report = engine.load_report(report_path)
+            if int(report.get("changed_suggestions", 0) or 0) == 0:
+                console.print(
+                    "[yellow]This report contains no filename changes. There is nothing to apply.[/yellow]"
+                )
+                continue
             result = engine.apply_report(report=report, dry_run=not execute)
 
             apply_output = Path(os.getenv(
@@ -773,45 +1534,107 @@ class CLIManager:
 
     def show_system_info_menu(self):
         while True:
-            console.print("\n[bold cyan]System Information[/bold cyan]")
+            console.print("\n[bold cyan]🖥️  System Information[/bold cyan]")
             console.print("[bold]Select an operation:[/bold]\n")
 
             options = {
-                "1": "View system status",
-                "2": "View unorganized files",
-                "3": "View organization logs",
-                "4": "View statistics",
-                "5": "Music quality dashboard",
-                "6": "Genre quality report (detailed)",
-                "7": "Return to main menu",
+                "1": "View unorganized files",
+                "2": "View organization logs",
+                "3": "View statistics",
+                "4": "Music quality dashboard",
+                "5": "Genre quality report (detailed)",
+                "6": "Return to main menu",
             }
 
             for key, value in options.items():
                 console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
             choice = Prompt.ask(
-                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="7")
+                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="6")
 
             if choice == "1":
-                self.show_status_interactive()
-            elif choice == "2":
                 self.view_unorganized_interactive()
-            elif choice == "3":
+            elif choice == "2":
                 self.view_logs_interactive()
-            elif choice == "4":
+            elif choice == "3":
                 self.view_stats_interactive()
-            elif choice == "5":
+            elif choice == "4":
                 self.show_quality_dashboard_interactive()
-            elif choice == "6":
+            elif choice == "5":
                 self.show_genre_quality_report()
-            elif choice == "7":
+            elif choice == "6":
                 break
 
     def show_organize_menu(self):
         from app.main import MediaOrganizerApp
+        from app.core.types import MediaType
+
+        def _log_stage(app: Any, title: str) -> None:
+            log_cycle_stage(app.logger, title)
+
+        def _run_music_preclean(app: Any, path: Path) -> None:
+            """Run music pre-clean step before directory organization."""
+            _log_stage(app, "Music | PRE-CLEAN START")
+            music_org = app.organizadores.get(MediaType.MUSIC)
+            if music_org is None:
+                _log_stage(app, "Music | PRE-CLEAN END")
+                return
+            if hasattr(music_org, "clean_invalid_genres_in_directory"):
+                preclean_report = music_org.clean_invalid_genres_in_directory(
+                    path,
+                    dry_run=app.dry_run,
+                )
+                app.logger.info(
+                    "Music pre-clean finished: files-processed=%d files-updated=%d genres-removed=%d errors=%d",
+                    preclean_report.get("processed", 0),
+                    preclean_report.get("updated", 0),
+                    preclean_report.get("removed_genre_values", 0),
+                    preclean_report.get("errors", 0),
+                )
+            _log_stage(app, "Music | PRE-CLEAN END")
+
+        def _run_music_db_recheck(app: Any) -> None:
+            """Run DB recheck after music cycle to catch legacy genre and album metadata variants."""
+            _log_stage(app, "Music | DB RECHECK START")
+            music_org = app.organizadores.get(MediaType.MUSIC)
+            if music_org is None:
+                _log_stage(app, "Music | DB RECHECK END")
+                return
+            if hasattr(music_org, "reprocess_db_tracks_with_invalid_genres"):
+                db_reprocess_report = music_org.reprocess_db_tracks_with_invalid_genres(
+                    dry_run=app.dry_run,
+                )
+                app.logger.info(
+                    "Music DB invalid-genre recheck finished: scanned=%d invalid-found=%d normalization-needed=%d db-updates=%d files-reprocessed=%d files-updated=%d genres-removed=%d errors=%d",
+                    db_reprocess_report.get("music_records_scanned", 0),
+                    db_reprocess_report.get(
+                        "tracks_flagged_invalid_genres", 0),
+                    db_reprocess_report.get(
+                        "tracks_flagged_genre_normalization", 0),
+                    db_reprocess_report.get("db_metadata_updates", 0),
+                    db_reprocess_report.get("tracks_reprocessed", 0),
+                    db_reprocess_report.get("tracks_updated", 0),
+                    db_reprocess_report.get("removed_genre_values", 0),
+                    db_reprocess_report.get("file_errors", 0),
+                )
+            if hasattr(music_org, "reprocess_db_tracks_with_album_identity"):
+                album_reprocess_report = music_org.reprocess_db_tracks_with_album_identity(
+                    dry_run=app.dry_run,
+                )
+                app.logger.info(
+                    "Music DB album-identity recheck finished: scanned=%d groups=%d groups-with-variants=%d files-updated=%d files-skipped=%d errors=%d",
+                    album_reprocess_report.get("music_records_scanned", 0),
+                    album_reprocess_report.get("album_groups_scanned", 0),
+                    album_reprocess_report.get(
+                        "album_groups_with_variants", 0),
+                    album_reprocess_report.get("tracks_updated", 0),
+                    album_reprocess_report.get("files_skipped", 0),
+                    album_reprocess_report.get("file_errors", 0),
+                )
+            _log_stage(app, "Music | DB RECHECK END")
 
         while True:
-            console.print("\n[bold cyan]Organize Media Files[/bold cyan]")
+            console.print("\n[bold cyan]🗃️  Organize Media Files[/bold cyan]")
             console.print("[bold]Select directory to organize:[/bold]\n")
 
             options = {
@@ -845,12 +1668,26 @@ class CLIManager:
 
                     for name, path, unit in dir_options:
                         if path and path.exists():
-                            processed = asyncio.run(
-                                app.organize_directory(
-                                    path,
-                                    source_label=name,
-                                    progress_unit=unit,
-                                )
+                            processed = run_logged_cycle(
+                                logger=app.logger,
+                                label=name,
+                                run_organization=lambda p=path, n=name, u=unit: asyncio.run(
+                                    app.organize_directory(
+                                        p,
+                                        source_label=n,
+                                        progress_unit=u,
+                                    )
+                                ),
+                                on_pre_organization=(
+                                    (lambda p=path: _run_music_preclean(app, p))
+                                    if name == "Music"
+                                    else None
+                                ),
+                                on_post_organization=(
+                                    (lambda: _run_music_db_recheck(app))
+                                    if name == "Music"
+                                    else None
+                                ),
                             )
                             total_processed += processed
                             console.print(
@@ -878,12 +1715,26 @@ class CLIManager:
                     console.print(
                         f"\n[cyan]Organizing {name}: {path}[/cyan]\n")
                     unit = "tracks" if name == "Music" else name.lower()
-                    asyncio.run(
-                        app.organize_directory(
-                            path,
-                            source_label=name,
-                            progress_unit=unit,
-                        )
+                    run_logged_cycle(
+                        logger=app.logger,
+                        label=name,
+                        run_organization=lambda p=path, n=name, u=unit: asyncio.run(
+                            app.organize_directory(
+                                p,
+                                source_label=n,
+                                progress_unit=u,
+                            )
+                        ),
+                        on_pre_organization=(
+                            (lambda p=path: _run_music_preclean(app, p))
+                            if name == "Music"
+                            else None
+                        ),
+                        on_post_organization=(
+                            (lambda: _run_music_db_recheck(app))
+                            if name == "Music"
+                            else None
+                        ),
                     )
                     app.show_stats()
             finally:
@@ -896,7 +1747,7 @@ class CLIManager:
         from app.infrastructure.database import OrganizationDatabase
         from app.services.organizers import MusicOrganizer
 
-        console.print("\n[bold cyan]Music Genre Backfill[/bold cyan]")
+        console.print("\n[bold cyan]🔁 Music Genre Backfill[/bold cyan]")
         console.print(
             "[bold yellow]This will enrich genre metadata for all organized music tracks[/bold yellow]")
         console.print(
@@ -973,7 +1824,7 @@ class CLIManager:
 
     def _display_backfill_report(self, report: Dict) -> None:
         """Display backfill report in a readable format."""
-        console.print("\n[bold cyan]Backfill Report[/bold cyan]")
+        console.print("\n[bold cyan]🧾 Backfill Report[/bold cyan]")
         console.print(
             f"Total tracks processed: {report['total_tracks_processed']}")
         console.print(
@@ -999,23 +1850,10 @@ class CLIManager:
                     f"{track['file']}: {track['genre']}"
                 )
 
-    def show_status_interactive(self):
-        console.print("\n[bold cyan]System Status[/bold cyan]")
-
-        try:
-            import shutil
-
-            total, used, free = shutil.disk_usage("/")
-            console.print(f"Total: {total / (1024**3):.2f} GB")
-            console.print(f"Used: {used / (1024**3):.2f} GB")
-            console.print(f"Free: {free / (1024**3):.2f} GB")
-        except Exception as exc:
-            log_error(self.logger, f"Error getting system status: {exc}")
-
     def view_unorganized_interactive(self):
         from app.infrastructure.database import UnorganizedDatabase
 
-        console.print("\n[bold cyan]Unorganized Files[/bold cyan]")
+        console.print("\n[bold cyan]📂 Unorganized Files[/bold cyan]")
 
         try:
             unorganized_db = UnorganizedDatabase(
@@ -1039,7 +1877,7 @@ class CLIManager:
             log_error(self.logger, f"Error viewing unorganized files: {exc}")
 
     def view_logs_interactive(self):
-        console.print("\n[bold cyan]Organization Logs[/bold cyan]")
+        console.print("\n[bold cyan]📜 Organization Logs[/bold cyan]")
 
         log_file = self.logs_dir / "organizer.log"
         if not log_file.exists():
@@ -1058,15 +1896,32 @@ class CLIManager:
     def view_stats_interactive(self):
         from app.main import MediaOrganizerApp
 
-        console.print("\n[bold cyan]System Statistics[/bold cyan]")
+        console.print("\n[bold cyan]📉 System Statistics[/bold cyan]")
 
         try:
             app = MediaOrganizerApp()
             stats = app.database.get_stats()
 
-            console.print("\n[bold]Organization Stats:[/bold]")
+            stats_labels = {
+                "total_files_organized": "Total files organized",
+                "music_tracks": "Music tracks",
+                "lyrics_files": "Lyrics files",
+                "books": "Books",
+                "comics": "Comics",
+                "failed_operations": "Failed operations",
+                "last_organization_run": "Last organization run",
+            }
+
+            table = Table(title="Organization Stats")
+            table.add_column("Metric", style="cyan")
+            table.add_column("Value", style="green")
+
             for key, value in stats.items():
-                console.print(f"  {key}: {value}")
+                label = stats_labels.get(
+                    str(key), str(key).replace("_", " ").strip().title())
+                table.add_row(str(label), str(value))
+
+            console.print(table)
 
             app.cleanup()
         except Exception as exc:

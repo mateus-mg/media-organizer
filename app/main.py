@@ -13,7 +13,7 @@ import json
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict
+from typing import Any, Awaitable, Callable, Dict, List
 
 import click
 from rich.console import Console
@@ -35,10 +35,11 @@ from app.validators import FileCompletionValidator
 from app.logging import get_logger, set_console_log_level
 from app.config.constants import SUPPORTED_MEDIA_EXTS
 from app.metadata import enrich_book_metadata_with_online_sources
-from app.services import ArtworkOrganizer, BookOrganizer, LyricsOrganizer, MusicOrganizer, RenamerOrganizer
+from app.services import ArtworkOrganizer, BookOrganizer, LyricsOrganizer, MusicOrganizer, RenamerOrganizer, PlaylistService
 from app.infrastructure.database import format_datetime_br
 from app.infrastructure import OrganizationDatabase
-from app.utils.helpers import ConflictHandler
+from app.infrastructure import NavidromeClient
+from app.utils.helpers import ConflictHandler, log_cycle_stage, run_logged_cycle
 
 
 def _env_int(name: str, default: int, minimum: int = 0) -> int:
@@ -255,6 +256,159 @@ def test():
         app.cleanup()
 
 
+@cli.command("navidrome-test")
+def navidrome_test():
+    """Test connection to Navidrome Subsonic API."""
+    console = Console()
+    config = Config()
+
+    if not config.navidrome_enabled:
+        console.print("NAVIDROME_ENABLED=false", style="yellow")
+        return
+
+    client = NavidromeClient(config)
+    try:
+        client.ping()
+        playlists = client.get_playlists()
+        console.print("Navidrome connection successful", style="green")
+        console.print(f"Playlists visible: {len(playlists)}", style="cyan")
+    except Exception as exc:
+        console.print(f"Navidrome connection failed: {exc}", style="red")
+        raise SystemExit(1)
+    finally:
+        client.close()
+
+
+@cli.command("navidrome-playlists")
+def navidrome_playlists():
+    """List playlists available in Navidrome."""
+    console = Console()
+    config = Config()
+
+    if not config.navidrome_enabled:
+        console.print("NAVIDROME_ENABLED=false", style="yellow")
+        return
+
+    client = NavidromeClient(config)
+    try:
+        playlists = client.get_playlists()
+        if not playlists:
+            console.print("No playlists found.", style="yellow")
+            return
+
+        table = Table(title="Navidrome Playlists")
+        table.add_column("Name", style="cyan")
+        table.add_column("ID", style="green")
+        table.add_column("Songs", style="magenta")
+        table.add_column("Owner", style="yellow")
+
+        for playlist in playlists:
+            table.add_row(
+                str(playlist.get("name", "")),
+                str(playlist.get("id", "")),
+                str(playlist.get("songCount", 0)),
+                str(playlist.get("owner", "")),
+            )
+
+        console.print(table)
+    except Exception as exc:
+        console.print(f"Could not list playlists: {exc}", style="red")
+        raise SystemExit(1)
+    finally:
+        client.close()
+
+
+@cli.command("navidrome-sync-simple")
+@click.option("--name", required=True, help="Playlist name in Navidrome")
+@click.option("--artist", default="", help="Artist filter (contains)")
+@click.option("--genre", default="", help="Genre filter (contains)")
+@click.option("--album", default="", help="Album filter (contains)")
+@click.option("--limit", default=0, type=int, help="Max tracks (0 = no limit)")
+@click.option("--public", "is_public", is_flag=True, help="Create/update as public playlist")
+@click.option(
+    "--mode",
+    type=click.Choice(["recreate", "incremental"], case_sensitive=False),
+    default="incremental",
+    show_default=True,
+    help="Sync strategy: recreate playlist or apply incremental diff",
+)
+@click.option(
+    "--preview-diff",
+    is_flag=True,
+    help="Preview additions/removals without applying remote/local changes",
+)
+def navidrome_sync_simple(name: str, artist: str, genre: str, album: str, limit: int, is_public: bool, mode: str, preview_diff: bool):
+    """Sync a simple playlist from organization.json using metadata filters."""
+    console = Console()
+    config = Config()
+
+    if not config.navidrome_enabled:
+        console.print("NAVIDROME_ENABLED=false", style="yellow")
+        return
+
+    service = PlaylistService(config)
+    try:
+        report = service.sync_simple_playlist_from_organization(
+            name=name,
+            public=is_public,
+            artist_filter=artist,
+            genre_filter=genre,
+            album_filter=album,
+            limit=max(0, int(limit)),
+            mode=(mode or "incremental").lower(),
+            preview_only=bool(preview_diff),
+        )
+        if preview_diff:
+            console.print(
+                f"Simple playlist preview generated ({(mode or 'incremental').lower()})", style="green")
+        else:
+            console.print(
+                f"Simple playlist synced ({(mode or 'incremental').lower()})", style="green")
+        console.print(
+            f"Matched={report.get('matched_records', 0)} | Resolved={report.get('resolved_count', 0)} | Unresolved={report.get('unresolved_count', 0)}",
+            style="cyan",
+        )
+
+        preview = report.get("preview") or {}
+        if preview:
+            add_count = int(preview.get("to_add_count", 0) or 0)
+            remove_count = int(preview.get("to_remove_count", 0) or 0)
+            console.print(
+                f"Diff: add={add_count} | remove={remove_count} | existing={preview.get('existing_song_count', 0)} | target={preview.get('target_song_count', 0)}",
+                style="magenta",
+            )
+            if preview_diff:
+                if add_count == 0 and remove_count == 0:
+                    console.print(
+                        "Resumo: nenhum ajuste necessário, a playlist já está alinhada aos filtros.",
+                        style="magenta",
+                    )
+                else:
+                    console.print(
+                        f"Resumo: adicionaria {add_count} música(s) e removeria {remove_count} música(s) para alinhar com os filtros atuais.",
+                        style="magenta",
+                    )
+                add_samples = preview.get("to_add_song_ids", [])
+                remove_samples = preview.get("to_remove_song_ids", [])
+                if add_samples:
+                    console.print("Sample IDs to add:", style="magenta")
+                    for song_id in add_samples[:10]:
+                        console.print(f"+ {song_id}")
+                if remove_samples:
+                    console.print("Sample IDs to remove:", style="magenta")
+                    for song_id in remove_samples[:10]:
+                        console.print(f"- {song_id}")
+
+        unresolved_paths = report.get("unresolved_paths", [])
+        if unresolved_paths:
+            console.print("Unresolved examples:", style="yellow")
+            for path in unresolved_paths[:10]:
+                console.print(f"- {path}")
+    except Exception as exc:
+        console.print(f"Sync failed: {exc}", style="red")
+        raise SystemExit(1)
+
+
 @cli.command("music-genre-backfill")
 @click.option(
     "--execute",
@@ -304,6 +458,85 @@ def music_genre_backfill(ctx, execute: bool):
         console.print(
             f"No genre found: {report.get('tracks_with_no_genre_found', 0)}")
         console.print(f"Errors: {report.get('tracks_with_file_errors', 0)}")
+    finally:
+        if app is not None:
+            app.cleanup()
+
+
+@cli.command("music-metadata-normalize-albums")
+@click.option(
+    "--execute",
+    is_flag=True,
+    help="Apply album metadata normalization (default is dry-run preview).",
+)
+@click.pass_context
+def music_metadata_normalize_albums(ctx, execute: bool):
+    """Audit and normalize album identity metadata across organized music tracks."""
+    from app.services.organizers import MusicOrganizer
+
+    console = Console()
+    cli_dry_run = bool(ctx.obj.get("DRY_RUN", False))
+    effective_dry_run = True
+    if execute and not cli_dry_run:
+        effective_dry_run = False
+
+    if execute and cli_dry_run:
+        console.print(
+            "--execute ignored because global --dry-run is enabled",
+            style="yellow",
+        )
+
+    app = None
+    try:
+        app = MediaOrganizerApp(dry_run=effective_dry_run)
+        music_organizer = MusicOrganizer(
+            config=app.config,
+            database=app.database,
+            conflict_handler=None,
+            logger=app.logger,
+            dry_run=effective_dry_run,
+        )
+
+        report = music_organizer.reprocess_db_tracks_with_album_identity(
+            dry_run=effective_dry_run,
+        )
+
+        mode = "DRY RUN" if effective_dry_run else "EXECUTE"
+        console.print(
+            f"Album metadata normalization finished ({mode})", style="cyan")
+        console.print(
+            f"Scanned tracks: {report.get('music_records_scanned', 0)}")
+        console.print(
+            f"Album groups scanned: {report.get('album_groups_scanned', 0)}")
+        console.print(
+            f"Groups with variants: {report.get('album_groups_with_variants', 0)}")
+        console.print(f"Files skipped: {report.get('files_skipped', 0)}")
+        console.print(f"Files updated: {report.get('tracks_updated', 0)}")
+        console.print(f"Errors: {report.get('file_errors', 0)}")
+
+        groups = report.get("groups") or []
+        if groups:
+            table = Table(title="Album Metadata Variants")
+            table.add_column("Artist", style="cyan")
+            table.add_column("Album", style="green")
+            table.add_column("Years", style="magenta")
+            table.add_column("Album Variants", style="yellow")
+            table.add_column("Artist Variants", style="blue")
+            table.add_column("Tracks", style="white")
+            for group in groups[:20]:
+                table.add_row(
+                    str(group.get("artist", "")),
+                    str(group.get("album", "")),
+                    ", ".join(str(year)
+                              for year in group.get("years", [])) or "-",
+                    str(len(group.get("album_variants", []))),
+                    str(len(group.get("album_artist_variants", []))),
+                    str(group.get("tracks", 0)),
+                )
+            console.print(table)
+            if len(groups) > 20:
+                console.print(
+                    f"Showing first 20 of {len(groups)} variant group(s)", style="yellow")
     finally:
         if app is not None:
             app.cleanup()
@@ -413,6 +646,63 @@ def process_new_media(ctx):
     dry_run = ctx.obj.get("DRY_RUN", False)
     app = MediaOrganizerApp(dry_run=dry_run)
 
+    def _run_music_preclean(path: Path) -> None:
+        log_cycle_stage(app.logger, "Music | PRE-CLEAN START")
+        music_org = app.organizadores.get(MediaType.MUSIC)
+        if music_org is None:
+            log_cycle_stage(app.logger, "Music | PRE-CLEAN END")
+            return
+        if hasattr(music_org, "clean_invalid_genres_in_directory"):
+            preclean_report = music_org.clean_invalid_genres_in_directory(
+                path,
+                dry_run=dry_run,
+            )
+            app.logger.info(
+                "Music pre-clean finished: files-processed=%d files-updated=%d genres-removed=%d errors=%d",
+                preclean_report.get("processed", 0),
+                preclean_report.get("updated", 0),
+                preclean_report.get("removed_genre_values", 0),
+                preclean_report.get("errors", 0),
+            )
+        log_cycle_stage(app.logger, "Music | PRE-CLEAN END")
+
+    def _run_music_db_recheck() -> None:
+        log_cycle_stage(app.logger, "Music | DB RECHECK START")
+        music_org = app.organizadores.get(MediaType.MUSIC)
+        if music_org is None:
+            log_cycle_stage(app.logger, "Music | DB RECHECK END")
+            return
+        if hasattr(music_org, "reprocess_db_tracks_with_invalid_genres"):
+            db_reprocess_report = music_org.reprocess_db_tracks_with_invalid_genres(
+                dry_run=dry_run,
+            )
+            app.logger.info(
+                "Music DB invalid-genre recheck finished: scanned=%d invalid-found=%d normalization-needed=%d db-updates=%d files-reprocessed=%d files-updated=%d genres-removed=%d errors=%d",
+                db_reprocess_report.get("music_records_scanned", 0),
+                db_reprocess_report.get("tracks_flagged_invalid_genres", 0),
+                db_reprocess_report.get(
+                    "tracks_flagged_genre_normalization", 0),
+                db_reprocess_report.get("db_metadata_updates", 0),
+                db_reprocess_report.get("tracks_reprocessed", 0),
+                db_reprocess_report.get("tracks_updated", 0),
+                db_reprocess_report.get("removed_genre_values", 0),
+                db_reprocess_report.get("file_errors", 0),
+            )
+        if hasattr(music_org, "reprocess_db_tracks_with_album_identity"):
+            album_reprocess_report = music_org.reprocess_db_tracks_with_album_identity(
+                dry_run=dry_run,
+            )
+            app.logger.info(
+                "Music DB album-identity recheck finished: scanned=%d groups=%d groups-with-variants=%d files-updated=%d files-skipped=%d errors=%d",
+                album_reprocess_report.get("music_records_scanned", 0),
+                album_reprocess_report.get("album_groups_scanned", 0),
+                album_reprocess_report.get("album_groups_with_variants", 0),
+                album_reprocess_report.get("tracks_updated", 0),
+                album_reprocess_report.get("files_skipped", 0),
+                album_reprocess_report.get("file_errors", 0),
+            )
+        log_cycle_stage(app.logger, "Music | DB RECHECK END")
+
     try:
         total_processed = 0
         download_paths = [
@@ -423,29 +713,29 @@ def process_new_media(ctx):
 
         for label, path, unit in download_paths:
             if path and path.exists():
-                app.logger.info("Starting %s cycle from %s", label, path)
-
-                if label == "Music":
-                    music_org = app.organizadores.get(MediaType.MUSIC)
-                    if music_org is not None and hasattr(music_org, "clean_invalid_genres_in_directory"):
-                        preclean_report = music_org.clean_invalid_genres_in_directory(
-                            path,
-                            dry_run=dry_run,
+                processed = run_logged_cycle(
+                    logger=app.logger,
+                    label=label,
+                    run_organization=lambda p=path, l=label, u=unit: asyncio.run(
+                        app.organize_directory(
+                            p,
+                            source_label=l,
+                            progress_unit=u,
                         )
-                        app.logger.info(
-                            "Music pre-clean finished: processed=%d updated=%d removed_genres=%d errors=%d",
-                            preclean_report.get("processed", 0),
-                            preclean_report.get("updated", 0),
-                            preclean_report.get("removed_genre_values", 0),
-                            preclean_report.get("errors", 0),
+                    ),
+                    on_pre_organization=(
+                        (lambda p=path: _run_music_preclean(p))
+                        if label == "Music"
+                        else None
+                    ),
+                    on_post_organization=(
+                        _run_music_db_recheck if label == "Music" else None
+                    ),
+                    on_cycle_start=(
+                        lambda p=path, l=label: app.logger.info(
+                            "Starting %s cycle from %s", l, p
                         )
-
-                processed = asyncio.run(
-                    app.organize_directory(
-                        path,
-                        source_label=label,
-                        progress_unit=unit,
-                    )
+                    ),
                 )
                 total_processed += processed
                 app.logger.info(
@@ -454,25 +744,6 @@ def process_new_media(ctx):
                     processed,
                     unit,
                 )
-
-                if label == "Music":
-                    music_org = app.organizadores.get(MediaType.MUSIC)
-                    if music_org is not None and hasattr(music_org, "reprocess_db_tracks_with_invalid_genres"):
-                        db_reprocess_report = music_org.reprocess_db_tracks_with_invalid_genres(
-                            dry_run=dry_run,
-                        )
-                        app.logger.info(
-                            "Music DB invalid-genre recheck finished: scanned=%d flagged=%d db_updates=%d reprocessed=%d updated=%d removed_genres=%d errors=%d",
-                            db_reprocess_report.get(
-                                "music_records_scanned", 0),
-                            db_reprocess_report.get(
-                                "tracks_flagged_invalid_genres", 0),
-                            db_reprocess_report.get("db_metadata_updates", 0),
-                            db_reprocess_report.get("tracks_reprocessed", 0),
-                            db_reprocess_report.get("tracks_updated", 0),
-                            db_reprocess_report.get("removed_genre_values", 0),
-                            db_reprocess_report.get("file_errors", 0),
-                        )
 
         if total_processed > 0:
             Console().print(
@@ -522,6 +793,94 @@ def preview_music_metadata(music_path: Path):
         app.cleanup()
 
 
+def _collect_book_records_for_backfill(app: MediaOrganizerApp, limit: int) -> List[Dict[str, Any]]:
+    records = app.database.media_table.all()
+    book_records: List[Dict[str, Any]] = []
+    for record in records:
+        metadata = record.get("metadata") or {}
+        media_type = str(metadata.get("media_type") or "").lower()
+        media_subtype = str(metadata.get("media_subtype") or "").lower()
+        if media_type == "book" or media_subtype == "book":
+            book_records.append(record)
+
+    if limit > 0:
+        return book_records[:limit]
+    return book_records
+
+
+def _new_backfill_report(dry_run: bool, limit: int, success_key: str) -> Dict[str, Any]:
+    return {
+        "dry_run": dry_run,
+        "limit": limit,
+        "processed": 0,
+        success_key: 0,
+        "skipped": 0,
+        "errors": 0,
+        "reasons": {},
+        "details": [],
+    }
+
+
+def _count_backfill_reason(report: Dict[str, Any], reason: str) -> None:
+    report["reasons"][reason] = report["reasons"].get(reason, 0) + 1
+
+
+def _write_backfill_report(report: Dict[str, Any], env_var: str, default_path: str) -> Path:
+    out_path = Path(os.getenv(env_var, default_path))
+    out_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    return out_path
+
+
+async def _run_book_backfill_engine(
+    app: MediaOrganizerApp,
+    *,
+    limit: int,
+    dry_run: bool,
+    success_key: str,
+    strategy: Callable[[Dict[str, Any]], Awaitable[Dict[str, Any]]],
+) -> Dict[str, Any]:
+    """Generic engine for book backfill flows with pluggable record strategy."""
+    report = _new_backfill_report(
+        dry_run=dry_run, limit=limit, success_key=success_key)
+    records = _collect_book_records_for_backfill(app, limit)
+
+    for record in records:
+        report["processed"] += 1
+        outcome = await strategy(record)
+
+        status = str(outcome.get("status") or "skipped").lower()
+        reason = str(outcome.get("reason") or "unknown")
+        detail = dict(outcome.get("detail") or {})
+        if "reason" not in detail:
+            detail["reason"] = reason
+
+        if status == "success":
+            report[success_key] += 1
+        elif status == "error":
+            report["errors"] += 1
+        else:
+            report["skipped"] += 1
+
+        _count_backfill_reason(report, reason)
+        report["details"].append(detail)
+
+    return report
+
+
+def _normalize_year_value(value: Any) -> int | None:
+    if isinstance(value, int):
+        return value if 1000 <= value <= 2100 else None
+    if isinstance(value, str):
+        match = re.search(r"(\d{4})", value)
+        if match:
+            year = int(match.group(1))
+            return year if 1000 <= year <= 2100 else None
+    return None
+
+
 @cli.command("backfill-book-covers")
 @click.option(
     "--limit",
@@ -535,39 +894,13 @@ def backfill_book_covers(ctx, limit: int):
     """Backfill book covers using existing DB metadata (title/author) with Google Books."""
     dry_run = ctx.obj.get("DRY_RUN", False)
     app = MediaOrganizerApp(dry_run=dry_run)
+    report = _new_backfill_report(
+        dry_run=dry_run, limit=limit, success_key="updated")
 
-    report = {
-        "dry_run": dry_run,
-        "limit": limit,
-        "processed": 0,
-        "updated": 0,
-        "skipped": 0,
-        "errors": 0,
-        "reasons": {},
-        "details": [],
-    }
-
-    def _count_reason(reason: str) -> None:
-        report["reasons"][reason] = report["reasons"].get(reason, 0) + 1
-
-    async def _run() -> None:
+    async def _run() -> Dict[str, Any]:
         book_organizer = app.organizadores[MediaType.BOOK]
-        records = app.database.media_table.all()
 
-        book_records = []
-        for record in records:
-            metadata = record.get("metadata") or {}
-            media_type = str(metadata.get("media_type") or "").lower()
-            media_subtype = str(metadata.get("media_subtype") or "").lower()
-            if media_type == "book" or media_subtype == "book":
-                book_records.append(record)
-
-        if limit > 0:
-            book_records = book_records[:limit]
-
-        for record in book_records:
-            report["processed"] += 1
-
+        async def _strategy(record: Dict[str, Any]) -> Dict[str, Any]:
             organized_path = Path(record.get("organized_path") or "")
             metadata = dict(record.get("metadata") or {})
             ext = organized_path.suffix.lower()
@@ -575,46 +908,45 @@ def backfill_book_covers(ctx, limit: int):
             detail = {
                 "path": str(organized_path),
                 "updated": False,
-                "reason": "",
             }
 
             if ext not in {".epub", ".pdf"}:
-                detail["reason"] = "unsupported_extension"
-                report["skipped"] += 1
-                _count_reason("unsupported_extension")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "unsupported_extension",
+                    "detail": detail,
+                }
 
             if not organized_path.exists():
-                detail["reason"] = "file_not_found"
-                report["skipped"] += 1
-                _count_reason("file_not_found")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "file_not_found",
+                    "detail": detail,
+                }
 
             title = str(metadata.get("title") or "").strip()
             author = str(metadata.get("author") or "").strip()
             if not title or not author or author.lower() == "unknown author":
-                detail["reason"] = "missing_title_or_author"
-                report["skipped"] += 1
-                _count_reason("missing_title_or_author")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "missing_title_or_author",
+                    "detail": detail,
+                }
 
             has_cover = book_organizer._book_has_embedded_cover(organized_path)
             if has_cover is True:
-                detail["reason"] = "already_has_cover"
-                report["skipped"] += 1
-                _count_reason("already_has_cover")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "already_has_cover",
+                    "detail": detail,
+                }
 
             if has_cover is None:
-                detail["reason"] = "unknown_cover_state"
-                report["skipped"] += 1
-                _count_reason("unknown_cover_state")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "unknown_cover_state",
+                    "detail": detail,
+                }
 
             try:
                 enriched = await enrich_book_metadata_with_online_sources(
@@ -627,20 +959,20 @@ def backfill_book_covers(ctx, limit: int):
                     include_cover_url=True,
                 )
             except Exception as exc:
-                detail["reason"] = "enrichment_error"
                 detail["error"] = str(exc)
-                report["errors"] += 1
-                _count_reason("enrichment_error")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "error",
+                    "reason": "enrichment_error",
+                    "detail": detail,
+                }
 
             cover_url = str(enriched.get("cover_image_url") or "").strip()
             if not cover_url:
-                detail["reason"] = "no_cover_url_found"
-                report["skipped"] += 1
-                _count_reason("no_cover_url_found")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "skipped",
+                    "reason": "no_cover_url_found",
+                    "detail": detail,
+                }
 
             writable_metadata = dict(metadata)
             writable_metadata["cover_image_url"] = cover_url
@@ -653,18 +985,14 @@ def backfill_book_covers(ctx, limit: int):
                     organized_path, writable_metadata)
 
             if not write_ok:
-                detail["reason"] = "write_failed"
-                report["errors"] += 1
-                _count_reason("write_failed")
-                report["details"].append(detail)
-                continue
+                return {
+                    "status": "error",
+                    "reason": "write_failed",
+                    "detail": detail,
+                }
 
             detail["updated"] = True
-            detail["reason"] = "updated"
             detail["cover_url"] = cover_url
-            report["updated"] += 1
-            _count_reason("updated")
-            report["details"].append(detail)
 
             if not dry_run:
                 file_hash = record.get("file_hash")
@@ -687,16 +1015,27 @@ def backfill_book_covers(ctx, limit: int):
                         doc_ids=[record.doc_id],
                     )
 
+            return {
+                "status": "success",
+                "reason": "updated",
+                "detail": detail,
+            }
+
+        return await _run_book_backfill_engine(
+            app,
+            limit=limit,
+            dry_run=dry_run,
+            success_key="updated",
+            strategy=_strategy,
+        )
+
     try:
-        asyncio.run(_run())
+        report = asyncio.run(_run())
     finally:
-        out_path = Path(os.getenv(
+        out_path = _write_backfill_report(
+            report,
             "BOOK_COVER_BACKFILL_REPORT_PATH",
             "data/book_cover_backfill_report.json",
-        ))
-        out_path.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2),
-            encoding="utf-8",
         )
 
         Console().print(
@@ -720,147 +1059,118 @@ def backfill_book_years(ctx, limit: int):
     """Backfill missing `(YYYY)` suffix in original source book filenames."""
     dry_run = ctx.obj.get("DRY_RUN", False)
     app = MediaOrganizerApp(dry_run=dry_run)
+    report = _new_backfill_report(
+        dry_run=dry_run, limit=limit, success_key="renamed")
 
-    report = {
-        "dry_run": dry_run,
-        "limit": limit,
-        "processed": 0,
-        "renamed": 0,
-        "skipped": 0,
-        "errors": 0,
-        "reasons": {},
-        "details": [],
-    }
+    async def _run() -> Dict[str, Any]:
+        async def _strategy(record: Dict[str, Any]) -> Dict[str, Any]:
+            original_path = Path(record.get("original_path") or "")
+            metadata = dict(record.get("metadata") or {})
+            detail = {
+                "path": str(original_path),
+                "renamed": False,
+            }
 
-    def _count_reason(reason: str) -> None:
-        report["reasons"][reason] = report["reasons"].get(reason, 0) + 1
+            if not original_path.exists() or not original_path.is_file():
+                return {
+                    "status": "skipped",
+                    "reason": "file_not_found",
+                    "detail": detail,
+                }
 
-    def _normalize_year(value) -> int | None:
-        if isinstance(value, int):
-            return value if 1000 <= value <= 2100 else None
-        if isinstance(value, str):
-            import re
+            if original_path.suffix.lower() not in {".epub", ".pdf", ".mobi", ".azw", ".azw3"}:
+                return {
+                    "status": "skipped",
+                    "reason": "unsupported_extension",
+                    "detail": detail,
+                }
 
-            match = re.search(r"(\d{4})", value)
-            if match:
-                year = int(match.group(1))
-                return year if 1000 <= year <= 2100 else None
-        return None
+            stem = original_path.stem
 
-    records = app.database.media_table.all()
-    book_records = []
-    for record in records:
-        metadata = record.get("metadata") or {}
-        media_type = str(metadata.get("media_type") or "").lower()
-        media_subtype = str(metadata.get("media_subtype") or "").lower()
-        if media_type == "book" or media_subtype == "book":
-            book_records.append(record)
+            if re.search(r"\(\d{4}\)\s*$", stem):
+                return {
+                    "status": "skipped",
+                    "reason": "already_has_year",
+                    "detail": detail,
+                }
 
-    if limit > 0:
-        book_records = book_records[:limit]
+            year = _normalize_year_value(metadata.get("year"))
+            if not year:
+                return {
+                    "status": "skipped",
+                    "reason": "missing_valid_year_metadata",
+                    "detail": detail,
+                }
 
-    for record in book_records:
-        report["processed"] += 1
+            new_name = f"{stem} ({year}){original_path.suffix}"
+            target_path = original_path.with_name(new_name)
 
-        original_path = Path(record.get("original_path") or "")
-        metadata = dict(record.get("metadata") or {})
-        detail = {
-            "path": str(original_path),
-            "renamed": False,
-            "reason": "",
-        }
+            if target_path.exists():
+                detail["target"] = str(target_path)
+                return {
+                    "status": "skipped",
+                    "reason": "target_already_exists",
+                    "detail": detail,
+                }
 
-        if not original_path.exists() or not original_path.is_file():
-            detail["reason"] = "file_not_found"
-            report["skipped"] += 1
-            _count_reason("file_not_found")
-            report["details"].append(detail)
-            continue
+            if dry_run:
+                detail["renamed"] = True
+                detail["target"] = str(target_path)
+                return {
+                    "status": "success",
+                    "reason": "would_rename",
+                    "detail": detail,
+                }
 
-        if original_path.suffix.lower() not in {".epub", ".pdf", ".mobi", ".azw", ".azw3"}:
-            detail["reason"] = "unsupported_extension"
-            report["skipped"] += 1
-            _count_reason("unsupported_extension")
-            report["details"].append(detail)
-            continue
+            try:
+                original_path.rename(target_path)
+                app.database.media_table.update(
+                    {
+                        "original_path": str(target_path),
+                        "last_checked": format_datetime_br(),
+                        "metadata": metadata,
+                    },
+                    doc_ids=[record.doc_id],
+                )
 
-        stem = original_path.stem
-        import re
+                detail["renamed"] = True
+                detail["target"] = str(target_path)
+                return {
+                    "status": "success",
+                    "reason": "renamed",
+                    "detail": detail,
+                }
+            except Exception as exc:
+                detail["error"] = str(exc)
+                return {
+                    "status": "error",
+                    "reason": "rename_error",
+                    "detail": detail,
+                }
 
-        if re.search(r"\(\d{4}\)\s*$", stem):
-            detail["reason"] = "already_has_year"
-            report["skipped"] += 1
-            _count_reason("already_has_year")
-            report["details"].append(detail)
-            continue
+        return await _run_book_backfill_engine(
+            app,
+            limit=limit,
+            dry_run=dry_run,
+            success_key="renamed",
+            strategy=_strategy,
+        )
 
-        year = _normalize_year(metadata.get("year"))
-        if not year:
-            detail["reason"] = "missing_valid_year_metadata"
-            report["skipped"] += 1
-            _count_reason("missing_valid_year_metadata")
-            report["details"].append(detail)
-            continue
+    try:
+        report = asyncio.run(_run())
+    finally:
+        out_path = _write_backfill_report(
+            report,
+            "BOOK_YEAR_BACKFILL_REPORT_PATH",
+            "data/book_year_backfill_report.json",
+        )
 
-        new_name = f"{stem} ({year}){original_path.suffix}"
-        target_path = original_path.with_name(new_name)
-
-        if target_path.exists():
-            detail["reason"] = "target_already_exists"
-            detail["target"] = str(target_path)
-            report["skipped"] += 1
-            _count_reason("target_already_exists")
-            report["details"].append(detail)
-            continue
-
-        if dry_run:
-            detail["renamed"] = True
-            detail["reason"] = "would_rename"
-            detail["target"] = str(target_path)
-            report["renamed"] += 1
-            _count_reason("would_rename")
-            report["details"].append(detail)
-            continue
-
-        try:
-            original_path.rename(target_path)
-            app.database.media_table.update(
-                {
-                    "original_path": str(target_path),
-                    "last_checked": format_datetime_br(),
-                    "metadata": metadata,
-                },
-                doc_ids=[record.doc_id],
-            )
-
-            detail["renamed"] = True
-            detail["reason"] = "renamed"
-            detail["target"] = str(target_path)
-            report["renamed"] += 1
-            _count_reason("renamed")
-            report["details"].append(detail)
-        except Exception as exc:
-            detail["reason"] = "rename_error"
-            detail["error"] = str(exc)
-            report["errors"] += 1
-            _count_reason("rename_error")
-            report["details"].append(detail)
-
-    out_path = Path(os.getenv(
-        "BOOK_YEAR_BACKFILL_REPORT_PATH",
-        "data/book_year_backfill_report.json",
-    ))
-    out_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-
-    Console().print(
-        f"Year backfill completed | processed={report['processed']} | renamed={report['renamed']} | skipped={report['skipped']} | errors={report['errors']}",
-        style="cyan",
-    )
-    Console().print(f"Report: {out_path}", style="green")
-    app.cleanup()
+        Console().print(
+            f"Year backfill completed | processed={report['processed']} | renamed={report['renamed']} | skipped={report['skipped']} | errors={report['errors']}",
+            style="cyan",
+        )
+        Console().print(f"Report: {out_path}", style="green")
+        app.cleanup()
 
 
 @cli.command("suggest-filenames")

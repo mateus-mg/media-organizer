@@ -12,7 +12,7 @@ import json
 import shutil
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from tinydb import TinyDB, Query
 
 from app.core import DatabaseInterface
@@ -25,7 +25,7 @@ from app.core import DatabaseInterface
 def format_datetime_br(dt: datetime = None) -> str:
     """Format datetime to Brazilian format (DD/MM/YYYY HH:MM:SS)"""
     if dt is None:
-        dt = datetime.utcnow()
+        dt = datetime.now(timezone.utc)
     return dt.strftime("%d/%m/%Y %H:%M:%S")
 
 
@@ -140,6 +140,22 @@ class OrganizationDatabase(DatabaseInterface):
                     },
                     (Media.file_hash == file_hash) &
                     (Media.original_path == original_path)
+                )
+                return True
+
+            existing_by_destination = self.media_table.get(
+                Media.organized_path == organized_path
+            )
+            if existing_by_destination:
+                self.media_table.update(
+                    {
+                        "file_hash": file_hash,
+                        "metadata": metadata,
+                        "last_checked": format_datetime_br(),
+                        "file_exists": True,
+                        "errors": [],
+                    },
+                    Media.organized_path == organized_path,
                 )
                 return True
 
@@ -379,7 +395,13 @@ class UnorganizedDatabase:
         with open(self.db_path, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, indent=2, ensure_ascii=False)
 
-    def add_unorganized(self, file_path: str, error_message: str):
+    def add_unorganized(
+        self,
+        file_path: str,
+        error_message: str,
+        media_type: str = "",
+        reason: str = "",
+    ):
         """
         Add file to unorganized list
 
@@ -387,20 +409,34 @@ class UnorganizedDatabase:
             file_path: File path
             error_message: Reason why file couldn't be organized
         """
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
+        reason_value = str(reason or error_message or "unknown_reason").strip()
+        existing = None
+        remaining = []
+        for entry in self.data.get("unorganized", []):
+            if entry.get("file_path") == file_path:
+                existing = entry
+            else:
+                remaining.append(entry)
+
+        attempts_count = 1
+        if isinstance(existing, dict):
+            previous_attempts = existing.get("attempts_count")
+            if isinstance(previous_attempts, int) and previous_attempts > 0:
+                attempts_count = previous_attempts + 1
+
         entry = {
             "file_path": file_path,
             "filename": Path(file_path).name,
             "directory": str(Path(file_path).parent),
             "last_attempt": now,
-            "error": error_message
+            "attempts_count": attempts_count,
+            "media_type": str(media_type or existing.get("media_type") if isinstance(existing, dict) else media_type or ""),
+            "reason": reason_value,
+            "error": error_message,
         }
 
-        # Remove previous entry for this file
-        self.data["unorganized"] = [
-            e for e in self.data["unorganized"] if e["file_path"] != file_path
-        ]
-
+        self.data["unorganized"] = remaining
         self.data["unorganized"].append(entry)
         self._save()
 

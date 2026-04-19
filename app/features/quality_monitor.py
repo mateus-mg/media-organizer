@@ -33,12 +33,46 @@ class MusicQualityMonitor:
         data_dir: Path,
         organization_path: Optional[Path] = None,
         link_registry_path: Optional[Path] = None,
+        expect_artist_in_filename: Optional[bool] = None,
     ):
         self.data_dir = Path(data_dir)
         self.organization_path = Path(
             organization_path) if organization_path else self.data_dir / "organization.json"
         self.link_registry_path = Path(
             link_registry_path) if link_registry_path else self.data_dir / "link_registry.json"
+        if expect_artist_in_filename is None:
+            expect_artist_in_filename = os.getenv(
+                "QUALITY_MONITOR_EXPECT_ARTIST_IN_FILENAME",
+                "false",
+            ).lower() == "true"
+        self.expect_artist_in_filename = bool(expect_artist_in_filename)
+
+    def _collect_name_tag_issues(self, record: Dict[str, Any]) -> List[Dict[str, Any]]:
+        metadata = record.get("metadata", {}) if isinstance(
+            record.get("metadata"), dict) else {}
+        organized_path = str(record.get("organized_path", "")).strip()
+        if not organized_path:
+            return []
+
+        artist = _normalize(
+            metadata.get("primary_artist") or metadata.get("artist") or "")
+        file_name = Path(organized_path).name
+        stem = Path(file_name).stem
+
+        # Remove optional numeric track prefix from filename before matching.
+        normalized_stem = _normalize(re.sub(r"^\s*\d{1,3}\s*-\s*", "", stem))
+
+        issues: List[Dict[str, Any]] = []
+        if self.expect_artist_in_filename and artist and artist not in normalized_stem:
+            issues.append(
+                {
+                    "organized_path": organized_path,
+                    "issue": "artist_not_in_filename",
+                    "artist": artist,
+                    "file_name": file_name,
+                }
+            )
+        return issues
 
     def _load_json(self, path: Path) -> Dict[str, Any]:
         if not path.exists() or not path.is_file():
@@ -111,6 +145,7 @@ class MusicQualityMonitor:
 
         genre_counter: Counter[str] = Counter()
         quality_scores: List[int] = []
+        name_tag_issues: List[Dict[str, Any]] = []
 
         for record in music_records:
             genres = self._extract_genres(record)
@@ -136,6 +171,7 @@ class MusicQualityMonitor:
                     genre_equal_folder += 1
 
             quality_scores.append(self._quality_score(record, genres))
+            name_tag_issues.extend(self._collect_name_tag_issues(record))
 
         genre_completeness = (tracks_with_genre /
                               total_tracks * 100.0) if total_tracks else 0.0
@@ -156,10 +192,12 @@ class MusicQualityMonitor:
                 "multi_genre_tracks": multi_genre_tracks,
                 "playlist_like_tokens": playlist_like_tokens,
                 "genre_equal_folder": genre_equal_folder,
+                "name_tag_issues_count": len(name_tag_issues),
                 "avg_tag_quality_score": round(avg_quality, 2),
                 "registry_music_records": self._registry_music_count(),
             },
             "top_genres": genre_counter.most_common(max(1, top_n)),
+            "name_tag_issues_sample": name_tag_issues[:50],
         }
 
     def save_report(self, report: Dict[str, Any], output_path: Optional[Path] = None) -> Path:
@@ -183,7 +221,7 @@ class MusicQualityMonitor:
         - Whitelist coverage
         - Recommendations for improvement
         """
-        from app.features.genre_guard import (
+        from app.features.genre_guard.core import (
             load_genre_exceptions,
             load_musical_keywords,
             load_invalid_catalog,

@@ -42,6 +42,48 @@ class TestMediaClassifier(unittest.TestCase):
         self.assertEqual(metadata.title, "Great Book")
         self.assertEqual(metadata.year, 2024)
 
+    def test_classifies_artwork_only_for_music_context(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            music_image = root / "downloads" / "musics" / "Album" / "cover.jpg"
+            music_image.parent.mkdir(parents=True, exist_ok=True)
+            music_image.write_text("x", encoding="utf-8")
+
+            books_image = root / "downloads" / "books" / "Book" / "cover.jpg"
+            books_image.parent.mkdir(parents=True, exist_ok=True)
+            books_image.write_text("x", encoding="utf-8")
+
+            comics_image = root / "downloads" / "comics" / "Series" / "cover.jpg"
+            comics_image.parent.mkdir(parents=True, exist_ok=True)
+            comics_image.write_text("x", encoding="utf-8")
+
+            self.assertEqual(
+                self.classifier.classificar_tipo_midia(music_image),
+                MediaType.ARTWORK,
+            )
+            self.assertEqual(
+                self.classifier.classificar_tipo_midia(books_image),
+                MediaType.UNKNOWN,
+            )
+            self.assertEqual(
+                self.classifier.classificar_tipo_midia(comics_image),
+                MediaType.UNKNOWN,
+            )
+
+    def test_classifies_artwork_when_local_audio_pair_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cover = root / "misc" / "song.jpg"
+            cover.parent.mkdir(parents=True, exist_ok=True)
+            cover.write_text("x", encoding="utf-8")
+            cover.with_suffix(".mp3").write_text("x", encoding="utf-8")
+
+            self.assertEqual(
+                self.classifier.classificar_tipo_midia(cover),
+                MediaType.ARTWORK,
+            )
+
 
 class TestFileScanner(unittest.TestCase):
     def test_scan_and_filter(self):
