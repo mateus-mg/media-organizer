@@ -333,6 +333,25 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         self.assertEqual(series, "Saga")
         self.assertEqual(issue, 9)
 
+    def test_book_smart_fallback(self):
+        """Test that fallback constructs usable names instead of returning original."""
+        engine = FilenameSuggestionEngine()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            # File with messy name but contains year
+            file_path = root / "My.Book.2020.pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            self.assertEqual(len(report["suggestions"]), 1)
+            item = report["suggestions"][0]
+            # Should suggest something useful, not just keep original
+            self.assertNotEqual(item["suggested_name"], "My.Book.2020.pdf")
+            self.assertIn("2020", item["suggested_name"])
+            # Should still end with .pdf
+            self.assertTrue(item["suggested_name"].endswith(".pdf"))
+
 
 if __name__ == "__main__":
     unittest.main()

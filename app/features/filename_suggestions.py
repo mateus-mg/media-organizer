@@ -393,14 +393,19 @@ class FilenameSuggestionEngine:
                 reason = "book_schema_missing_year"
         else:
             title_fallback = self._sanitize_name(clean_stem or stem)
-            if year is not None:
-                suggested = f"{title_fallback} ({year}){ext}"
-                confidence = "medium"
-                reason = "title_year_only"
+            if title_fallback and title_fallback != "Unknown":
+                if year is not None:
+                    suggested = f"{title_fallback} ({year}){ext}"
+                    confidence = "medium"
+                    reason = "title_year_extracted_fallback"
+                else:
+                    suggested = f"{title_fallback}{ext}"
+                    confidence = "low"
+                    reason = "title_only_fallback"
             else:
-                suggested = file_path.name
+                suggested = self._sanitize_name(stem) + ext
                 confidence = "low"
-                reason = "book_schema_unrecognized"
+                reason = "filename_normalized"
 
         if suggested != file_path.name:
             candidate_valid = parse_book_filename_fields(Path(suggested).stem)
@@ -463,9 +468,19 @@ class FilenameSuggestionEngine:
             confidence = "high"
             reason = "comic_title_year_series_issue_extracted"
         else:
-            suggested = file_path.name
-            confidence = "low"
-            reason = "comic_schema_unrecognized"
+            if series and series != "Unknown":
+                if year is not None:
+                    suggested = f"{series} ({year}){ext}"
+                    confidence = "medium"
+                    reason = "series_year_fallback"
+                else:
+                    suggested = f"{series}{ext}"
+                    confidence = "low"
+                    reason = "series_only_fallback"
+            else:
+                suggested = self._sanitize_name(stem) + ext
+                confidence = "low"
+                reason = "filename_normalized"
 
         if suggested != file_path.name:
             candidate_valid = parse_comic_filename_fields(Path(suggested).stem)
