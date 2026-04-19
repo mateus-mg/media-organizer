@@ -280,6 +280,25 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
             self.assertIn(result["details"][0]["status"], [
                           "source_not_found", "source_disappeared"])
 
+    def test_extract_book_author_title_variants(self):
+        """Test flexible author-title extraction - handles inverted order and title-only."""
+        engine = FilenameSuggestionEngine()
+
+        # Standard format: "Author - Title"
+        author, title = engine._extract_book_author_title("John Smith - Great Book")
+        self.assertEqual(author, "John Smith")
+        self.assertEqual(title, "Great Book")
+
+        # Title-only with year: "Title (Year)"
+        author, title = engine._extract_book_author_title("Great Book (2020)")
+        self.assertEqual(title, "Great Book")
+        self.assertIsNone(author)
+
+        # Title-only without year: just the title
+        author, title = engine._extract_book_author_title("Some Book Title")
+        self.assertIsNone(author)
+        self.assertEqual(title, "Some Book Title")
+
 
 if __name__ == "__main__":
     unittest.main()

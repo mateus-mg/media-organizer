@@ -485,17 +485,34 @@ class FilenameSuggestionEngine:
         )
 
     def _extract_book_author_title(self, stem: str) -> tuple[Optional[str], Optional[str]]:
-        if " - " not in stem:
-            return None, self._sanitize_name(stem)
+        """Extract author and title from book filename.
 
-        left, right = stem.split(" - ", 1)
-        author = self._sanitize_name(left)
-        title = self._sanitize_name(right)
+        Handles formats:
+        - "Author - Title" (standard)
+        - "Author - Title (Year)" (standard with year)
+        - "Title (Year)" (title only)
+        - "Title - Author" (inverted, detected when no year and right side is shorter)
+        """
+        year_match = re.search(r"\((19|20)\d{2}\)\s*$", stem)
+        if year_match:
+            core = stem[:year_match.start()].strip()
+            if " - " not in core:
+                title = self._sanitize_name(core)
+                return None, title
+            parts = core.split(" - ", 1)
+            left, right = parts[0].strip(), parts[1].strip()
+            if len(right.split()) <= 3 and len(left.split()) > len(right.split()):
+                return self._sanitize_name(right), self._sanitize_name(left)
+            return self._sanitize_name(left), self._sanitize_name(right)
 
-        if not author or not title:
-            return None, self._sanitize_name(stem)
+        if " - " in stem:
+            parts = stem.split(" - ", 1)
+            left, right = parts[0].strip(), parts[1].strip()
+            if len(right.split()) <= 3 and len(left.split()) > len(right.split()):
+                return self._sanitize_name(right), self._sanitize_name(left)
+            return self._sanitize_name(left), self._sanitize_name(right)
 
-        return author, title
+        return None, self._sanitize_name(stem)
 
     def _extract_series_issue(self, stem: str) -> tuple[Optional[str], Optional[int]]:
         # Fallback with trailing year: "Series 12 (2015)"
