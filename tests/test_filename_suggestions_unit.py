@@ -168,6 +168,17 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         # 255 é o limite NTFS/ext4
         self.assertLessEqual(len(sanitized.encode('utf-8')), 255)
 
+    def test_extract_year_variants(self):
+        """Test flexible year extraction - accepts more formats than just (YYYY)."""
+        engine = FilenameSuggestionEngine()
+        # Existing format should still work
+        self.assertEqual(engine._extract_year("Book (2020)"), 2020)
+        # New formats to support
+        self.assertEqual(engine._extract_year("Book.2020"), 2020)
+        self.assertEqual(engine._extract_year("Book-2020"), 2020)
+        self.assertEqual(engine._extract_year("Book_2020"), 2020)
+        self.assertEqual(engine._extract_year("Book 2020"), 2020)
+
     def test_update_prevents_path_traversal(self):
         """Test that update_report_suggestion rejects path traversal."""
         with tempfile.TemporaryDirectory() as tmp:

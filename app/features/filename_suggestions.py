@@ -516,12 +516,27 @@ class FilenameSuggestionEngine:
         return self._sanitize_name(stem), None
 
     def _extract_year(self, text: str) -> Optional[int]:
-        match = re.search(r"(?:19|20)\d{2}", text)
-        if not match:
-            return None
-        value = int(match.group(0))
-        if 1900 <= value <= 2100:
-            return value
+        """Extract year from text. Accepts (YYYY), .YYYY, -YYYY, _YYYY, spaceYYYY."""
+        # Try parentheses first: (2020)
+        match = re.search(r"\((19|20)\d{2}\)", text)
+        if match:
+            value = int(match.group(0)[1:-1])
+            if 1900 <= value <= 2100:
+                return value
+
+        # Try dot/dash/underscore/space before year: .2020, -2020, _2020, 2020
+        match = re.search(r"[._\-\s](19|20)(\d{2})(?=[^0-9]|$)", text)
+        if match:
+            value = int(match.group(0)[1:])
+            if 1900 <= value <= 2100:
+                return value
+
+        # Try trailing year with nothing before: "2020" at end
+        match = re.search(r"(19|20)\d{2}$", text)
+        if match:
+            value = int(match.group(0))
+            if 1900 <= value <= 2100:
+                return value
         return None
 
     def _sanitize_name(self, text: str) -> str:
