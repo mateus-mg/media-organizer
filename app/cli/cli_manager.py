@@ -348,7 +348,8 @@ class CLIManager:
                 "2": "Filename suggestions",
                 "3": "System information",
                 "4": "Genre catalog management",
-                "5": "Exit",
+                "5": "Comic Vine backfill",
+                "6": "Exit",
             }
             if admin_backfill_visible:
                 options["9"] = "[Admin] Music genre backfill"
@@ -357,7 +358,7 @@ class CLIManager:
                 console.print(f"  [bold cyan][{key}][/bold cyan]  {value}")
 
             choice = Prompt.ask(
-                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="5")
+                "\n[bold]Your choice[/bold]", choices=list(options.keys()), default="6")
 
             if choice == "1":
                 self.show_organize_menu()
@@ -368,6 +369,8 @@ class CLIManager:
             elif choice == "4":
                 self.show_genre_catalogs_menu()
             elif choice == "5":
+                self.show_comic_vine_backfill_menu()
+            elif choice == "6":
                 break
             elif choice == "9" and admin_backfill_visible:
                 self.show_music_backfill_menu()
@@ -970,6 +973,34 @@ class CLIManager:
             console.print(f"[red]Error during backfill: {exc}[/red]")
         finally:
             set_console_log_level(logging.WARNING)
+
+    def show_comic_vine_backfill_menu(self):
+        """Backfill comic metadata using Comic Vine API."""
+        from app.services import BookOrganizer
+
+        console.print("\n[bold cyan]🔍 Comic Vine Backfill[/bold cyan]")
+
+        if not self.config.comic_vine_enabled:
+            console.print(
+                "[yellow]COMIC_VINE_API_KEY not configured.[/yellow]")
+            console.print("[dim]Set COMIC_VINE_API_KEY in .env to enable.[/dim]")
+            return
+
+        if not self.config.comic_vine_api_key:
+            console.print(
+                "[yellow]COMIC_VINE_API_KEY is empty.[/yellow]")
+            return
+
+        console.print(f"[green]Comic Vine enrichment enabled.[/green]")
+        console.print(f"API Key: {self.config.comic_vine_api_key[:8]}...")
+        console.print(f"Translate PT→EN: {self.config.comic_vine_translate_series_names}")
+        console.print(f"Rate limit: {self.config.comic_vine_api_delay_seconds}s/request")
+        console.print(f"Timeout: {self.config.comic_vine_timeout_seconds}s")
+        console.print(f"Min match score: {self.config.comic_vine_min_match_score}")
+        console.print(f"Download covers: {self.config.comic_vine_download_covers}")
+
+        console.print("\n[dim]Comic Vine backfill is automatic during media organization.[/dim]")
+        console.print("[dim]To backfill existing comics, run organization with --force flag.[/dim]")
 
     def _display_backfill_report(self, report: Dict) -> None:
         """Display backfill report in a readable format."""
