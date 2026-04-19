@@ -11,29 +11,27 @@ theme:
   palette:
     - scheme: default
       primary: indigo
-      accent: indigo
+      accent: blue
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: indigo
+      primary: blue
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
   font:
     text: Roboto
     code: Roboto Mono
-  features:
-    - navigation.instant
-    - navigation.tracking
-    - navigation.tabs
-    - navigation.sections
-    - toc.integrate
-    - search.suggest
-    - search.highlight
-    - content.code.copy
-    - content.code.annotate
 
 plugins:
   - search
@@ -43,47 +41,25 @@ plugins:
           options:
             docstring_style: google
             show_source: true
-            show_root_heading: true
-  - glightbox
 
 markdown_extensions:
-  - abbr
-  - admonition
-  - attr_list
-  - def_list
-  - footnotes
-  - md_in_html
-  - tables
-  - toc:
-      permalink: true
-
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.magiclink:
-      repo_url_shorthand: true
-      user: mateus-mg
-      repo: media-organizer
+  - admonition
+  - pymdownx.details
   - pymdownx.mark
-  - pymdownx.smartsymbols
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
-  - pymdownx.tilde
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/mateus-mg/media-organizer
+  generator: false
 
 nav:
   - Home: index.md
@@ -92,11 +68,9 @@ nav:
       - guides/installation.md
       - guides/quick-start.md
   - Architecture:
-      - architecture/index.md
       - architecture/overview.md
       - architecture/directory-structure.md
-      - architecture/core-modules.md
-      - architecture/infrastructure.md
+      - architecture/modules.md
       - architecture/data-flow.md
   - Configuration:
       - configuration/index.md
@@ -120,8 +94,3 @@ nav:
       - guides/troubleshooting.md
   - Reference:
       - reference/cli-commands.md
-
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/mateus-mg/media-organizer

@@ -16,7 +16,7 @@ A powerful Python-based media file management tool that automatically organizes 
 ## Quick Links
 
 - [Getting Started](getting-started.md)
-- [Architecture Overview](architecture/index.md)
+- [Architecture Overview](architecture/overview.md)
 - [Configuration Guide](configuration/index.md)
 - [CLI Commands](guides/commands.md)
 - [API Reference](reference/cli-commands.md)

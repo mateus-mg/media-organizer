@@ -6,22 +6,23 @@ media-organizer/
 │   ├── __init__.py
 │   ├── main.py                   # CLI entry point (click commands)
 │   ├── cli/
-│   │   └── cli_manager.py       # Interactive menu system
+│   │   └── cli_manager.py        # Interactive menu system
 │   ├── config/
-│   │   ├── constants.py         # Extension constants
-│   │   └── settings.py           # Configuration manager
+│   │   ├── constants.py           # Extension constants
+│   │   └── settings.py            # Configuration manager
 │   ├── core/
-│   │   ├── detection.py          # Media classifier & file scanner
+│   │   ├── detection.py           # Media classifier & file scanner
 │   │   ├── interfaces.py         # Abstract interfaces
-│   │   ├── orchestrator.py       # Main workflow coordinator
+│   │   ├── orchestrator.py        # Main workflow coordinator
 │   │   └── types.py              # Core types and enums
 │   ├── features/
 │   │   ├── data/                 # Feature data files
 │   │   ├── filename_suggestions.py
 │   │   ├── genre_guard/          # Genre validation
+│   │   │   └── core.py
 │   │   └── quality_monitor.py
 │   ├── infrastructure/
-│   │   ├── database.py           # TinyDB persistence
+│   │   ├── database.py            # TinyDB persistence
 │   │   ├── deletion_manager.py
 │   │   ├── link_registry.py      # Hardlink tracking
 │   │   ├── navidrome_client.py   # Subsonic API client
@@ -32,7 +33,8 @@ media-organizer/
 │   │   └── formatter.py
 │   ├── metadata/
 │   │   ├── metadata.py            # Metadata extraction/enrichment
-│   │   └── artist_genre_cache.py
+│   │   ├── artist_genre_cache.py
+│   │   └── comic_vine.py
 │   ├── services/
 │   │   ├── organizers.py          # Media organizers
 │   │   ├── playlists.py
@@ -44,8 +46,8 @@ media-organizer/
 │   └── validators/
 │       └── integrations.py
 ├── data/                          # Runtime data
-│   ├── backups/                   # Database backups
-│   ├── navidrome/                 # Navidrome state
+│   ├── backups/                  # Database backups
+│   ├── navidrome/                # Navidrome state
 │   ├── organization.json          # Main database
 │   └── *.json                    # Genre lists, caches
 ├── docs/                          # Documentation
@@ -67,3 +69,15 @@ media-organizer/
 | `logs/` | Rotating log files |
 | `tests/` | pytest test suite |
 | `docs/` | mkdocs documentation source |
+
+## Data Files
+
+| File | Purpose |
+|------|---------|
+| `data/organization.json` | TinyDB with media records |
+| `data/link_registry.json` | Hardlink tracking by inode |
+| `data/invalid_music_genres.json` | Genre blacklist |
+| `data/suspect_music_genres.json` | Suspicious but kept |
+| `data/genre_exceptions.json` | Explicit exceptions |
+| `data/musical_keywords.json` | Valid genre keywords |
+| `data/backups/*.json` | Versioned database backups |
