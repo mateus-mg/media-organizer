@@ -43,38 +43,38 @@ class FileCompletionValidator(ValidatorInterface):
         self.temp_extensions = {".part", ".tmp",
                                 ".!qB", ".crdownload", ".download", ".aria2"}
 
-    def validar_arquivos(self, arquivos: List[Path]) -> List[Path]:
-        if not arquivos:
+    def validate_files(self, files: List[Path]) -> List[Path]:
+        if not files:
             return []
 
         self.logger.info(
             "Validating file completion for %s file(s)",
-            len(arquivos),
+            len(files),
         )
 
         prefiltered: List[Path] = []
         initial_sizes: Dict[Path, int] = {}
 
-        for index, arquivo in enumerate(arquivos, start=1):
-            if index == 1 or index % 25 == 0 or index == len(arquivos):
+        for index, file in enumerate(files, start=1):
+            if index == 1 or index % 25 == 0 or index == len(files):
                 self.logger.info(
                     "Completion validation progress: %s/%s",
                     index,
-                    len(arquivos),
+                    len(files),
                 )
 
-            if not arquivo.exists() or self._has_temp_extension(arquivo):
+            if not file.exists() or self._has_temp_extension(file):
                 continue
 
-            if self._is_locked(arquivo):
+            if self._is_locked(file):
                 continue
 
-            if not self._is_old_enough(arquivo):
+            if not self._is_old_enough(file):
                 continue
 
             try:
-                initial_sizes[arquivo] = arquivo.stat().st_size
-                prefiltered.append(arquivo)
+                initial_sizes[file] = file.stat().st_size
+                prefiltered.append(file)
             except OSError:
                 continue
 
@@ -91,18 +91,18 @@ class FileCompletionValidator(ValidatorInterface):
             time.sleep(self.size_check_duration)
 
         valid: List[Path] = []
-        for arquivo in prefiltered:
+        for file in prefiltered:
             try:
-                current_size = arquivo.stat().st_size
-                if current_size == initial_sizes[arquivo]:
-                    valid.append(arquivo)
+                current_size = file.stat().st_size
+                if current_size == initial_sizes[file]:
+                    valid.append(file)
             except OSError:
                 continue
 
         self.logger.info(
             "Completion validation finished: %s/%s valid",
             len(valid),
-            len(arquivos),
+            len(files),
         )
         return valid
 

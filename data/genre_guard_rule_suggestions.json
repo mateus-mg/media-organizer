@@ -1,12 +1,12 @@
 {
-  "updated_at": "2026-04-19T22:42:44",
-  "source": "/media/mateus/Servidor/scripts/media-organizer/data/genre_guard_decisions_latest.json",
+  "updated_at": "2026-04-20T00:01:37",
+  "source": "/media/mateus/Servidor/scripts/media-organizer/.worktrees/filename-suggestions/data/genre_guard_decisions_latest.json",
   "unknown_genre_candidates": [
     {
       "genre": "drum-and-bass",
       "count": 1,
       "example_files": [
-        "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac"
+        "/tmp/tmp8183gvmz/downloads/musics/x/song.flac"
       ],
       "suggested_action": "review_for_keywords_or_exceptions"
     },
@@ -14,7 +14,7 @@
       "genre": "drum & bass",
       "count": 1,
       "example_files": [
-        "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac"
+        "/tmp/tmp8183gvmz/downloads/musics/x/song.flac"
       ],
       "suggested_action": "review_for_keywords_or_exceptions"
     }

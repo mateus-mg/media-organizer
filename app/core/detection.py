@@ -164,42 +164,42 @@ class FileScanner(FileScannerInterface):
 
         self.media_extensions = set(SUPPORTED_MEDIA_EXTS)
 
-    def escanear_diretorio(self, diretorio: Path) -> List[Path]:
+    def scan_directory(self, directory: Path) -> List[Path]:
         """
         Scan directory recursively for media files
 
         Args:
-            diretorio: Directory to scan
+            directory: Directory to scan
 
         Returns:
             List of media file paths
         """
-        if not diretorio.exists() or not diretorio.is_dir():
-            self.logger.error(f"Directory not found: {diretorio}")
+        if not directory.exists() or not directory.is_dir():
+            self.logger.error(f"Directory not found: {directory}")
             return []
 
         media_files = [
             file_path
-            for file_path in diretorio.rglob('*')
+            for file_path in directory.rglob('*')
             if file_path.is_file() and file_path.suffix.lower() in self.media_extensions
         ]
 
         self.logger.info(f"Found {len(media_files)} media files")
         return media_files
 
-    def filtrar_arquivos_para_organizacao(self, arquivos: List[Path]) -> List[Path]:
+    def filter_files_for_organization(self, files: List[Path]) -> List[Path]:
         """
         Filter files for organization
 
         Args:
-            arquivos: List of file paths
+            files: List of file paths
 
         Returns:
             Filtered list of files
         """
         filtered = []
 
-        for file_path in arquivos:
+        for file_path in files:
             # Skip incomplete
             if is_incomplete_file(file_path):
                 continue

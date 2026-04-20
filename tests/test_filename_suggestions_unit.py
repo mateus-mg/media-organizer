@@ -102,13 +102,13 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
     def test_manual_update_requires_same_extension(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            file_path = root / "books" / "Author - Book.pdf"
+            file_path = root / "books" / "Author.Book.2020.pdf"
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest("No book suggestions generated")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated")
 
             with self.assertRaises(ValueError):
                 self.engine.update_report_suggestion(
@@ -165,21 +165,31 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that _sanitize_name truncates to 255 bytes max."""
         long_name = 'x' * 300
         sanitized = self.engine._sanitize_name(long_name)
-        # 255 é o limite NTFS/ext4
+        # 255 is the NTFS/ext4 limit
         self.assertLessEqual(len(sanitized.encode('utf-8')), 255)
+
+    def test_extract_year_variants(self):
+        """Test flexible year extraction - accepts more formats than just (YYYY)."""
+        engine = FilenameSuggestionEngine()
+        # Existing format should still work
+        self.assertEqual(engine._extract_year("Book (2020)"), 2020)
+        # New formats to support
+        self.assertEqual(engine._extract_year("Book.2020"), 2020)
+        self.assertEqual(engine._extract_year("Book-2020"), 2020)
+        self.assertEqual(engine._extract_year("Book_2020"), 2020)
+        self.assertEqual(engine._extract_year("Book 2020"), 2020)
 
     def test_update_prevents_path_traversal(self):
         """Test that update_report_suggestion rejects path traversal."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Usar arquivo com extensão válida
-            file_path = root / "Author - Book.pdf"
-            file_path.write_text("x")
+            file_path = root / "books" / "Author.Book.2020.pdf"
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest(
-                    "No book suggestions generated - classifier may not recognize .pdf as book")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated - file may already be in correct format")
 
             with self.assertRaises(ValueError) as ctx:
                 self.engine.update_report_suggestion(
@@ -194,14 +204,13 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that update_report_suggestion rejects empty or dots-only names."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Usar arquivo com extensão válida
-            file_path = root / "Author - Book.pdf"
-            file_path.write_text("x")
+            file_path = root / "books" / "Author.Book.2020.pdf"
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest(
-                    "No book suggestions generated - classifier may not recognize .pdf as book")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated")
 
             with self.assertRaises(ValueError):
                 self.engine.update_report_suggestion(report, 0, ".")
@@ -259,15 +268,137 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
                 }]
             }
 
-            # Deletar arquivo depois que foi adicionado no report (simula race condition)
+            # Delete file after it was added to report (simulates race condition)
             file_path.unlink()
 
             result = engine.apply_report(report, dry_run=False)
 
-            # Deve reportar source_not_found ou source_disappeared, não crash
+            # Should report source_not_found or source_disappeared, not crash
             self.assertEqual(result["errors"], 1)
             self.assertIn(result["details"][0]["status"], [
                           "source_not_found", "source_disappeared"])
+
+    def test_extract_book_author_title_variants(self):
+        """Test flexible author-title extraction - handles inverted order and title-only."""
+        engine = FilenameSuggestionEngine()
+
+        # Standard format: "Author - Title"
+        author, title = engine._extract_book_author_title("John Smith - Great Book")
+        self.assertEqual(author, "John Smith")
+        self.assertEqual(title, "Great Book")
+
+        # Title-only with year: "Title (Year)"
+        author, title = engine._extract_book_author_title("Great Book (2020)")
+        self.assertEqual(title, "Great Book")
+        self.assertIsNone(author)
+
+        # Title-only without year: just the title
+        author, title = engine._extract_book_author_title("Some Book Title")
+        self.assertIsNone(author)
+        self.assertEqual(title, "Some Book Title")
+
+        # Edge case: short title, should NOT invert
+        author, title = engine._extract_book_author_title("X - John Smith")
+        self.assertEqual(author, "X")
+        self.assertEqual(title, "John Smith")
+
+        # Edge case: long author name, should NOT invert when right is single word
+        author, title = engine._extract_book_author_title("Long Author Name - Short")
+        self.assertEqual(author, "Long Author Name")
+        self.assertEqual(title, "Short")
+
+    def test_extract_series_issue_variants(self):
+        """Test flexible comic series-issue extraction."""
+        engine = FilenameSuggestionEngine()
+
+        # Standard: "Series #12"
+        series, issue = engine._extract_series_issue("Saga #12")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 12)
+
+        # Zero-padded without hash: "Saga 009"
+        series, issue = engine._extract_series_issue("Saga 009")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
+        # Dot separator: "Saga.9"
+        series, issue = engine._extract_series_issue("Saga.9")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
+        # Underscore separator: "Saga_v9"
+        series, issue = engine._extract_series_issue("Saga_v9")
+        self.assertEqual(series, "Saga")
+        self.assertEqual(issue, 9)
+
+    def test_full_book_suggestion_flow(self):
+        """Test messy book filename → canonical suggestion."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "John.Smith.-.Great.Book.2020.pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            self.assertEqual(len(report["suggestions"]), 1)
+            item = report["suggestions"][0]
+
+            expected = "John Smith - Great Book (2020).pdf"
+            self.assertEqual(item["suggested_name"], expected)
+
+    def test_full_comic_suggestion_flow(self):
+        """Test messy comic filename → canonical suggestion."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "Saga.009.2012.cbz"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="comics")
+            self.assertTrue(len(report["suggestions"]) > 0, "Should generate a suggestion")
+            item = report["suggestions"][0]
+
+            self.assertNotEqual(item["suggested_name"], "Saga.009.2012.cbz")
+            self.assertIn("Saga", item["suggested_name"])
+            self.assertIn("2012", item["suggested_name"])
+
+    def test_book_title_only_suggestion(self):
+        """Test title-only book filename is handled gracefully."""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            engine = FilenameSuggestionEngine(learning_path=Path(tmp) / "learn.json")
+
+            file_path = root / "Great.Book.2020.pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            self.assertTrue(len(report["suggestions"]) > 0, "Should generate a suggestion")
+            item = report["suggestions"][0]
+
+            self.assertIn("Great Book", item["suggested_name"])
+            self.assertIn("2020", item["suggested_name"])
+            self.assertEqual(item["suggested_name"], "Great Book (2020).pdf")
+
+    def test_book_smart_fallback(self):
+        """Test that fallback constructs usable names instead of returning original."""
+        engine = FilenameSuggestionEngine()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            # File with messy name but contains year
+            file_path = root / "My.Book.2020.pdf"
+            file_path.write_text("x", encoding="utf-8")
+
+            report = engine.suggest_for_root(root, media_filter="books")
+            self.assertEqual(len(report["suggestions"]), 1)
+            item = report["suggestions"][0]
+            # Should suggest something useful, not just keep original
+            self.assertNotEqual(item["suggested_name"], "My.Book.2020.pdf")
+            self.assertIn("2020", item["suggested_name"])
+            # Should still end with .pdf
+            self.assertTrue(item["suggested_name"].endswith(".pdf"))
 
 
 if __name__ == "__main__":

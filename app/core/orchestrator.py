@@ -182,30 +182,30 @@ class Orquestrador:
 
     def _sync_unorganized_registry(
         self,
-        arquivo: Path,
+        file_path: Path,
         media_type: MediaType,
-        resultado: OrganizationResult,
+        result: OrganizationResult,
     ) -> None:
-        if resultado.success and not resultado.skipped:
-            self.unorganized_db.remove_unorganized(str(arquivo))
+        if result.success and not result.skipped:
+            self.unorganized_db.remove_unorganized(str(file_path))
             return
 
-        if not resultado.skipped:
+        if not result.skipped:
             return
 
         skip_reason = str(
-            resultado.skip_reason or resultado.error_message or "").strip()
+            result.skip_reason or result.error_message or "").strip()
         if not self._is_schema_skip_reason(skip_reason):
             return
 
         self.unorganized_db.add_unorganized(
-            file_path=str(arquivo),
+            file_path=str(file_path),
             error_message=skip_reason,
             media_type=getattr(media_type, "value", str(media_type)),
             reason=skip_reason,
         )
 
-    def _ordenar_arquivos_para_processamento(self, arquivos: List[Path]) -> List[Path]:
+    def _order_files_for_processing(self, files: List[Path]) -> List[Path]:
         """Order files to keep audio tracks and sidecar lyrics together.
 
         Processing order priority inside the same stem group:
@@ -213,22 +213,22 @@ class Orquestrador:
         2) lyrics
         3) everything else
         """
-        if len(arquivos) <= 1:
-            return arquivos
+        if len(files) <= 1:
+            return files
 
         type_cache: Dict[Path, MediaType] = {}
         grouped: Dict[str, List[Path]] = {}
         group_order: List[str] = []
 
-        for arquivo in arquivos:
-            media_type = self.classifier.classificar_tipo_midia(arquivo)
-            type_cache[arquivo] = media_type
+        for file_path in files:
+            media_type = self.classifier.classificar_tipo_midia(file_path)
+            type_cache[file_path] = media_type
 
-            group_key = arquivo.stem.casefold()
+            group_key = file_path.stem.casefold()
             if group_key not in grouped:
                 grouped[group_key] = []
                 group_order.append(group_key)
-            grouped[group_key].append(arquivo)
+            grouped[group_key].append(file_path)
 
         type_priority = {
             MediaType.MUSIC: 0,
@@ -272,7 +272,7 @@ class Orquestrador:
         normalized = stem.strip()
         normalized = re.sub(r"\s*\(\d+\)\s*$", "", normalized)
         normalized = re.sub(
-            r"\s*[-_ ](?:copy|copia|cópia)\s*$", "", normalized, flags=re.IGNORECASE)
+            r"\s*[-_ ]copy\s*$", "", normalized, flags=re.IGNORECASE)
         normalized = re.sub(r"\s+", " ", normalized).strip()
         return normalized.casefold()
 
@@ -289,11 +289,11 @@ class Orquestrador:
         except Exception:
             return None
 
-    def _deduplicate_lyrics_files(self, arquivos: List[Path]) -> List[Path]:
+    def _deduplicate_lyrics_files(self, files: List[Path]) -> List[Path]:
         """Remove true duplicate `.lrc` files before processing."""
-        lyrics = [f for f in arquivos if f.suffix.lower() == ".lrc"]
+        lyrics = [f for f in files if f.suffix.lower() == ".lrc"]
         if len(lyrics) <= 1:
-            return arquivos
+            return files
 
         grouped_exact: Dict[tuple[str, str], List[Path]] = {}
         for lyric in lyrics:
@@ -342,7 +342,7 @@ class Orquestrador:
             duplicates_to_remove.extend(ranked[1:])
 
         if not duplicates_to_remove:
-            return arquivos
+            return files
 
         duplicates_to_remove = list(dict.fromkeys(duplicates_to_remove))
 
@@ -375,7 +375,7 @@ class Orquestrador:
             )
 
         duplicate_set = set(duplicates_to_remove)
-        return [f for f in arquivos if f not in duplicate_set]
+        return [f for f in files if f not in duplicate_set]
 
     async def organizar_arquivos(
         self,
@@ -394,16 +394,18 @@ class Orquestrador:
         Returns:
             List of processed files
         """
-        cycle_label = source_label or diretorio_origem.name
+        source_directory = diretorio_origem
+        validate_file_completion = validar_completude_arquivo
+        cycle_label = source_label or source_directory.name
         self._log_stage(cycle_label, "ORCHESTRATION START")
         self.logger.info(
             "Starting %s organization cycle: %s",
             cycle_label,
-            diretorio_origem,
+            source_directory,
         )
 
         self._log_stage(cycle_label, "SCAN START")
-        all_files = self.scanner.escanear_diretorio(diretorio_origem)
+        all_files = self.scanner.scan_directory(source_directory)
         self.logger.info("%s scan: found %s %s", cycle_label,
                          len(all_files), progress_unit)
         self._log_stage(cycle_label, "SCAN END")
@@ -422,8 +424,8 @@ class Orquestrador:
         self._log_stage(cycle_label, "PENDING FILTER END")
 
         self._log_stage(cycle_label, "VALIDATION START")
-        if validar_completude_arquivo and self.file_completion_validator:
-            valid_files = self.file_completion_validator.validar_arquivos(
+        if validate_file_completion and self.file_completion_validator:
+            valid_files = self.file_completion_validator.validate_files(
                 files_to_process)
         else:
             valid_files = files_to_process
@@ -431,7 +433,7 @@ class Orquestrador:
 
         self._log_stage(cycle_label, "DEDUP/SORT START")
         valid_files = self._deduplicate_lyrics_files(valid_files)
-        valid_files = self._ordenar_arquivos_para_processamento(valid_files)
+        valid_files = self._order_files_for_processing(valid_files)
         self._log_stage(cycle_label, "DEDUP/SORT END")
 
         classified_valid_files = [
@@ -493,7 +495,7 @@ class Orquestrador:
                 pending_breakdown,
             )
 
-        resultados = []
+        results = []
         total_valid = len(valid_files)
         self._log_stage(cycle_label, "PROCESSING START")
         progress_step = 10 if total_valid >= 10 else 1
@@ -504,17 +506,17 @@ class Orquestrador:
         skipped_by_type: Counter[MediaType] = Counter()
         failed_by_type: Counter[MediaType] = Counter()
 
-        for index, arquivo in enumerate(valid_files, start=1):
-            resultado = await self._processar_arquivo(arquivo)
-            resultados.append(resultado)
+        for index, file_path in enumerate(valid_files, start=1):
+            result = await self._process_file(file_path)
+            results.append(result)
 
-            media_type = resultado.media_type or MediaType.UNKNOWN
+            media_type = result.media_type or MediaType.UNKNOWN
             current_type = getattr(media_type, "value", str(media_type))
 
-            if resultado.was_skipped:
+            if result.was_skipped:
                 skipped_count += 1
                 skipped_by_type[media_type] += 1
-            elif resultado.success:
+            elif result.success:
                 organized_count += 1
                 organized_by_type[media_type] += 1
             else:
@@ -542,7 +544,7 @@ class Orquestrador:
                     skipped_count,
                     failed_count,
                     current_type,
-                    arquivo.name,
+                    file_path.name,
                     breakdown_suffix,
                 )
 
@@ -567,28 +569,28 @@ class Orquestrador:
         )
         self._log_stage(cycle_label, "PROCESSING END")
         self._log_stage(cycle_label, "ORCHESTRATION END")
-        return resultados
+        return results
 
-    async def _processar_arquivo(self, arquivo: Path) -> ProcessedFile:
+    async def _process_file(self, file_path: Path) -> ProcessedFile:
         """Process single file"""
         processed_file = ProcessedFile(
-            original_path=arquivo,
+            original_path=file_path,
             processing_time=datetime.now(),
             metadata=FileMetadata(media_type=MediaType.UNKNOWN)
         )
 
         try:
-            media_type = self.classifier.classificar_tipo_midia(arquivo)
+            media_type = self.classifier.classificar_tipo_midia(file_path)
             processed_file.media_type = media_type
 
-            validacao = await self._validar_arquivo_global(arquivo)
-            if not validacao.is_valid:
-                processed_file.error_message = validacao.error_message
+            validation = await self._validate_file_global(file_path)
+            if not validation.is_valid:
+                processed_file.error_message = validation.error_message
                 processed_file.was_skipped = True
                 self.logger.info(
                     "↷ Skipped: %s | reason=%s",
-                    str(arquivo),
-                    validacao.error_message or "global_validation_failed",
+                    str(file_path),
+                    validation.error_message or "global_validation_failed",
                 )
                 return processed_file
 
@@ -598,61 +600,61 @@ class Orquestrador:
                 processed_file.was_skipped = True
                 self.logger.info(
                     "↷ Skipped: %s | reason=%s",
-                    str(arquivo),
+                    str(file_path),
                     processed_file.error_message,
                 )
                 return processed_file
 
-            if not organizador.pode_processar(arquivo):
-                processed_file.error_message = f"Cannot process: {arquivo}"
+            if not organizador.pode_processar(file_path):
+                processed_file.error_message = f"Cannot process: {file_path}"
                 processed_file.was_skipped = True
                 self.logger.info(
                     "↷ Skipped: %s | reason=%s",
-                    str(arquivo),
+                    str(file_path),
                     processed_file.error_message,
                 )
                 return processed_file
 
-            resultado = await organizador.organizar(arquivo)
-            processed_file.success = resultado.success
-            processed_file.organized_path = resultado.organized_path
-            processed_file.was_skipped = resultado.skipped
-            self._sync_unorganized_registry(arquivo, media_type, resultado)
+            result = await organizador.organizar(file_path)
+            processed_file.success = result.success
+            processed_file.organized_path = result.organized_path
+            processed_file.was_skipped = result.skipped
+            self._sync_unorganized_registry(file_path, media_type, result)
 
-            if resultado.error_message:
-                processed_file.error_message = resultado.error_message
+            if result.error_message:
+                processed_file.error_message = result.error_message
 
-            if resultado.skipped:
+            if result.skipped:
                 skip_reason = (
-                    resultado.skip_reason
-                    or resultado.error_message
+                    result.skip_reason
+                    or result.error_message
                     or "organizer_returned_skipped"
                 )
                 self.logger.info(
                     "↷ Skipped: %s | reason=%s | destination=%s",
-                    str(arquivo),
+                    str(file_path),
                     skip_reason,
-                    str(resultado.organized_path) if resultado.organized_path else "-",
+                    str(result.organized_path) if result.organized_path else "-",
                 )
-            elif resultado.success:
-                self.logger.info(f"✓ Organized: {arquivo.name}")
+            elif result.success:
+                self.logger.info(f"✓ Organized: {file_path.name}")
             else:
-                self.logger.error(f"✗ Failed: {arquivo.name}")
+                self.logger.error(f"✗ Failed: {file_path.name}")
 
         except Exception as e:
             processed_file.error_message = f"Error: {str(e)}"
             processed_file.success = False
-            self.logger.error(f"Error processing {arquivo.name}: {e}")
+            self.logger.error(f"Error processing {file_path.name}: {e}")
 
         return processed_file
 
-    async def _validar_arquivo_global(self, arquivo: Path) -> ValidationResult:
+    async def _validate_file_global(self, file_path: Path) -> ValidationResult:
         """Apply all global validators"""
         for validator in self.validators:
-            if validator.can_validate(arquivo):
-                resultado = await validator.validate(arquivo)
-                if not resultado.is_valid:
-                    return resultado
+            if validator.can_validate(file_path):
+                result = await validator.validate(file_path)
+                if not result.is_valid:
+                    return result
         return ValidationResult(is_valid=True)
 
     def configurar_validadores(self, validadores: List[ValidatorInterface]) -> None:

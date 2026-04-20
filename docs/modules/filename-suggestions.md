@@ -4,62 +4,96 @@ AI-powered filename improvement suggestions for books and comics.
 
 ## Class: FilenameSuggestionEngine
 
+### Constructor
+
 ```python
 class FilenameSuggestionEngine:
-    def gerar_sugestoes(self, arquivos: list[Path]) -> list[Suggestion]
-    def aplicar_sugestoes(self, sugestoes: list[Suggestion], execute: bool)
-    def editar_sugestao(self, suggestion_id: str, novo_nome: str)
+    def __init__(
+        self,
+        classifier: Optional[MediaClassifier] = None,
+        learning_path: Optional[Path] = None,
+    )
 ```
 
-## Suggestion Types
+### Key Methods
 
-| Type | Description |
-|------|-------------|
-| `TITLE_YEAR_ADDED` | Added missing year to title |
-| `SERIES_NORMALIZED` | Standardized series format |
-| `ISSUE_PADDED` | Zero-padded issue numbers |
-| `AUTHOR_ADDED` | Added author to path |
+| Method | Description |
+|--------|-------------|
+| `suggest_for_root(root_path, media_filter)` | Scan directory recursively and generate suggestions |
+| `learn_from_report(report, only_manual)` | Learn from user-accepted suggestions |
+| `apply_report(report, dry_run)` | Apply suggestions to rename files |
+| `update_report_suggestion(report, index, new_name)` | Manually edit a suggestion |
 
-## Schema Patterns
+### Supported Input Patterns
 
-### Books
+The engine accepts flexible input patterns:
 
-```
-Author/Title.ext
-Title (Year).ext
-Title - Author.ext
-```
+**Books:**
+- `Author - Title (Year).ext` (canonical)
+- `Author - Title.YYYY.ext` (dot year)
+- `Author - Title-YYYY.ext` (dash year)
+- `Title (Year).ext` (title only)
 
-### Comics
+**Comics:**
+- `Title (Year) - Series #Issue.ext` (canonical)
+- `Series #Issue.ext` (without year)
+- `Series.ISSUE.ext` (dot separator)
+- `Series_ISSUE.ext` (underscore separator)
+- `Series ISSUE.ext` (zero-padded without hash)
 
-```
-Title (Year) - Series #Issue.ext
-```
+### Confidence Levels
 
-## CLI Commands
+| Level | Meaning |
+|-------|---------|
+| `high` | Author/title/series/issue/year all extracted correctly |
+| `medium` | Some fields extracted, suggestion may need review |
+| `low` | Fallback mode, suggestion needs manual review |
+| `manual` | User manually corrected the suggestion |
+
+### CLI Commands
 
 ```bash
-./run.sh suggest-filenames           # Generate suggestions
-./run.sh edit-filename-suggestion   # Edit suggestion report
-./run.sh apply-filename-suggestions # Apply changes
-./run.sh apply-filename-suggestions --execute  # Execute changes
+# Generate suggestions report
+./run.sh suggest-filenames --media books
+
+# View and edit suggestions
+./run.sh edit-filename-suggestion
+
+# Apply suggestions (dry-run)
+./run.sh apply-filename-suggestions
+
+# Apply suggestions (execute)
+./run.sh apply-filename-suggestions --execute
 ```
 
-## Report Format
+### Report Format
 
 Suggestions are saved to `data/filename_suggestions_report.json`:
 
 ```json
 {
+  "total_files_scanned": 100,
+  "matched_media_files": 50,
+  "changed_suggestions": 25,
   "suggestions": [
     {
-      "id": "uuid",
       "original_path": "/downloads/book.epub",
-      "suggested_path": "/library/Author/Title.epub",
-      "confidence": 0.95,
-      "reason": "Added year to title",
-      "status": "pending"
+      "original_name": "John.Smith.-.Great.Book.2020.pdf",
+      "media_type": "BOOK",
+      "suggested_name": "John Smith - Great Book (2020).pdf",
+      "confidence": "high",
+      "reason": "author_title_year_extracted",
+      "changed": true
     }
   ]
 }
 ```
+
+### Learning System
+
+The engine learns from user corrections:
+- `exact_overrides`: Direct filename mappings
+- `series_aliases`: Comic series name normalization
+- `author_aliases`: Book author name normalization
+
+Data stored in `data/filename_suggestion_learning.json`.

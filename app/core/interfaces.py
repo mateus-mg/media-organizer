@@ -58,16 +58,16 @@ class ConcurrencyManagerInterface(ABC):
     """Interface for concurrency management"""
 
     @abstractmethod
-    async def executar_em_paralelo(
+    async def execute_parallel(
         self,
         tarefas: List[Callable],
-        limite_simultaneos: int
+        max_concurrent: int
     ) -> List[Any]:
         """Execute tasks in parallel"""
         pass
 
     @abstractmethod
-    def obter_lock_arquivo(self, caminho_arquivo: Path):
+    def get_file_lock(self, file_path: Path):
         """Get file lock"""
         pass
 
@@ -90,12 +90,12 @@ class FileScannerInterface(ABC):
     """Interface for file scanning"""
 
     @abstractmethod
-    def escanear_diretorio(self, diretorio: Path) -> List[Path]:
+    def scan_directory(self, directory: Path) -> List[Path]:
         """Scan directory"""
         pass
 
     @abstractmethod
-    def filtrar_arquivos_para_organizacao(self, arquivos: List[Path]) -> List[Path]:
+    def filter_files_for_organization(self, files: List[Path]) -> List[Path]:
         """Filter files for organization"""
         pass
 

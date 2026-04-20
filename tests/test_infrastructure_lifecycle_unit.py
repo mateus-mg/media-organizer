@@ -104,7 +104,7 @@ class TestFileCompletionValidator(unittest.TestCase):
             temp.write_text("tmp", encoding="utf-8")
 
             validator = FileCompletionValidator(min_file_age_seconds=0, size_check_duration=0)
-            files = validator.validar_arquivos([valid, temp])
+            files = validator.validate_files([valid, temp])
 
             self.assertIn(valid, files)
             self.assertNotIn(temp, files)
