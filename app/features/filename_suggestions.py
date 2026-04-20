@@ -38,7 +38,7 @@ class FilenameSuggestionEngine:
         self.learning_path = learning_path or Path(
             "data/filename_suggestion_learning.json")
         self.learning_data = self._load_learning_data()
-        # Cache para normalization (melhoria de performance)
+        # Cache for normalization (performance improvement)
         self._normalize_cache: Dict[str, str] = {}
 
     def suggest_for_root(
@@ -374,8 +374,20 @@ class FilenameSuggestionEngine:
 
         normalized = re.sub(r"\s+", " ", stem.replace("_", " ")).strip()
         year = self._extract_year(normalized)
-        clean_stem = re.sub(
-            r"\s*\((?:19|20)\d{2}\)\s*$", "", normalized).strip()
+        clean_stem = normalized
+        if year is not None:
+            year_str = str(year)
+            for sep in [".", "-", "_"]:
+                for pattern in [f"{sep}{year_str}", f" {year_str}"]:
+                    if normalized.endswith(pattern):
+                        clean_stem = normalized[:-len(pattern)].strip()
+                        break
+                else:
+                    continue
+                break
+        clean_stem = re.sub(r"[._]+", " ", clean_stem)
+        clean_stem = re.sub(r"\s*-\s+", " - ", clean_stem)
+        clean_stem = re.sub(r"\s+", " ", clean_stem).strip()
 
         author, title = self._extract_book_author_title(clean_stem)
 
@@ -393,14 +405,19 @@ class FilenameSuggestionEngine:
                 reason = "book_schema_missing_year"
         else:
             title_fallback = self._sanitize_name(clean_stem or stem)
-            if year is not None:
-                suggested = f"{title_fallback} ({year}){ext}"
-                confidence = "medium"
-                reason = "title_year_only"
+            if title_fallback and title_fallback != "Unknown":
+                if year is not None:
+                    suggested = f"{title_fallback} ({year}){ext}"
+                    confidence = "medium"
+                    reason = "title_year_extracted_fallback"
+                else:
+                    suggested = f"{title_fallback}{ext}"
+                    confidence = "low"
+                    reason = "title_only_fallback"
             else:
-                suggested = file_path.name
+                suggested = self._sanitize_name(stem) + ext
                 confidence = "low"
-                reason = "book_schema_unrecognized"
+                reason = "filename_normalized"
 
         if suggested != file_path.name:
             candidate_valid = parse_book_filename_fields(Path(suggested).stem)
@@ -463,9 +480,19 @@ class FilenameSuggestionEngine:
             confidence = "high"
             reason = "comic_title_year_series_issue_extracted"
         else:
-            suggested = file_path.name
-            confidence = "low"
-            reason = "comic_schema_unrecognized"
+            if series and series != "Unknown":
+                if year is not None:
+                    suggested = f"{series} ({year}){ext}"
+                    confidence = "medium"
+                    reason = "series_year_fallback"
+                else:
+                    suggested = f"{series}{ext}"
+                    confidence = "low"
+                    reason = "series_only_fallback"
+            else:
+                suggested = self._sanitize_name(stem) + ext
+                confidence = "low"
+                reason = "filename_normalized"
 
         if suggested != file_path.name:
             candidate_valid = parse_comic_filename_fields(Path(suggested).stem)
@@ -485,43 +512,95 @@ class FilenameSuggestionEngine:
         )
 
     def _extract_book_author_title(self, stem: str) -> tuple[Optional[str], Optional[str]]:
-        if " - " not in stem:
-            return None, self._sanitize_name(stem)
+        """Extract author and title from book filename.
 
-        left, right = stem.split(" - ", 1)
-        author = self._sanitize_name(left)
-        title = self._sanitize_name(right)
+        Handles formats:
+        - "Author - Title" (standard)
+        - "Author - Title (Year)" (standard with year)
+        - "Title (Year)" (title only)
+        - "Title - Author" (inverted, detected when no year and right side is shorter)
+        """
+        year_match = re.search(r"\((19|20)\d{2}\)\s*$", stem)
+        if year_match:
+            core = stem[:year_match.start()].strip()
+            if " - " not in core:
+                title = self._sanitize_name(core)
+                return None, title
+            parts = core.split(" - ", 1)
+            left, right = parts[0].strip(), parts[1].strip()
+            if (2 <= len(right.split()) <= 3 and
+                len(left.split()) >= 2 and
+                len(left.split()) > len(right.split())):
+                return self._sanitize_name(right), self._sanitize_name(left)
+            return self._sanitize_name(left), self._sanitize_name(right)
 
-        if not author or not title:
-            return None, self._sanitize_name(stem)
+        if " - " in stem:
+            parts = stem.split(" - ", 1)
+            left, right = parts[0].strip(), parts[1].strip()
+            if (2 <= len(right.split()) <= 3 and
+                len(left.split()) >= 2 and
+                len(left.split()) > len(right.split())):
+                return self._sanitize_name(right), self._sanitize_name(left)
+            return self._sanitize_name(left), self._sanitize_name(right)
 
-        return author, title
+        return None, self._sanitize_name(stem)
 
     def _extract_series_issue(self, stem: str) -> tuple[Optional[str], Optional[int]]:
-        # Fallback with trailing year: "Series 12 (2015)"
-        match = re.match(r"^(.+?)\s+(\d{1,4})\s*\((?:19|20)\d{2}\)\s*$", stem)
+        """Extract series and issue number from comic filename.
+
+        Handles formats:
+        - "Series #12" or "Series #009" (hash format)
+        - "Series.9" or "Series_9" (dot/underscore without space)
+        - "Series 12" or "Series 009" (space-separated)
+        - "Series 12 (2015)" (trailing year)
+        """
+        # Remove leading number prefix like "01. " or "01 - "
+        stem = re.sub(r"^\d+[.\-\s]+\s*", "", stem).strip()
+
+        # Try: "Series #12" or "Series #009"
+        match = re.match(r"^(.+?)\s*#\s*(\d+)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
-        # Preferred comic pattern: "Series #12"
-        match = re.match(r"^(.+?)\s*#\s*(\d{1,4})\s*$", stem)
+        # Try: "Series.12", "Series_12" or "Series_v12" (dot/underscore with optional v prefix)
+        match = re.match(r"^(.+?)[._]v?(\d+)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
-        # Common fallback: "Series 12"
+        # Try: "Series 12" or "Series 009" (space-separated)
         match = re.match(r"^(.+?)\s+(\d{1,4})\s*$", stem)
+        if match:
+            return self._sanitize_name(match.group(1)), int(match.group(2))
+
+        # Try: "Series 12 (2015)" (trailing year)
+        match = re.match(r"^(.+?)\s+(\d{1,4})\s*\((?:19|20)\d{2}\)\s*$", stem)
         if match:
             return self._sanitize_name(match.group(1)), int(match.group(2))
 
         return self._sanitize_name(stem), None
 
     def _extract_year(self, text: str) -> Optional[int]:
-        match = re.search(r"(?:19|20)\d{2}", text)
-        if not match:
-            return None
-        value = int(match.group(0))
-        if 1900 <= value <= 2100:
-            return value
+        """Extract year from text. Accepts (YYYY), .YYYY, -YYYY, _YYYY, spaceYYYY."""
+        # Try parentheses first: (2020)
+        match = re.search(r"\((19|20)\d{2}\)", text)
+        if match:
+            value = int(match.group(0)[1:-1])
+            if 1900 <= value <= 2100:
+                return value
+
+        # Try dot/dash/underscore/space before year: .2020, -2020, _2020, 2020
+        match = re.search(r"[._\-\s](19|20)(\d{2})(?=[^0-9]|$)", text)
+        if match:
+            value = int(match.group(0)[1:])
+            if 1900 <= value <= 2100:
+                return value
+
+        # Try trailing year with nothing before: "2020" at end
+        match = re.search(r"(19|20)\d{2}$", text)
+        if match:
+            value = int(match.group(0))
+            if 1900 <= value <= 2100:
+                return value
         return None
 
     def _sanitize_name(self, text: str) -> str:
@@ -689,7 +768,7 @@ class FilenameSuggestionEngine:
                 alias_key = self._normalize_lookup_name(old_series)
                 existing_alias = aliases.get(alias_key)
 
-                # Detectar conflito de alias (CRÍTICO - integridade de dados)
+                # Detect alias conflict (CRITICAL - data integrity)
                 if existing_alias and existing_alias != new_series:
                     import logging
                     logger = logging.getLogger(__name__)
@@ -726,7 +805,7 @@ class FilenameSuggestionEngine:
                 alias_key = self._normalize_lookup_name(old_author)
                 existing_alias = aliases.get(alias_key)
 
-                # Detectar conflito de alias em livros
+                # Detect alias conflict in books
                 if existing_alias and existing_alias != new_author:
                     import logging
                     logger = logging.getLogger(__name__)

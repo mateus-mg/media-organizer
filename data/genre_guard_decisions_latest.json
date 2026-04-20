@@ -1,257 +1,257 @@
 {
-  "updated_at": "2026-04-19T22:42:44",
-  "started_at": "2026-04-19T22:42:26",
+  "updated_at": "2026-04-20T00:01:37",
+  "started_at": "2026-04-20T00:01:23",
   "entries": [
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Pop & Chart"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Pop Chart"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Pop-Chart"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Pop_Chart"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Pop + Chart"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "quarantine",
       "reason": "unknown_genre",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Drum-And-Bass"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "quarantine",
       "reason": "unknown_genre",
-      "file_path": "/tmp/tmpnhaj0ser/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp8183gvmz/downloads/musics/x/song.flac",
       "genre": "Drum & Bass"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpyssoge66/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpip2665mz/downloads/musics/x/song.flac",
       "genre": "Blues Rock"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpyssoge66/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpip2665mz/downloads/musics/x/song.flac",
       "genre": "Blues-Rock"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpyssoge66/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpip2665mz/downloads/musics/x/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "quarantine",
       "reason": "token_editorial_bias",
-      "file_path": "/tmp/tmpqd2ftidm/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmprpmnbg5a/downloads/musics/x/song.flac",
       "genre": "Mood Vibes"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "token_editorial_overload",
-      "file_path": "/tmp/tmphcvx862q/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpllwxqo2f/downloads/musics/x/song.flac",
       "genre": "Mood Vibes"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmphcvx862q/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpllwxqo2f/downloads/musics/x/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "quarantine",
       "reason": "token_editorial_bias",
-      "file_path": "/tmp/tmpik4a3a66/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmprakuyf7m/downloads/musics/x/song.flac",
       "genre": "Mood Booster Vibes"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpp6sb_su0/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpmy4naldg/downloads/musics/x/song.flac",
       "genre": "Hard & Heavy"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpp6sb_su0/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpmy4naldg/downloads/musics/x/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "folder_name_match",
-      "file_path": "/tmp/tmp1ns6cmra/downloads/musics/Dance Hits 2010s/song.flac",
+      "file_path": "/tmp/tmpnzo841vw/downloads/musics/Dance Hits 2010s/song.flac",
       "genre": "Dance Hits 2010S"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmp1ns6cmra/downloads/musics/Dance Hits 2010s/song.flac",
+      "file_path": "/tmp/tmpnzo841vw/downloads/musics/Dance Hits 2010s/song.flac",
       "genre": "English"
     },
     {
-      "ts": "2026-04-19T22:42:39",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp1ns6cmra/downloads/musics/Dance Hits 2010s/song.flac",
+      "file_path": "/tmp/tmpnzo841vw/downloads/musics/Dance Hits 2010s/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp28oryjps/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpqxvfnj0c/downloads/musics/x/song.flac",
       "genre": "Neo Psychedelic Rock"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "token_editorial_overload",
-      "file_path": "/tmp/tmpwlo19bq8/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpabos8bvx/downloads/musics/x/song.flac",
       "genre": "Mood Booster Vibes"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpwlo19bq8/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmpabos8bvx/downloads/musics/x/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "remove",
       "reason": "exact_invalid_match",
-      "file_path": "/tmp/tmpsppunmqd/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp0nx6pznj/downloads/musics/x/song.flac",
       "genre": "Électronique"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "valid_geographic_genre",
-      "file_path": "/tmp/tmp0fjmc2y5/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp3uj7gz87/downloads/musics/x/song.flac",
       "genre": "Dutch House"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp0fjmc2y5/downloads/musics/x/song.flac",
+      "file_path": "/tmp/tmp3uj7gz87/downloads/musics/x/song.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpw9aysott/music/test_beatles.flac",
+      "file_path": "/tmp/tmp_b0gz73s/music/test_beatles.flac",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpw9aysott/music/test_beatles.flac",
+      "file_path": "/tmp/tmp_b0gz73s/music/test_beatles.flac",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp_w1dhkwm/music/test_imagine.mp3",
+      "file_path": "/tmp/tmp14wgigb8/music/test_imagine.mp3",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:40",
+      "ts": "2026-04-20T00:01:34",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp_w1dhkwm/music/test_imagine.mp3",
+      "file_path": "/tmp/tmp14wgigb8/music/test_imagine.mp3",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp0f96rryl/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
+      "file_path": "/tmp/tmpgbat5ntk/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmp0f96rryl/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
+      "file_path": "/tmp/tmpgbat5ntk/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
       "genre": "Rock"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "remove",
       "reason": "folder_name_match",
-      "file_path": "/tmp/tmpletb1c21/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
+      "file_path": "/tmp/tmpu8zleq7k/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
       "genre": "Um Pouco De Tudo !"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "remove",
       "reason": "folder_name_match",
-      "file_path": "/tmp/tmpletb1c21/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
+      "file_path": "/tmp/tmpu8zleq7k/downloads/musics/#1 Um Pouco de Tudo !/Song - Artist.flac",
       "genre": "Um Pouco De Tudo !"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "remove",
       "reason": "folder_name_match",
-      "file_path": "/tmp/tmpv021hzk_/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
+      "file_path": "/tmp/tmp0guzb68q/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
       "genre": "Bts As Melhores"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "keep",
       "reason": "token_musical_confident",
-      "file_path": "/tmp/tmpv021hzk_/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
+      "file_path": "/tmp/tmp0guzb68q/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
       "genre": "Pop"
     },
     {
-      "ts": "2026-04-19T22:42:41",
+      "ts": "2026-04-20T00:01:35",
       "action": "remove",
       "reason": "folder_name_match",
-      "file_path": "/tmp/tmpv021hzk_/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
+      "file_path": "/tmp/tmp0guzb68q/downloads/musics/BTS AS MELHORES/Song - Artist.flac",
       "genre": "Bts As Melhores"
     }
   ],

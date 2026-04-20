@@ -87,8 +87,8 @@ SAFE_TERMS = {
     "singer", "artist", "group", "live", "studio", "records", "music"
 }
 
-# Tokens editoriais/comportamentais que frequentemente poluem tags de genero.
-# Usados para heuristica de confianca sem depender de listas extensas.
+# Editorial/behavioral tokens that frequently pollute genre tags.
+# Used for confidence heuristics without relying on extensive lists.
 EDITORIAL_TOKENS = {
     "top", "chart", "charts", "best", "playlist", "hits", "viral", "tiktok",
     "flashback", "mood", "vibes", "booster", "favorite", "favorites", "listen",

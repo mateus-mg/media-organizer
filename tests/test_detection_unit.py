@@ -108,8 +108,8 @@ class TestFileScanner(unittest.TestCase):
             junk = root / "BLUDV.MP4"
             junk.write_text("junk", encoding="utf-8")
 
-            all_files = scanner.escanear_diretorio(root)
-            filtered = scanner.filtrar_arquivos_para_organizacao(all_files)
+            all_files = scanner.scan_directory(root)
+            filtered = scanner.filter_files_for_organization(all_files)
 
             self.assertIn(valid_music, filtered)
             self.assertIn(uppercase_music, filtered)
