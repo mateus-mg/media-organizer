@@ -102,13 +102,13 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
     def test_manual_update_requires_same_extension(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            file_path = root / "books" / "Author - Book.pdf"
+            file_path = root / "books" / "Author.Book.2020.pdf"
             file_path.parent.mkdir(parents=True, exist_ok=True)
             file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest("No book suggestions generated")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated")
 
             with self.assertRaises(ValueError):
                 self.engine.update_report_suggestion(
@@ -183,14 +183,13 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that update_report_suggestion rejects path traversal."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Use file with valid extension
-            file_path = root / "Author - Book.pdf"
-            file_path.write_text("x")
+            file_path = root / "books" / "Author.Book.2020.pdf"
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest(
-                    "No book suggestions generated - classifier may not recognize .pdf as book")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated - file may already be in correct format")
 
             with self.assertRaises(ValueError) as ctx:
                 self.engine.update_report_suggestion(
@@ -205,14 +204,13 @@ class TestFilenameSuggestionEngine(unittest.TestCase):
         """Test that update_report_suggestion rejects empty or dots-only names."""
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            # Use file with valid extension
-            file_path = root / "Author - Book.pdf"
-            file_path.write_text("x")
+            file_path = root / "books" / "Author.Book.2020.pdf"
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text("x", encoding="utf-8")
 
             report = self.engine.suggest_for_root(root, media_filter="books")
-            if not report.get("suggestions"):
-                self.skipTest(
-                    "No book suggestions generated - classifier may not recognize .pdf as book")
+            self.assertGreater(report.get("changed_suggestions", 0), 0,
+                              "No changes generated")
 
             with self.assertRaises(ValueError):
                 self.engine.update_report_suggestion(report, 0, ".")
