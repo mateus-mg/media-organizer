@@ -1,19 +1,26 @@
+"""Smart playlist definition models for Navidrome .nsp format."""
+
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class Rule:
+    """A single smart playlist rule with operator, field, and value."""
+
     operator: str
     field: str
     value: Any
 
     def to_nsp_dict(self) -> Dict[str, Any]:
+        """Serialize to Navidrome .nsp JSON dict."""
         return {self.operator: {self.field: self.value}}
 
 
 @dataclass
 class SmartPlaylistDefinition:
+    """Complete smart playlist definition for Navidrome NSP serialization."""
+
     name: str
     comment: str = ""
     public: bool = False
@@ -25,6 +32,7 @@ class SmartPlaylistDefinition:
     limit_percent: Optional[int] = None
 
     def to_nsp_dict(self) -> Dict[str, Any]:
+        """Serialize to Navidrome .nsp JSON dict."""
         payload: Dict[str, Any] = {
             "name": self.name,
             "comment": self.comment,
