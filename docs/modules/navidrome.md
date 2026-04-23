@@ -23,18 +23,58 @@ class NavidromeClient:
 
 ### .nsp Smart Playlists
 
-Navidrome smart playlists in `.nsp` format:
+Navidrome smart playlists in `.nsp` format use the official Navidrome JSON structure:
 
-```nsp
+```json
 {
   "name": "My Smart Playlist",
-  "rules": [
-    {"field": "genre", "operator": "contains", "value": "Rock"},
-    {"field": "year", "operator": "greaterThan", "value": "2020"}
+  "all": [
+    {"contains": {"genre": "Rock"}},
+    {"gt": {"year": 2020}}
   ],
-  "match": "all"
+  "sort": "-rating,title",
+  "order": "asc",
+  "limit": 50
 }
 ```
+
+**Root clauses:** `all` (AND) or `any` (OR).
+
+**Operators:** `is`, `isNot`, `gt`, `lt`, `contains`, `notContains`, `startsWith`, `endsWith`, `inTheRange`, `before`, `after`, `inTheLast`, `notInTheLast`, `inPlaylist`, `notInPlaylist`.
+
+## Smart Playlist Builder API
+
+Create smart playlists programmatically:
+
+```python
+from app.services import PlaylistService
+from app.features.smart_playlists import SmartPlaylistBuilder
+
+builder = SmartPlaylistBuilder("Rock 80s")
+builder.all_of(
+    builder.field("genre").contains("rock"),
+    builder.field("year").in_the_range(1980, 1989),
+    builder.field("rating").gt(3),
+).sort("-rating", "title").limit(50)
+
+service = PlaylistService(config)
+service.create_smart_playlist(name="Rock 80s", builder=builder)
+```
+
+## Query String Syntax
+
+Quick creation with query strings:
+
+```python
+service.create_smart_playlist(
+    name="EDM",
+    query="genre:edm year:gt:2020 rating:gt:3",
+    sort="-playcount",
+    limit=100,
+)
+```
+
+Syntax: `field:value` or `field:operator:value`. Conditions separated by space = AND.
 
 ## CLI Commands
 
