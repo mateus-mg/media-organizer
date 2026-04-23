@@ -1,10 +1,12 @@
 """Unit tests for playlist service."""
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from app.features.smart_playlists import SmartPlaylistBuilder
 from app.services.playlists import PlaylistService
 
 
@@ -251,6 +253,69 @@ class TestPlaylistService(unittest.TestCase):
         self.assertEqual(report["preview"]["to_add_count"], 1)
         self.assertEqual(report["preview"]["to_remove_count"], 1)
         self.assertEqual(service.list_local_playlists(kind="simple"), [])
+
+    def test_create_smart_playlist_with_builder(self):
+        service = PlaylistService(self.config)
+        builder = SmartPlaylistBuilder("Builder Test")
+        builder.all_of(
+            builder.field("genre").contains("rock"),
+            builder.field("year").gt(2020),
+        ).limit(30)
+        created = service.create_smart_playlist(name="Builder Test", builder=builder)
+        self.assertEqual(created["kind"], "smart")
+        nsp_path = Path(created["nsp_path"])
+        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["limit"], 30)
+        self.assertIn("all", payload)
+
+    def test_create_smart_playlist_with_query_string(self):
+        service = PlaylistService(self.config)
+        created = service.create_smart_playlist(
+            name="Query Test", query="genre:rock year:gt:2020", limit=25)
+        self.assertEqual(created["kind"], "smart")
+        nsp_path = Path(created["nsp_path"])
+        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["limit"], 25)
+        self.assertEqual(payload["all"][0], {"contains": {"genre": "rock"}})
+
+    def test_create_smart_playlist_with_sort_and_order(self):
+        service = PlaylistService(self.config)
+        created = service.create_smart_playlist(
+            name="Sorted", query="genre:rock", sort="-rating,title", order="asc")
+        nsp_path = Path(created["nsp_path"])
+        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["sort"], "-rating,title")
+        self.assertEqual(payload["order"], "asc")
+
+    def test_create_smart_playlist_with_nsp_definition(self):
+        service = PlaylistService(self.config)
+        created = service.create_smart_playlist(
+            name="NSP Test",
+            nsp_definition={
+                "all": [{"is": {"loved": True}}],
+                "sort": "random",
+                "limit": 10,
+            },
+        )
+        nsp_path = Path(created["nsp_path"])
+        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["all"], [{"is": {"loved": True}}])
+        self.assertEqual(payload["sort"], "random")
+
+    def test_update_smart_playlist_changes_sort_and_limit(self):
+        service = PlaylistService(self.config)
+        created = service.create_smart_playlist(
+            name="Update Test", query="genre:rock")
+        updated = service.update_smart_playlist(
+            local_id=created["local_id"],
+            sort="-playcount",
+            limit=50,
+        )
+        self.assertEqual(updated["local_id"], created["local_id"])
+        nsp_path = Path(updated["nsp_path"])
+        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        self.assertEqual(payload["sort"], "-playcount")
+        self.assertEqual(payload["limit"], 50)
 
 
 if __name__ == "__main__":
