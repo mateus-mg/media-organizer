@@ -10,7 +10,7 @@ build/
 
 # Virtual Environment
 venv/
-env/
+.env/
 ENV/
 
 # Environment variables
@@ -18,8 +18,8 @@ ENV/
 .env.local
 
 # Database and data
-data/organization.json
-data/backups/*.json
+data/*.json
+data/**/*.json
 
 # Logs
 logs/
@@ -50,6 +50,8 @@ site/
 
 # IDE settings
 .qwen/
+.opencode/
+docs/superpowers/
 
 # Runtime data files
 data/unorganized.json
@@ -58,4 +60,6 @@ data/genre_enrichment_retry_queue.json
 data/invencivel_rename_report.json
 data/suspect_music_genres.json
 data/navidrome/playlists_state.json
-.env.example
+
+# Superpowers plans (local)
+docs/.superpowers/plans/
