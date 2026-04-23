@@ -1,0 +1,2 @@
+class QueryStringParser:
+    pass
