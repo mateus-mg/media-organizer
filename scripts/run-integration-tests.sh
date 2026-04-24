@@ -27,6 +27,9 @@ if [ ! -d "${PROJECT_ROOT}/tests/integration/fixtures/music" ]; then
     mkdir -p "${PROJECT_ROOT}/tests/integration/fixtures/music"
 fi
 
+# Clean previous data to ensure fresh state
+rm -rf "${PROJECT_ROOT}/tests/integration/fixtures/data"/*
+
 # Start Navidrome test container
 echo ""
 echo "🚀 Starting Navidrome test server..."
@@ -54,17 +57,19 @@ echo -e "${GREEN}✅ Navidrome is ready!${NC}"
 # Create first admin user
 echo ""
 echo "👤 Creating test admin user..."
-# Navidrome auto-creates admin on first startup, wait for scan
-echo "   (User: admin, Pass: test123 - set via ND_DEFAULTADMINUSERNAME/PASSWORD if needed)"
+"${PROJECT_ROOT}/.venv/bin/python" "${PROJECT_ROOT}/tests/integration/setup_navidrome_user.py"
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Failed to create admin user${NC}"
+    docker compose -f "${COMPOSE_FILE}" down -v
+    exit 1
+fi
 
 # Run tests
 echo ""
 echo "🧪 Running integration tests..."
 cd "${PROJECT_ROOT}"
-"${PROJECT_ROOT}/.venv/bin/python" -m pytest tests/integration/ -v \
-    --tb=short \
-    -k "test_" \
-    || true
+"${PROJECT_ROOT}/.venv/bin/python" -m pytest tests/integration/test_navidrome_integration.py -v \
+    --tb=short
 
 # Show results
 echo ""
