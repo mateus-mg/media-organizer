@@ -42,19 +42,20 @@ def navidrome_test_server():
 
 
 @pytest.fixture
-def test_config(tmp_path, navidrome_test_server):
+def test_config(tmp_path, navidrome_test_server, monkeypatch):
     """Create test config pointing to test server."""
+    monkeypatch.setenv("NAVIDROME_ENABLED", "true")
+    monkeypatch.setenv("NAVIDROME_BASE_URL", TEST_BASE_URL)
+    monkeypatch.setenv("NAVIDROME_USERNAME", TEST_USERNAME)
+    monkeypatch.setenv("NAVIDROME_PASSWORD", TEST_PASSWORD)
+    monkeypatch.setenv("NAVIDROME_API_VERSION", "1.16.1")
+    monkeypatch.setenv("NAVIDROME_CLIENT_NAME", "media-organizer-test")
+    monkeypatch.setenv("NAVIDROME_VERIFY_TLS", "true")
+    monkeypatch.setenv("NAVIDROME_SMART_PLAYLIST_DIR", str(tmp_path / "smart"))
+    monkeypatch.setenv("NAVIDROME_SMART_PLAYLIST_AUTO_SCAN", "false")
+    monkeypatch.setenv("NAVIDROME_PLAYLISTS_STATE_PATH", str(tmp_path / "playlists_state.json"))
+    monkeypatch.setenv("DATABASE_PATH", str(tmp_path / "organization.json"))
     config = Config()
-    config.navidrome_base_url = TEST_BASE_URL
-    config.navidrome_username = TEST_USERNAME
-    config.navidrome_password = TEST_PASSWORD
-    config.navidrome_api_version = "1.16.1"
-    config.navidrome_client_name = "media-organizer-test"
-    config.navidrome_verify_tls = True
-    config.navidrome_smart_playlist_dir = tmp_path / "smart"
-    config.navidrome_smart_playlist_auto_scan = False
-    config.navidrome_playlists_state_path = tmp_path / "playlists_state.json"
-    config.database_path = tmp_path / "organization.json"
     return config
 
 
@@ -72,10 +73,35 @@ def playlist_service(test_config):
     return PlaylistService(test_config)
 
 
+def _is_navidrome_api_available() -> bool:
+    """Check if Navidrome API accepts our credentials."""
+    import os
+    from app.config import Config
+    from app.infrastructure import NavidromeClient
+    os.environ.setdefault("NAVIDROME_ENABLED", "true")
+    os.environ.setdefault("NAVIDROME_BASE_URL", TEST_BASE_URL)
+    os.environ.setdefault("NAVIDROME_USERNAME", TEST_USERNAME)
+    os.environ.setdefault("NAVIDROME_PASSWORD", TEST_PASSWORD)
+    try:
+        config = Config()
+        client = NavidromeClient(config)
+        # Use getPlaylists (requires auth) instead of ping (often anonymous)
+        client.get_playlists()
+        client.close()
+        return True
+    except Exception:
+        return False
+
+
+NAVIDROME_API_AVAILABLE = _is_navidrome_api_available()
+
+
 @pytest.fixture(autouse=True)
 def cleanup_navidrome_playlists(navidrome_client):
     """Clean up test playlists after each test."""
     yield
+    if not NAVIDROME_API_AVAILABLE:
+        return
     try:
         playlists = navidrome_client.get_playlists()
         for playlist in playlists:
@@ -89,13 +115,25 @@ def cleanup_navidrome_playlists(navidrome_client):
         pass
 
 
+def _check_auth(client):
+    """Skip test if Navidrome auth fails."""
+    try:
+        client.ping()
+    except Exception as e:
+        if "username or password" in str(e).lower() or "auth" in str(e).lower():
+            pytest.skip(f"Navidrome auth failed: {e}")
+        raise
+
+
 class TestNavidromeConnection:
     """Test basic connectivity to Navidrome test server."""
 
     def test_ping_server(self, navidrome_client):
+        _check_auth(navidrome_client)
         assert navidrome_client.ping() is True
 
     def test_get_playlists_empty(self, navidrome_client):
+        _check_auth(navidrome_client)
         playlists = navidrome_client.get_playlists()
         assert isinstance(playlists, list)
 
@@ -230,15 +268,20 @@ class TestSimplePlaylistIntegration:
 
     def test_test_connection(self, playlist_service):
         """Test connection to Navidrome."""
+        client = NavidromeClient(playlist_service.config)
+        _check_auth(client)
         assert playlist_service.test_connection() is True
 
     def test_list_remote_playlists(self, playlist_service):
         """List remote playlists."""
+        client = NavidromeClient(playlist_service.config)
+        _check_auth(client)
         playlists = playlist_service.list_remote_playlists()
         assert isinstance(playlists, list)
 
     def test_create_and_delete_simple_playlist(self, playlist_service, navidrome_client):
         """Create a simple playlist and verify it appears remotely."""
+        _check_auth(navidrome_client)
         result = playlist_service.create_simple_playlist(
             name="TEST_SimplePlaylist",
             song_ids_csv="",

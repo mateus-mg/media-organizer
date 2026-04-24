@@ -5,7 +5,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-COMPOSE_FILE="${PROJECT_ROOT}/docker-compose.test.yml"
+COMPOSE_FILE="${PROJECT_ROOT}/docker compose.test.yml"
 
 # Colors
 RED='\033[0;31m'
@@ -30,7 +30,7 @@ fi
 # Start Navidrome test container
 echo ""
 echo "🚀 Starting Navidrome test server..."
-docker-compose -f "${COMPOSE_FILE}" up -d
+docker compose -f "${COMPOSE_FILE}" up -d
 
 # Wait for Navidrome to be ready
 echo ""
@@ -41,8 +41,8 @@ while ! curl -s -o /dev/null -w "%{http_code}" http://localhost:4534/app | grep 
     RETRY_COUNT=$((RETRY_COUNT + 1))
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
         echo -e "${RED}❌ Navidrome failed to start after ${MAX_RETRIES} attempts${NC}"
-        docker-compose -f "${COMPOSE_FILE}" logs
-        docker-compose -f "${COMPOSE_FILE}" down -v
+        docker compose -f "${COMPOSE_FILE}" logs
+        docker compose -f "${COMPOSE_FILE}" down -v
         exit 1
     fi
     echo "   Attempt ${RETRY_COUNT}/${MAX_RETRIES}..."
@@ -80,7 +80,7 @@ fi
 # Stop container
 echo ""
 echo "🛑 Stopping Navidrome test server..."
-docker-compose -f "${COMPOSE_FILE}" down -v
+docker compose -f "${COMPOSE_FILE}" down -v
 
 echo ""
 echo "Done!"
