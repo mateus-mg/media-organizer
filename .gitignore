@@ -65,3 +65,4 @@ data/navidrome/playlists_state.json
 
 # Superpowers plans (local)
 docs/.superpowers/plans/
+tests/integration/fixtures/data/
