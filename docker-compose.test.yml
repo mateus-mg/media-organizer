@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  navidrome-test:
+    image: deluan/navidrome:latest
+    container_name: media-organizer-navidrome-test
+    ports:
+      - "4534:4533"
+    environment:
+      ND_SCANSCHEDULE: "1h"
+      ND_LOGLEVEL: "info"
+      ND_BASEURL: ""
+      ND_ENABLETRANSCODINGCONFIG: "true"
+      ND_DEFAULTTHEME: "Dark"
+      ND_LASTFM_ENABLED: "false"
+      ND_LISTENBRAINZ_ENABLED: "false"
+      ND_PROMETHEUS_ENABLED: "false"
+    volumes:
+      - ./tests/integration/fixtures/music:/music:ro
+      - ./tests/integration/fixtures/data:/data
+      - ./tests/integration/fixtures/playlists:/playlists
+    restart: "no"
+
+volumes:
+  navidrome-test-data:
