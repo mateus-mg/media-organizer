@@ -9,6 +9,11 @@ from typing import Any, Dict, List, Optional
 from app.config import Config
 from app.infrastructure import NavidromeClient, PlaylistStore
 from app.logging import get_logger
+from app.features.smart_playlists import (
+    SmartPlaylistBuilder,
+    SmartPlaylistDefinition,
+    QueryStringParser,
+)
 
 
 class PlaylistService:
@@ -189,6 +194,59 @@ class PlaylistService:
         if not isinstance(entries, list):
             return []
         return [str(item.get("id", "")).strip() for item in entries if isinstance(item, dict) and str(item.get("id", "")).strip()]
+
+    def _resolve_smart_definition(
+        self,
+        *,
+        name: str,
+        query: str = "",
+        sort: Optional[str] = None,
+        order: Optional[str] = None,
+        limit: Optional[int] = None,
+        limit_percent: Optional[int] = None,
+        builder: Optional[SmartPlaylistBuilder] = None,
+        nsp_definition: Optional[Dict[str, Any]] = None,
+    ) -> SmartPlaylistDefinition:
+        if builder is not None:
+            definition = builder.build()
+        elif nsp_definition:
+            definition = self._definition_from_nsp_dict(nsp_definition)
+        elif query:
+            definition = QueryStringParser().parse(query)
+        else:
+            raise ValueError("Smart playlist query is required")
+        definition.name = name
+        if sort is not None:
+            definition.sort = sort
+        if order is not None:
+            definition.order = order
+        if limit is not None:
+            definition.limit = limit
+            definition.limit_percent = None
+        if limit_percent is not None:
+            definition.limit_percent = limit_percent
+            definition.limit = None
+        return definition
+
+    @staticmethod
+    def _definition_from_nsp_dict(nsp_definition: Dict[str, Any]) -> SmartPlaylistDefinition:
+        from app.features.smart_playlists.definition import Rule
+        definition = SmartPlaylistDefinition(name="")
+        all_rules_raw = nsp_definition.get("all", [])
+        any_rules_raw = nsp_definition.get("any", [])
+        for rule_dict in all_rules_raw:
+            for op, field_value in rule_dict.items():
+                for field, value in field_value.items():
+                    definition.all_rules.append(Rule(op, field, value))
+        for rule_dict in any_rules_raw:
+            for op, field_value in rule_dict.items():
+                for field, value in field_value.items():
+                    definition.any_rules.append(Rule(op, field, value))
+        definition.sort = nsp_definition.get("sort")
+        definition.order = nsp_definition.get("order")
+        definition.limit = nsp_definition.get("limit")
+        definition.limit_percent = nsp_definition.get("limitPercent")
+        return definition
 
     def test_connection(self) -> bool:
         client = NavidromeClient(self.config)
@@ -445,43 +503,41 @@ class PlaylistService:
         query: str = "",
         public: bool = False,
         comment: str = "",
+        sort: Optional[str] = None,
+        order: Optional[str] = None,
+        limit: Optional[int] = None,
+        limit_percent: Optional[int] = None,
+        builder: Optional[SmartPlaylistBuilder] = None,
         nsp_definition: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         name = str(name or "").strip()
-        query = str(query or "").strip()
         if not name:
             raise ValueError("Playlist name is required")
-        if not query and not isinstance(nsp_definition, dict):
-            raise ValueError("Smart playlist query is required")
+
+        definition = self._resolve_smart_definition(
+            name=name,
+            query=query,
+            sort=sort,
+            order=order,
+            limit=limit,
+            limit_percent=limit_percent,
+            builder=builder,
+            nsp_definition=nsp_definition,
+        )
 
         local_id = self._new_local_id("smart")
         smart_dir = self.config.navidrome_smart_playlist_dir
         smart_dir.mkdir(parents=True, exist_ok=True)
         nsp_path = smart_dir / f"{name}.nsp"
 
-        payload: Dict[str, Any] = {
-            "name": name,
-            "comment": comment,
-            "public": public,
-        }
-        if isinstance(nsp_definition, dict) and nsp_definition:
-            payload.update(dict(nsp_definition))
-            payload.pop("name", None)
-            payload.pop("comment", None)
-            payload.pop("public", None)
-            payload.pop("rules", None)
-            if "all" not in payload and "any" not in payload:
-                raise ValueError(
-                    "nsp_definition must contain 'all' or 'any' root clause")
-        else:
-            payload["all"] = self._smart_all_from_query(query)
-
+        payload = definition.to_nsp_dict()
         payload["name"] = name
         payload["comment"] = comment
         payload["public"] = public
 
-        nsp_path.write_text(json.dumps(
-            payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        nsp_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
         if self.config.navidrome_smart_playlist_auto_scan:
             self.trigger_scan()
@@ -505,6 +561,11 @@ class PlaylistService:
         query: Optional[str] = None,
         public: Optional[bool] = None,
         comment: Optional[str] = None,
+        sort: Optional[str] = None,
+        order: Optional[str] = None,
+        limit: Optional[int] = None,
+        limit_percent: Optional[int] = None,
+        builder: Optional[SmartPlaylistBuilder] = None,
         nsp_definition: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         record = self.store.get_playlist(local_id)
@@ -517,56 +578,50 @@ class PlaylistService:
         if not nsp_path.exists():
             raise FileNotFoundError(f"NSP file not found: {nsp_path}")
 
-        payload = json.loads(nsp_path.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict):
-            payload = {}
+        name = str(record.get("name", "")).strip()
+        new_public = bool(public) if public is not None else bool(record.get("public", False))
+        new_comment = str(comment if comment is not None else record.get("comment", "")).strip()
 
-        use_advanced_definition = isinstance(
-            nsp_definition, dict) and bool(nsp_definition)
+        current_payload = json.loads(nsp_path.read_text(encoding="utf-8"))
+        current_definition = self._definition_from_nsp_dict(current_payload)
 
-        new_query = str(
-            query if query is not None else record.get("query", "")).strip()
-        if query is not None and not new_query and not use_advanced_definition:
-            raise ValueError("Smart playlist query is required")
-
-        new_public = bool(public) if public is not None else bool(
-            record.get("public", False))
-        new_comment = str(
-            comment if comment is not None else record.get("comment", "")).strip()
-
-        payload["name"] = str(record.get("name", "")).strip()
-        payload["comment"] = new_comment
-        payload["public"] = new_public
-        payload.pop("rules", None)
-
-        if use_advanced_definition:
-            payload.pop("all", None)
-            payload.pop("any", None)
-            payload.update(dict(nsp_definition or {}))
-            payload.pop("name", None)
-            payload.pop("comment", None)
-            payload.pop("public", None)
-            if "all" not in payload and "any" not in payload:
-                raise ValueError(
-                    "nsp_definition must contain 'all' or 'any' root clause")
-            payload["name"] = str(record.get("name", "")).strip()
-            payload["comment"] = new_comment
-            payload["public"] = new_public
+        if builder is not None:
+            definition = builder.build()
+        elif nsp_definition:
+            definition = self._definition_from_nsp_dict(nsp_definition)
         elif query is not None:
-            payload.pop("all", None)
-            payload.pop("any", None)
-            payload["all"] = self._smart_all_from_query(new_query)
+            definition = QueryStringParser().parse(query)
+        else:
+            definition = current_definition
 
-        nsp_path.write_text(json.dumps(
-            payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        definition.name = name
+        definition.comment = new_comment
+        definition.public = new_public
+        if sort is not None:
+            definition.sort = sort
+        if order is not None:
+            definition.order = order
+        if limit is not None:
+            definition.limit = limit
+            definition.limit_percent = None
+        if limit_percent is not None:
+            definition.limit_percent = limit_percent
+            definition.limit = None
+
+        payload = definition.to_nsp_dict()
+        nsp_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
         if self.config.navidrome_smart_playlist_auto_scan:
             self.trigger_scan()
 
-        if use_advanced_definition:
+        if builder is not None:
+            record["query"] = "[advanced-builder]"
+        elif nsp_definition:
             record["query"] = "[advanced-builder]"
         elif query is not None:
-            record["query"] = new_query
+            record["query"] = query
         record["public"] = new_public
         record["comment"] = new_comment
         return self.store.upsert_playlist(record)
