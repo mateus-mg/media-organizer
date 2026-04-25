@@ -383,67 +383,39 @@ class CLIManager:
         from app.infrastructure import NavidromeAuthError, NavidromeClientError
         from app.services import PlaylistService
 
-        navidrome_fields = [
-            "title",
-            "album",
-            "artist",
-            "albumartist",
-            "genre",
-            "hascoverart",
-            "tracknumber",
-            "discnumber",
-            "year",
-            "date",
-            "originalyear",
-            "originaldate",
-            "releaseyear",
-            "releasedate",
-            "size",
-            "compilation",
-            "dateadded",
-            "datemodified",
-            "discsubtitle",
-            "comment",
-            "lyrics",
-            "sorttitle",
-            "sortalbum",
-            "sortartist",
-            "sortalbumartist",
-            "albumtype",
-            "albumcomment",
-            "catalognumber",
-            "filepath",
-            "filetype",
-            "grouping",
-            "duration",
-            "bitrate",
-            "bitdepth",
-            "bpm",
-            "channels",
-            "loved",
-            "dateloved",
-            "lastplayed",
-            "daterated",
-            "playcount",
-            "rating",
-            "averagerating",
-            "albumrating",
-            "albumloved",
-            "albumplaycount",
-            "albumlastplayed",
-            "albumdateloved",
-            "albumdaterated",
-            "artistrating",
-            "artistloved",
-            "artistplaycount",
-            "mbz_album_id",
-            "mbz_album_artist_id",
-            "mbz_artist_id",
-            "mbz_recording_id",
-            "mbz_release_track_id",
-            "mbz_release_group_id",
-            "library_id",
-        ]
+        NAVIDROME_FIELD_GROUPS = {
+            "Música": [
+                "title", "artist", "album", "albumartist", "genre",
+                "tracknumber", "discnumber", "compilation",
+                "sorttitle", "sortalbum", "sortartist", "sortalbumartist",
+                "discsubtitle", "grouping",
+            ],
+            "Estatísticas": [
+                "loved", "dateloved", "lastplayed", "playcount",
+                "rating", "averagerating", "daterated",
+                "albumrating", "albumloved", "albumplaycount",
+                "albumlastplayed", "albumdateloved", "albumdaterated",
+                "artistrating", "artistloved", "artistplaycount",
+            ],
+            "Datas": [
+                "year", "date", "originalyear", "originaldate",
+                "releaseyear", "releasedate",
+                "dateadded", "datemodified",
+            ],
+            "Técnico": [
+                "duration", "bitrate", "bitdepth", "bpm", "channels",
+                "size", "filetype", "filepath", "hascoverart",
+            ],
+            "Metadados": [
+                "comment", "lyrics", "albumtype", "albumcomment",
+                "catalognumber",
+            ],
+            "MusicBrainz": [
+                "mbz_album_id", "mbz_album_artist_id", "mbz_artist_id",
+                "mbz_recording_id", "mbz_release_track_id", "mbz_release_group_id",
+            ],
+            "Sistema": ["library_id"],
+        }
 
         smart_operators = [
             "is",
@@ -482,21 +454,11 @@ class CLIManager:
             return indexed[selected]
 
         def _definition_from_basic_query(query: str) -> Dict[str, Any]:
-            terms = [
-                term.strip()
-                for term in re.split(r"\s+OR\s+", str(query or ""), flags=re.IGNORECASE)
-                if term and term.strip()
-            ]
-            any_rules: List[Dict[str, Any]] = []
-            for term in terms:
-                any_rules.extend([
-                    {"contains": {"title": term}},
-                    {"contains": {"artist": term}},
-                    {"contains": {"album": term}},
-                ])
-            if not any_rules:
-                any_rules = [{"gt": {"playcount": -1}}]
-            return {"all": [{"any": any_rules}]}
+            from app.features.smart_playlists import QueryStringParser
+            definition = QueryStringParser().parse(query)
+            if not definition.all_rules and not definition.any_rules:
+                definition.all_rules = [{"gt": {"playcount": -1}}]
+            return definition.to_nsp_dict()
 
         def _confirm_smart_payload(
             *,
@@ -542,6 +504,36 @@ class CLIManager:
             except ValueError:
                 return value
 
+        def _get_suggestions_for_field(field: str) -> List[str]:
+            db_path = Path(self.config.database_path or "")
+            if not db_path.exists():
+                return []
+            try:
+                data = json.loads(db_path.read_text(encoding="utf-8"))
+                media = data.get("media", {})
+            except Exception:
+                return []
+            values: set = set()
+            for record in media.values():
+                if not isinstance(record, dict):
+                    continue
+                metadata = record.get("metadata", {})
+                if not isinstance(metadata, dict):
+                    continue
+                if field == "genre":
+                    genres = metadata.get("genres", [])
+                    if isinstance(genres, list):
+                        values.update(str(g) for g in genres if g)
+                    else:
+                        g = metadata.get("genre")
+                        if g:
+                            values.add(str(g))
+                elif field in metadata:
+                    v = metadata.get(field)
+                    if v is not None:
+                        values.add(str(v))
+            return sorted(values)[:20]
+
         def _build_smart_condition() -> Dict[str, Any]:
             op = _ask_indexed_choice(
                 "Operator",
@@ -554,18 +546,35 @@ class CLIManager:
                     "Playlist ID", default="").strip()
                 return {op: {"id": playlist_id}}
 
-            field = _ask_indexed_choice(
-                "Field",
-                navidrome_fields,
-                default_index=1,
-            ).strip()
+            # Select field by category
+            categories = list(NAVIDROME_FIELD_GROUPS.keys())
+            category = _ask_indexed_choice("Field category", categories)
+            fields = NAVIDROME_FIELD_GROUPS[category]
+            field = _ask_indexed_choice(f"{category} field", fields)
 
             if op == "inTheRange":
                 start = Prompt.ask("Range start", default="").strip()
                 end = Prompt.ask("Range end", default="").strip()
                 return {op: {field: [_parse_scalar(start), _parse_scalar(end)]}}
 
-            raw_value = Prompt.ask("Value", default="").strip()
+            suggestions = _get_suggestions_for_field(field)
+            if suggestions:
+                console.print(f"\n[cyan]Suggestions for {field}:[/cyan]")
+                for idx, sug in enumerate(suggestions, 1):
+                    console.print(f"  [{idx}] {sug}")
+                console.print("  [0] Other (type manually)")
+                choice = Prompt.ask("Select", default="0").strip()
+                try:
+                    idx = int(choice)
+                    if 1 <= idx <= len(suggestions):
+                        raw_value = suggestions[idx - 1]
+                    else:
+                        raw_value = Prompt.ask("Value", default="").strip()
+                except ValueError:
+                    raw_value = Prompt.ask("Value", default="").strip()
+            else:
+                raw_value = Prompt.ask("Value", default="").strip()
+
             value = _parse_scalar(raw_value)
             return {op: {field: value}}
 
