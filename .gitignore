@@ -50,7 +50,6 @@ site/
 .mkdocs-cache/
 
 # IDE settings
-.qwen/
 .opencode/
 docs/superpowers/
 
