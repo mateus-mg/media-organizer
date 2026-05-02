@@ -1,10 +1,5 @@
 # Media Organization System - Agent Knowledge Base
 
-**Generated:** 2026-05-03 00:03:05 WEST  
-**Commit:** 3cde5e1  
-**Branch:** main  
-**Commits:** 74 (since 2026-01-09)
-
 ## OVERVIEW
 
 Python CLI application for organizing media files (music, books, comics) with hardlink-based organization, genre validation, Navidrome integration, and conflict resolution. Uses async-first architecture with TinyDB for JSON storage.
