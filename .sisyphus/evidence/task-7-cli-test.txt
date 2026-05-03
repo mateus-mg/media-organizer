@@ -1,0 +1,46 @@
+=== Task 7: analyze-genres CLI Command Test Evidence ===
+
+1. Help command test:
+$ python3 -m app.main analyze-genres --help
+Usage: python -m app.main analyze-genres [OPTIONS]
+
+  Analisa generos da biblioteca e sugere agrupamentos.
+
+Options:
+  --suggest            Sugerir grupos baseado na biblioteca
+  --library-path PATH  Caminho da biblioteca
+  --help               Show this message and exit.
+
+2. Empty library test:
+$ python3 -m app.main analyze-genres --suggest
+Nenhum genero encontrado na biblioteca
+
+3. Simulated library test with music genres:
+$ python3 -m app.main analyze-genres --suggest --library-path /tmp/test_organization.json
+
+Analise de 10 generos unicos:
+
+ROCK (4 subgeneros):
+  - alternative rock
+  - hard rock
+  - progressive rock
+  - psychedelic rock
+
+ELECTRONIC (3 subgeneros):
+  - ambient
+  - deep house
+  - tech house
+
+Generos nao agrupados (3):
+  - bebop jazz
+  - jazz fusion
+  - smooth jazz
+
+4. Verification:
+- Command is read-only (no database/file modifications)
+- Uses Config.database_path as default library path
+- Filters only music media_type records
+- Groups genres using GenreExpander.infer_parent()
+- Shows groups with 3+ subgenres
+- Shows ungrouped genres
+- No modifications to hierarchy.json
