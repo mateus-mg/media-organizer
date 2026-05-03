@@ -568,7 +568,7 @@ def analyze_genres(suggest, library_path):
   - Files: `app/main.py`
   - Pre-commit: `./run.sh analyze-genres --help`
 
-- [ ] 8. Escrever Testes Unitários
+- [x] 8. Escrever Testes Unitários
 
   **What to do**:
   - Criar `tests/test_smart_playlists/test_expansion.py`
@@ -629,7 +629,7 @@ def analyze_genres(suggest, library_path):
   - Files: `tests/test_smart_playlists/test_expansion.py`, `test_query_parser_expand.py`, `test_builder_expand.py`
   - Pre-commit: `python -m unittest tests.test_smart_playlists -v`
 
-- [ ] 9. Testes de Integração e Edge Cases
+- [x] 9. Testes de Integração e Edge Cases
 
   **What to do**:
   - Testar fluxo completo: parser → builder → expansion
@@ -690,15 +690,15 @@ def analyze_genres(suggest, library_path):
 
 ## Final Verification Wave
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists. For each "Must NOT Have": search codebase for forbidden patterns. Check evidence files exist.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | VERDICT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
   Run `python -m unittest tests/test_smart_playlists/` + check for AI slop patterns.
   Output: `Tests [N pass/N fail] | Code Quality [PASS/FAIL] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high`
+- [x] F3. **Real Manual QA** — `unspecified-high`
   Execute:
   - `./run.sh analyze-genres --help`
   - `./run.sh analyze-genres --dry-run` (se existir)
@@ -706,7 +706,7 @@ def analyze_genres(suggest, library_path):
   Save to `.sisyphus/evidence/final-qa/`
   Output: `CLI Commands [N/N] | Expansion [N/N] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
   For each task: read "What to do", read actual diff. Verify 1:1 compliance.
   Output: `Tasks [N/N compliant] | VERDICT`
 
