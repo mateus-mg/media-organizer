@@ -1363,5 +1363,75 @@ def apply_filename_suggestions(report_path: Path, execute: bool, preview_limit: 
         console.print(f"[{status}] {old} => {new}")
 
 
+@cli.command("analyze-genres")
+@click.option("--suggest", is_flag=True, help="Sugerir grupos baseado na biblioteca")
+@click.option("--library-path", type=click.Path(), help="Caminho da biblioteca")
+def analyze_genres(suggest, library_path):
+    """Analisa generos da biblioteca e sugere agrupamentos."""
+    if not suggest:
+        click.echo("Use --suggest para analisar a biblioteca")
+        return
+
+    config = Config()
+    db_path = Path(library_path) if library_path else config.database_path
+
+    try:
+        with open(db_path, "r", encoding="utf-8") as f:
+            db = json.load(f)
+
+        genres = set()
+        media_records = db.get("media", {})
+        for item in media_records.values():
+            metadata = item.get("metadata") or {}
+            media_type = str(metadata.get("media_type") or "").lower()
+            if media_type == "music":
+                genre = metadata.get("genre")
+                if genre:
+                    for g in str(genre).split(","):
+                        stripped = g.strip().lower()
+                        if stripped:
+                            genres.add(stripped)
+
+        if not genres:
+            click.echo("Nenhum genero encontrado na biblioteca")
+            return
+
+        from app.features.smart_playlists.expansion import GenreExpander
+        expander = GenreExpander()
+
+        groups = {}
+        for genre in sorted(genres):
+            parent = expander.infer_parent(genre)
+            if parent:
+                groups.setdefault(parent, []).append(genre)
+
+        click.echo(f"\nAnalise de {len(genres)} generos unicos:\n")
+
+        for parent, subgenres in sorted(groups.items(), key=lambda x: -len(x[1])):
+            if len(subgenres) >= 3:
+                click.echo(f"\n{parent.upper()} ({len(subgenres)} subgeneros):")
+                for sub in sorted(subgenres)[:10]:
+                    click.echo(f"  - {sub}")
+                if len(subgenres) > 10:
+                    click.echo(f"  ... e mais {len(subgenres) - 10}")
+
+        grouped = set()
+        for subs in groups.values():
+            grouped.update(subs)
+        ungrouped = genres - grouped
+
+        if ungrouped:
+            click.echo(f"\nGeneros nao agrupados ({len(ungrouped)}):")
+            for g in sorted(ungrouped)[:10]:
+                click.echo(f"  - {g}")
+            if len(ungrouped) > 10:
+                click.echo(f"  ... e mais {len(ungrouped) - 10}")
+
+    except FileNotFoundError:
+        click.echo(f"Banco de dados nao encontrado: {db_path}")
+    except Exception as e:
+        click.echo(f"Erro ao analisar: {e}")
+
+
 if __name__ == "__main__":
     cli()
