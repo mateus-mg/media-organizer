@@ -13,7 +13,11 @@
     "ses_214bb6ad3ffeyFhyF4qiguuqm2",
     "ses_214bb0f67ffe2YNe9FzEH8cu7h",
     "ses_214b59a4cffe90NpAgaGys8F4w",
-    "ses_214b53830ffegQYKIZz9z9SxVd"
+    "ses_214b53830ffegQYKIZz9z9SxVd",
+    "ses_214af1f0dffeVuruzon62pGdNX",
+    "ses_214af1021ffe3L7ori7QfFr3UZ",
+    "ses_214aef896ffeXulvjYCsdWLKKt",
+    "ses_214aee323ffesGJkUMUhDOsKfu"
   ],
   "session_origins": {
     "ses_214d287ccffer8vvssyWrTH9kT": "direct",
@@ -27,7 +31,11 @@
     "ses_214bb6ad3ffeyFhyF4qiguuqm2": "appended",
     "ses_214bb0f67ffe2YNe9FzEH8cu7h": "appended",
     "ses_214b59a4cffe90NpAgaGys8F4w": "appended",
-    "ses_214b53830ffegQYKIZz9z9SxVd": "appended"
+    "ses_214b53830ffegQYKIZz9z9SxVd": "appended",
+    "ses_214af1f0dffeVuruzon62pGdNX": "appended",
+    "ses_214af1021ffe3L7ori7QfFr3UZ": "appended",
+    "ses_214aef896ffeXulvjYCsdWLKKt": "appended",
+    "ses_214aee323ffesGJkUMUhDOsKfu": "appended"
   },
   "plan_name": "smart-playlist-genre-expansion",
   "agent": "atlas",
@@ -70,7 +78,15 @@
       "task_title": "Escrever Testes Unitários",
       "session_id": "ses_214b53830ffegQYKIZz9z9SxVd",
       "agent": "build",
-      "updated_at": "2026-05-03T00:43:59.963Z"
+      "updated_at": "2026-05-03T00:50:07.967Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_214aee323ffesGJkUMUhDOsKfu",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:54:01.808Z"
     }
   }
 }
