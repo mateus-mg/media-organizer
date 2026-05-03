@@ -1,5 +1,5 @@
 """Parser for expanded smart playlist query strings."""
-from typing import Any, Optional
+from typing import Any, List, Optional, Union
 
 from .definition import Rule, SmartPlaylistDefinition
 from .validators import validate_operator_for_field
@@ -12,6 +12,7 @@ class QueryStringParser:
         campo:valor              → default operator (contains for strings, is for bools/numbers)
         campo:operador:valor     → explicit operator
         campo:"valor com espaço" → quoted values
+        campo:valor:expand       → expand parent genre into subgenres (OR logic)
         Condições separadas por espaço = AND
     """
 
@@ -19,9 +20,13 @@ class QueryStringParser:
         definition = SmartPlaylistDefinition(name="")
         terms = self._tokenize(str(query or "").strip())
         for term in terms:
-            rule = self._parse_term(term)
-            if rule:
-                definition.all_rules.append(rule)
+            parsed = self._parse_term(term)
+            if parsed is None:
+                continue
+            if isinstance(parsed, list):
+                definition.any_rules.extend(parsed)
+            else:
+                definition.all_rules.append(parsed)
         return definition
 
     def _tokenize(self, query: str) -> list[str]:
@@ -42,22 +47,33 @@ class QueryStringParser:
             tokens.append(current.strip())
         return tokens
 
-    def _parse_term(self, term: str) -> Optional[Rule]:
+    def _parse_term(self, term: str) -> Optional[Union[Rule, List[Rule]]]:
         if not term:
             return None
         # Remove surrounding quotes if present
         if len(term) >= 2 and term.startswith('"') and term.endswith('"'):
             term = term[1:-1]
+        # Check for :expand suffix
+        if term.endswith(":expand"):
+            term_without_expand = term[:-7]
+            parts = term_without_expand.split(":")
+            if len(parts) >= 2:
+                field = parts[0].strip()
+                parent_genre = ":".join(parts[1:]).strip()
+                from .expansion import GenreExpander
+                expander = GenreExpander()
+                subgenres = expander.expand(parent_genre)
+                if subgenres:
+                    return [Rule("is", field, subgenre) for subgenre in subgenres]
+                return Rule("is", field, parent_genre)
         parts = term.split(":")
         if len(parts) < 2:
             return None
         field = parts[0].strip()
         if len(parts) == 2:
-            # campo:valor → default operator
             value = self._parse_value(parts[1])
             operator = self._default_operator(field, value)
         else:
-            # campo:operador:valor
             operator = parts[1].strip()
             value = self._parse_value(":".join(parts[2:]))
         validate_operator_for_field(operator, field, value)
