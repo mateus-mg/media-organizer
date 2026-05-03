@@ -75,6 +75,18 @@ class FieldCondition:
         """Not in playlist (notInPlaylist)."""
         return self._rule("notInPlaylist", playlist_id)
 
+    def with_subgenres(self, parent_genre: str) -> List[Rule]:
+        """Expand parent_genre into multiple OR Rules for subgenres."""
+        from .expansion import GenreExpander
+
+        expander = GenreExpander()
+        subgenres = expander.expand(parent_genre)
+
+        if not subgenres:
+            return [self.is_(parent_genre)]
+
+        return [self.is_(subgenre) for subgenre in subgenres]
+
 
 class SmartPlaylistBuilder:
     """Fluent builder for composing Navidrome smart playlists."""
