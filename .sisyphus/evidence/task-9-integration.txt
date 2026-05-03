@@ -1,0 +1,34 @@
+test_builder_with_subgenres_empty_hierarchy (tests.test_smart_playlists.test_integration.TestIntegration.test_builder_with_subgenres_empty_hierarchy)
+with_subgenres com hierarquia vazia deve retornar uma regra única. ... Genre 'jazz' not found in hierarchy. Returning empty list.
+ok
+test_builder_with_subgenres_flow (tests.test_smart_playlists.test_integration.TestIntegration.test_builder_with_subgenres_flow)
+Fluxo: field().with_subgenres() → any_of() → build(). ... ok
+test_case_insensitivity (tests.test_smart_playlists.test_integration.TestIntegration.test_case_insensitivity)
+Testar case insensitive em todas as operações. ... ok
+test_empty_hierarchy_handling (tests.test_smart_playlists.test_integration.TestIntegration.test_empty_hierarchy_handling)
+Comportamento com hierarquia vazia. ... Genre 'electronic' not found in hierarchy. Returning empty list.
+ok
+test_end_to_end_parser_builder_expansion (tests.test_smart_playlists.test_integration.TestIntegration.test_end_to_end_parser_builder_expansion)
+Fluxo completo: parser com :expand → builder → definição válida. ... ok
+test_find_matches_with_special_characters (tests.test_smart_playlists.test_integration.TestIntegration.test_find_matches_with_special_characters)
+find_matches deve funcionar com caracteres especiais no padrão. ... ok
+test_full_playlist_definition_serialization (tests.test_smart_playlists.test_integration.TestIntegration.test_full_playlist_definition_serialization)
+Testar serialização NSP completa após fluxo inteiro. ... ok
+test_multiple_expand_in_query (tests.test_smart_playlists.test_integration.TestIntegration.test_multiple_expand_in_query)
+Múltiplos :expand na mesma query. ... ok
+test_parser_expand_fallback_to_single_rule (tests.test_smart_playlists.test_integration.TestIntegration.test_parser_expand_fallback_to_single_rule)
+Quando expand retorna vazio, parser deve criar uma única regra. ... Genre 'unknown' not found in hierarchy. Returning empty list.
+ok
+test_special_characters_in_genre (tests.test_smart_playlists.test_integration.TestIntegration.test_special_characters_in_genre)
+Gêneros com caracteres especiais (R&B, Drum & Bass). ... ok
+test_unknown_genre_handling (tests.test_smart_playlists.test_integration.TestIntegration.test_unknown_genre_handling)
+Comportamento com gênero inexistente. ... Genre 'unknown_genre_xyz' not found in hierarchy. Returning empty list.
+ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.006s
+
+OK
+✅ Test imports configured
+   Project root: /media/mateus/Servidor/scripts/media-organizer
+   Sys.path: ['/media/mateus/Servidor/scripts/media-organizer', '/media/mateus/Servidor/scripts/media-organizer', '/usr/lib/python312.zip']...

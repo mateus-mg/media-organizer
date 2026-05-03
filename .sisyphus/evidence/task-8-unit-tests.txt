@@ -1,0 +1,28 @@
+Task 8: Unit Tests for Genre Expansion
+Date: 2026-05-03
+
+Tests Created:
+1. tests/test_smart_playlists/test_expansion.py (4 tests)
+   - test_expand_returns_subgenres
+   - test_infer_parent_finds_match
+   - test_expand_unknown_returns_empty
+   - test_case_insensitive_matching
+
+2. tests/test_smart_playlists/test_query_parser_expand.py (3 tests)
+   - test_parse_expand_creates_multiple_rules
+   - test_parse_without_expand_unchanged
+   - test_parse_expand_case_insensitive
+
+3. tests/test_smart_playlists/test_builder_expand.py (2 tests)
+   - test_with_subgenres_returns_rules
+   - test_with_subgenres_integration
+
+Test Results:
+- test_expansion: 4/4 passed
+- test_query_parser_expand: 3/3 passed
+- test_builder_expand: 2/2 passed
+- Existing smart_playlists tests: 25/25 passed
+
+Source change:
+- Added field() helper function to app/features/smart_playlists/builder.py
+  (required for test_builder_expand.py to import field)

@@ -1,5 +1,5 @@
 """Fluent API builder for Navidrome smart playlists."""
-from typing import Any, List, Optional
+from typing import Any, List
 
 from .definition import Rule, SmartPlaylistDefinition
 from .validators import validate_operator_for_field
@@ -74,6 +74,27 @@ class FieldCondition:
     def not_in_playlist(self, playlist_id: str) -> Rule:
         """Not in playlist (notInPlaylist)."""
         return self._rule("notInPlaylist", playlist_id)
+
+    def with_subgenres(self, parent_genre: str) -> List[Rule]:
+        """Expand parent_genre into multiple OR Rules for subgenres."""
+        from .expansion import GenreExpander
+
+        expander = GenreExpander()
+        subgenres = expander.expand(parent_genre)
+
+        if not subgenres:
+            return [self.is_(parent_genre)]
+
+        return [self.is_(subgenre) for subgenre in subgenres]
+
+
+def field(field_name: str) -> FieldCondition:
+    """Create a FieldCondition for the given field name.
+
+    Convenience function for standalone use:
+        rules = field("genre").with_subgenres("rock")
+    """
+    return FieldCondition(field_name)
 
 
 class SmartPlaylistBuilder:

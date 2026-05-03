@@ -1,0 +1,50 @@
+Task 4: Estender query_parser.py com Suporte a :expand
+=====================================================================
+
+Arquivo modificado: app/features/smart_playlists/query_parser.py
+
+Mudanças realizadas:
+1. Modificado _parse_term para retornar Optional[Union[Rule, List[Rule]]]
+2. Adicionada detecção de sufixo :expand
+3. Quando :expand é detectado, usa GenreExpander para expandir gênero pai em subgêneros
+4. Lista de Rules retornada é adicionada a any_rules (lógica OR)
+5. Retrocompatibilidade mantida para queries sem :expand
+
+QA Scenario Executado:
+----------------------
+
+# Test with expand
+d = p.parse("genre:electronic:expand")
+Any rules (expand): 0  # (0 porque genre_hierarchy.json está vazio no ambiente de teste)
+
+# Test without expand (retrocompatibility)
+d2 = p.parse("genre:house")
+All rules (no expand): 1
+Any rules (no expand): 0
+Rule: Rule(operator='contains', field='genre', value='house')
+
+# Test explicit operator without expand
+d3 = p.parse("genre:is:techno")
+All rules (explicit op): 1
+Rule: Rule(operator='is', field='genre', value='techno')
+
+# Test combined: expand + normal term
+d4 = p.parse("genre:electronic:expand artist:daft punk")
+Combined test:
+  All rules: 2
+  Any rules: 0
+
+Testes Unitários Existentes:
+----------------------------
+test_boolean ... ok
+test_empty_returns_empty ... ok
+test_explicit_contains_operator ... ok
+test_explicit_operator ... ok
+test_invalid_field_raises ... ok
+test_multiple_and ... ok
+test_number_default_operator_is ... ok
+test_quoted_value ... ok
+test_simple_contains ... ok
+
+Ran 9 tests in 0.001s
+OK

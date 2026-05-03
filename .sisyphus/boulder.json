@@ -1,0 +1,92 @@
+{
+  "active_plan": "/media/mateus/Servidor/scripts/media-organizer/.sisyphus/plans/smart-playlist-genre-expansion.md",
+  "started_at": "2026-05-03T00:27:14.042Z",
+  "session_ids": [
+    "ses_214d287ccffer8vvssyWrTH9kT",
+    "ses_214c3bdf2ffexfe7ptCmypLB4A",
+    "ses_214c3b5f4ffecFYsrMqw6HqJnV",
+    "ses_214c3ac5bffeiBg8vozsmxbTd2",
+    "ses_214c2281cffe6tIz44YgFxUkoP",
+    "ses_214c1fabbffenL27eoPX7oyhg1",
+    "ses_214be8cc6ffecAdfr3hnEH36ua",
+    "ses_214be549fffe6XKSNzdDg794CP",
+    "ses_214bb6ad3ffeyFhyF4qiguuqm2",
+    "ses_214bb0f67ffe2YNe9FzEH8cu7h",
+    "ses_214b59a4cffe90NpAgaGys8F4w",
+    "ses_214b53830ffegQYKIZz9z9SxVd",
+    "ses_214af1f0dffeVuruzon62pGdNX",
+    "ses_214af1021ffe3L7ori7QfFr3UZ",
+    "ses_214aef896ffeXulvjYCsdWLKKt",
+    "ses_214aee323ffesGJkUMUhDOsKfu"
+  ],
+  "session_origins": {
+    "ses_214d287ccffer8vvssyWrTH9kT": "direct",
+    "ses_214c3bdf2ffexfe7ptCmypLB4A": "appended",
+    "ses_214c3b5f4ffecFYsrMqw6HqJnV": "appended",
+    "ses_214c3ac5bffeiBg8vozsmxbTd2": "appended",
+    "ses_214c2281cffe6tIz44YgFxUkoP": "appended",
+    "ses_214c1fabbffenL27eoPX7oyhg1": "appended",
+    "ses_214be8cc6ffecAdfr3hnEH36ua": "appended",
+    "ses_214be549fffe6XKSNzdDg794CP": "appended",
+    "ses_214bb6ad3ffeyFhyF4qiguuqm2": "appended",
+    "ses_214bb0f67ffe2YNe9FzEH8cu7h": "appended",
+    "ses_214b59a4cffe90NpAgaGys8F4w": "appended",
+    "ses_214b53830ffegQYKIZz9z9SxVd": "appended",
+    "ses_214af1f0dffeVuruzon62pGdNX": "appended",
+    "ses_214af1021ffe3L7ori7QfFr3UZ": "appended",
+    "ses_214aef896ffeXulvjYCsdWLKKt": "appended",
+    "ses_214aee323ffesGJkUMUhDOsKfu": "appended"
+  },
+  "plan_name": "smart-playlist-genre-expansion",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Validar Estrutura Atual do Sistema",
+      "session_id": "ses_214c3b5f4ffecFYsrMqw6HqJnV",
+      "agent": "explore",
+      "updated_at": "2026-05-03T00:29:10.768Z"
+    },
+    "todo:2": {
+      "task_key": "todo:2",
+      "task_label": "2",
+      "task_title": "Criar genre_hierarchy.json com 5 Gêneros Pais",
+      "session_id": "ses_214c1fabbffenL27eoPX7oyhg1",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:33:13.589Z"
+    },
+    "todo:4": {
+      "task_key": "todo:4",
+      "task_label": "4",
+      "task_title": "Estender query_parser.py com Suporte a :expand",
+      "session_id": "ses_214be549fffe6XKSNzdDg794CP",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:36:36.880Z"
+    },
+    "todo:6": {
+      "task_key": "todo:6",
+      "task_label": "6",
+      "task_title": "Adicionar Validação de Schema e Error Handling",
+      "session_id": "ses_214bb6ad3ffeyFhyF4qiguuqm2",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:42:56.244Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "Escrever Testes Unitários",
+      "session_id": "ses_214b53830ffegQYKIZz9z9SxVd",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:50:07.967Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_214aee323ffesGJkUMUhDOsKfu",
+      "agent": "build",
+      "updated_at": "2026-05-03T00:54:01.808Z"
+    }
+  }
+}
