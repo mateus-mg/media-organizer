@@ -1,0 +1,6 @@
+Any rules count: 20
+First rule: Rule(operator='is', field='genre', value='house')
+Unknown genre rules: 1
+Unknown genre first rule: Rule(operator='is', field='genre', value='unknown_genre')
+
+All QA checks passed!
