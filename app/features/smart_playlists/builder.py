@@ -97,11 +97,6 @@ def field(field_name: str) -> FieldCondition:
     return FieldCondition(field_name)
 
 
-def field(field_name: str) -> FieldCondition:
-    """Create a FieldCondition for the given field name."""
-    return FieldCondition(field_name)
-
-
 class SmartPlaylistBuilder:
     """Fluent builder for composing Navidrome smart playlists."""
 
