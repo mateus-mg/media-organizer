@@ -1,0 +1,8 @@
+=== QA Scenario Results ===
+Electronic subgenres: 20
+Deep House parent: electronic
+House matches: 1
+Rock subgenres sample: ['alternative rock', 'punk', 'metal']
+Synthpop parent: electronic
+Techno matches: ['techno']
+Synthpop matches (dedup test): ['synthpop']
