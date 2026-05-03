@@ -1,5 +1,5 @@
 """Fluent API builder for Navidrome smart playlists."""
-from typing import Any, List, Optional
+from typing import Any, List
 
 from .definition import Rule, SmartPlaylistDefinition
 from .validators import validate_operator_for_field

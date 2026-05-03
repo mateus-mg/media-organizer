@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -10,13 +9,6 @@ from typing import Dict, List, Optional
 LOGGER = logging.getLogger(__name__)
 
 DEFAULT_HIERARCHY_PATH = Path("./data/genre_hierarchy.json")
-
-DEFAULT_HIERARCHY_CONTENT = {
-    "version": 1,
-    "updated_at": "1970-01-01T00:00:00Z",
-    "hierarchy": {},
-}
-
 
 class GenreExpander:
     """Expands parent genres into subgenres and infers parents from subgenres."""
