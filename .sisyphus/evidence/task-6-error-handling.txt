@@ -1,0 +1,44 @@
+WARNING: Hierarchy file not found at /tmp/tmp_am9s3ob/nonexistent.json. Creating default empty hierarchy.
+WARNING: Genre 'electronic' not found in hierarchy. Returning empty list.
+WARNING: Invalid JSON in hierarchy file /tmp/tmpych0ymfn.json: Expecting value: line 1 column 1 (char 0). Using default empty hierarchy.
+WARNING: Genre 'electronic' not found in hierarchy. Returning empty list.
+WARNING: Invalid schema in hierarchy file /tmp/tmp8k7841gf.json. Using default empty hierarchy.
+WARNING: Genre 'electronic' not found in hierarchy. Returning empty list.
+WARNING: Invalid schema in hierarchy file /tmp/tmpreffbzlj.json. Using default empty hierarchy.
+WARNING: Genre 'electronic' not found in hierarchy. Returning empty list.
+WARNING: Invalid schema in hierarchy file /tmp/tmpn2flh23y.json. Using default empty hierarchy.
+WARNING: Genre 'electronic' not found in hierarchy. Returning empty list.
+WARNING: Hierarchy file not found at /tmp/tmpf7z32_4u/empty.json. Creating default empty hierarchy.
+WARNING: Genre 'unknown_genre' not found in hierarchy. Returning empty list.
+WARNING: Genre 'unknown_genre' not found in hierarchy. Returning empty list.
+=== Test 1: Arquivo inexistente ===
+Nonexistent file handled: True
+Default file created: True
+Default schema valid: True
+
+=== Test 2: JSON inválido ===
+Invalid JSON handled: True
+
+=== Test 3: Schema inválido ===
+Invalid schema handled: True
+
+=== Test 4: Schema inválido - version not int ===
+Invalid version type handled: True
+
+=== Test 5: Schema inválido - hierarchy not dict ===
+Invalid hierarchy type handled: True
+
+=== Test 6: Gênero não existe ===
+Unknown genre returns empty: True
+expand('unknown_genre'): []
+
+=== Summary ===
+  PASS: Nonexistent file handled
+  PASS: Default file created
+  PASS: Invalid JSON handled
+  PASS: Invalid schema handled
+  PASS: Invalid version type handled
+  PASS: Invalid hierarchy type handled
+  PASS: Unknown genre returns empty
+
+Overall: ALL TESTS PASSED

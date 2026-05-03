@@ -88,6 +88,20 @@ class FieldCondition:
         return [self.is_(subgenre) for subgenre in subgenres]
 
 
+def field(field_name: str) -> FieldCondition:
+    """Create a FieldCondition for the given field name.
+
+    Convenience function for standalone use:
+        rules = field("genre").with_subgenres("rock")
+    """
+    return FieldCondition(field_name)
+
+
+def field(field_name: str) -> FieldCondition:
+    """Create a FieldCondition for the given field name."""
+    return FieldCondition(field_name)
+
+
 class SmartPlaylistBuilder:
     """Fluent builder for composing Navidrome smart playlists."""
 
